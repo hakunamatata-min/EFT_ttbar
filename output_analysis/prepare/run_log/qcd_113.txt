@@ -1,7 +1,0 @@
-nohup: ignoring input
-
-Processing derive_qcd_em.cpp(1, 1, 3)...
-finished B region
-2.32286e+06
-finished A region
-554.115
