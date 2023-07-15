@@ -1,0 +1,21 @@
+MATRIX NNLO QCD cross sections
+
+The official documentation for this is ongoing and will be placed in an AN
+
+MATRIX settings:
+- dynamic_scale = 0.5*HT, sum of the transverse masses mT of the top and antitop quarks (mT^2=Q^2+pT^2)
+
+- LHAPDF_NNLO = NNPDF31_nnlo_as_0118
+- a sample parameter.dat file is provided (sample_parameter.dat)
+
+File contents:
+- sets of 2D histograms with axes corresponding to mtt and top quark cos(theta*)
+    - the top quarks are taken as the final copies in the event at generator level, (isLastCopy flag)
+    - top quark cos(theta*) is the angle between the 3-momentum of the top quark in the ttbar rest frame and the 3-momentum of the ttbar system in the lab frame
+- there are three sets of histograms
+    - MATRIX_xsec_<var> are the cross sections calculated by MATRIX
+        - <var> can be central, up, or down, where up and down are the resulting envelopes of the max (up) and minimum (down) scale variations
+    - AllYears_Summer20UL_xsec is the resulting cross section distribution calculated using the nominal ttbar datasets from all 4 eras (2016preVFP, 2016postVFP, 2017, and 2018)
+        - datasets are /TTTo[SAMPLE]_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL*NanoAOD*v2-*/NANOAODSIM where sample can be 2L2Nu, Hadronic, or SemiLeptonic
+    - MATRIX_xsec_central_over_AllYears_Summer20UL_Normalized_Ratios is the ratio of the MATRIX_xsec_central distribution normalized to unity and AllYears_Summer20UL_xsec distribution normalized to unity
+        - these weights should be applied to all SM ttbar events as is

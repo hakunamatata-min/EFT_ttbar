@@ -1,0 +1,97 @@
+##########################
+# MATRIX input parameter #
+##########################
+
+#----------------------\
+# general run settings |
+#----------------------/
+process_class   =  pp-ttx+X    #  process id
+E               =  6500.       #  energy per beam
+coll_choice     =  1           #  (1) PP collider; (2) PPbar collider
+
+
+#----------------\
+# scale settings |
+#----------------/
+scale_ren       =  172.5       #  renormalization (muR) scale
+scale_fact      =  172.5       #  factorization (muF) scale
+dynamic_scale   =  2           #  dynamic ren./fac. scale
+                               #  0: fixed scale above
+                               #  1: invariant mass of ttx system
+                               #  2: HT, sum of the transverse masses mT of the top and antitop quarks (mT^2=Q^2+pT^2)
+			       #  Additional scales defined in prc/ppttx20/user/specify.scales.cxx 
+factor_central_scale = 0.5       #  relative factor for central scale (important for dynamic scales)
+scale_variation  = 1           #  switch for muR/muF uncertainties (0) off; (1) 7-point (default); (2) 9-point variation
+variation_factor = 2           #  symmetric variation factor; usually a factor of 2 up and down (default)
+
+
+#------------------------------\
+# order-dependent run settings |
+#------------------------------/
+# LO
+run_LO          =  1           #  switch for LO cross section (1) on; (0) off
+LHAPDF_LO       =  NNPDF31_lo_as_0118 #  LO LHAPDF set
+PDFsubset_LO    =  0           #  member of LO PDF set
+precision_LO    =  1.e-3       #  precision of LO cross section
+
+# NLO
+run_NLO         =  1           #  switch for NLO cross section (1) on; (0) off
+LHAPDF_NLO      =  NNPDF31_nlo_as_0118 #  NLO LHAPDF set
+PDFsubset_NLO   =  0           #  member of NLO PDF set
+precision_NLO   =  1.e-3       #  precision of NLO cross section
+NLO_subtraction_method = 1     #  switch to use (2) qT subtraction (1) Catani-Seymour at NLO
+
+# NNLO
+run_NNLO        =  1           #  switch for NNLO cross section (1) on; (0) off
+LHAPDF_NNLO     =  NNPDF31_nnlo_as_0118 #  NNLO LHAPDF set
+PDFsubset_NNLO  =  0           #  member of NNLO PDF set
+precision_NNLO  =  1.4e-3       #  precision of NNLO cross section
+
+
+#----------------------------\
+# settings for fiducial cuts |
+#----------------------------/
+# Jet algorithm
+jet_algorithm = 3              #  (1) Cambridge-Aachen (2) kT (3) anti-kT
+jet_R_definition = 0           #  (0) pseudo-rapidity (1) rapidity
+jet_R = 0.4                    #  DeltaR
+
+# Jet cuts
+define_pT jet = 25.            #  requirement on jet transverse momentum (lower cut)
+define_eta jet = 4.5           #  requirement on jet pseudo-rapidity (upper cut)
+define_y jet = 1.e99           #  requirement on jet rapidity (upper cut)
+n_observed_min jet = 0         #  minimal number of observed jets (with cuts above)
+n_observed_max jet = 99        #  maximal number of observed jets (with cuts above)
+
+# Blocks with user-defined cuts (only used if defined in 'MATRIX/prc/$process/user/specify.cuts.cxx')
+# Mandatory cuts for this process:
+# -- none
+# no cuts defined at the moment for this process
+
+user_switch y_tops = 0
+user_cut max_y_tops = 200.5
+
+user_switch pt_top = 0
+user_cut min_pt_top = 0.
+user_cut max_pt_top = 300000.
+
+user_switch mass_tt = 1
+user_cut min_mass_tt = 300.
+user_cut max_mass_tt = 700.
+
+#-----------------\
+# MATRIX behavior |
+#-----------------/
+max_time_per_job = 12          #  very rough time(hours) one main run job shall take (default: 24h)
+                               #  unreliable when < 1h, use as tuning parameter for degree of parallelization
+                               #  note: becomes ineffective when job number > max_nr_parallel_jobs
+                               #        which is set in MATRIX_configuration file
+switch_distribution = 1        #  switch to turn on (1) and off (0) distributions
+save_previous_result = 1       #  switch to save previous result of this run (in result/"run"/saved_result_$i)
+save_previous_log = 0          #  switch to save previous log of this run (in log/"run"/saved_result_$i)
+#include_pre_in_results = 0     #  switch to (0) only include main run in results; (1) also all extrapolation (pre) runs;
+                               #  crucial to set to 0 if re-running main with different inputs (apart from precision)
+                               #  note: if missing (default) pre runs used if important for precision
+                               #        (separately for each contribution);
+reduce_workload = 2            #  switch to keep full job output (0), reduce (1) or minimize (2) workload on slow clusters
+random_seed = 0                #  specify integer value (grid-/pre-run reproducible)

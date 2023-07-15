@@ -1,0 +1,3 @@
+nohup: ignoring input
+
+Processing add_qcd.cpp(2, 0)...

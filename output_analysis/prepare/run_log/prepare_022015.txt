@@ -1,0 +1,133 @@
+nohup: ignoring input
+
+Processing prepare_datacard.cpp(0, 2, 2015)...
+begin E_3jets:
+finished nom of ttbar_ci0000
+finished nom of ttbar_ci0100
+finished nom of ttbar_ci0010
+finished nom of ttbar_ci0001
+finished nom of ttbar_ci0200
+finished nom of DYJets
+finished nom of STop
+finished nom of WJets
+finished sys of jes of ttbar_ci0000
+finished sys of jes of ttbar_ci0100
+finished sys of jes of ttbar_ci0010
+finished sys of jes of ttbar_ci0001
+finished sys of jes of ttbar_ci0200
+finished sys of jes of DYJets
+finished sys of jes of STop
+finished sys of jes of WJets
+finished sys of jer of ttbar_ci0000
+finished sys of jer of ttbar_ci0100
+finished sys of jer of ttbar_ci0010
+finished sys of jer of ttbar_ci0001
+finished sys of jer of ttbar_ci0200
+finished sys of jer of DYJets
+finished sys of jer of STop
+finished sys of jer of WJets
+finished sys of unclus of ttbar_ci0000
+finished sys of unclus of ttbar_ci0100
+finished sys of unclus of ttbar_ci0010
+finished sys of unclus of ttbar_ci0001
+finished sys of unclus of ttbar_ci0200
+finished sys of unclus of DYJets
+finished sys of unclus of STop
+finished sys of unclus of WJets
+finished sys of SF_lepton of ttbar_ci0000
+finished sys of SF_lepton of ttbar_ci0100
+finished sys of SF_lepton of ttbar_ci0010
+finished sys of SF_lepton of ttbar_ci0001
+finished sys of SF_lepton of ttbar_ci0200
+finished sys of SF_lepton of DYJets
+finished sys of SF_lepton of STop
+finished sys of SF_lepton of WJets
+finished sys of SF_btag_unco of ttbar_ci0000
+finished sys of SF_btag_unco of ttbar_ci0100
+finished sys of SF_btag_unco of ttbar_ci0010
+finished sys of SF_btag_unco of ttbar_ci0001
+finished sys of SF_btag_unco of ttbar_ci0200
+finished sys of SF_btag_unco of DYJets
+finished sys of SF_btag_unco of STop
+finished sys of SF_btag_unco of WJets
+finished sys of SF_btag_co of ttbar_ci0000
+finished sys of SF_btag_co of ttbar_ci0100
+finished sys of SF_btag_co of ttbar_ci0010
+finished sys of SF_btag_co of ttbar_ci0001
+finished sys of SF_btag_co of ttbar_ci0200
+finished sys of SF_btag_co of DYJets
+finished sys of SF_btag_co of STop
+finished sys of SF_btag_co of WJets
+finished sys of L1PF of ttbar_ci0000
+finished sys of L1PF of ttbar_ci0100
+finished sys of L1PF of ttbar_ci0010
+finished sys of L1PF of ttbar_ci0001
+finished sys of L1PF of ttbar_ci0200
+finished sys of L1PF of DYJets
+finished sys of L1PF of STop
+finished sys of L1PF of WJets
+finished sys of PU of ttbar_ci0000
+finished sys of PU of ttbar_ci0100
+finished sys of PU of ttbar_ci0010
+finished sys of PU of ttbar_ci0001
+finished sys of PU of ttbar_ci0200
+finished sys of PU of DYJets
+finished sys of PU of STop
+finished sys of PU of WJets
+finished sys of muR of ttbar_ci0000
+finished sys of muR of ttbar_ci0100
+finished sys of muR of ttbar_ci0010
+finished sys of muR of ttbar_ci0001
+finished sys of muR of ttbar_ci0200
+finished sys of muR of DYJets
+finished sys of muR of STop
+finished sys of muR of WJets
+finished sys of muF of ttbar_ci0000
+finished sys of muF of ttbar_ci0100
+finished sys of muF of ttbar_ci0010
+finished sys of muF of ttbar_ci0001
+finished sys of muF of ttbar_ci0200
+finished sys of muF of DYJets
+finished sys of muF of STop
+finished sys of muF of WJets
+finished sys of ISR of ttbar_ci0000
+finished sys of ISR of ttbar_ci0100
+finished sys of ISR of ttbar_ci0010
+finished sys of ISR of ttbar_ci0001
+finished sys of ISR of ttbar_ci0200
+finished sys of ISR of DYJets
+finished sys of ISR of STop
+finished sys of ISR of WJets
+finished sys of FSR of ttbar_ci0000
+finished sys of FSR of ttbar_ci0100
+finished sys of FSR of ttbar_ci0010
+finished sys of FSR of ttbar_ci0001
+finished sys of FSR of ttbar_ci0200
+finished sys of FSR of DYJets
+finished sys of FSR of STop
+finished sys of FSR of WJets
+finished sys of mtop of ttbar_ci0000
+finished sys of mtop of ttbar_ci0100
+finished sys of mtop of ttbar_ci0010
+finished sys of mtop of ttbar_ci0001
+finished sys of mtop of ttbar_ci0200
+finished sys of hdamp of ttbar_ci0000
+finished sys of hdamp of ttbar_ci0100
+finished sys of hdamp of ttbar_ci0010
+finished sys of hdamp of ttbar_ci0001
+finished sys of hdamp of ttbar_ci0200
+finished sys of TuneCP5 of ttbar_ci0000
+finished sys of TuneCP5 of ttbar_ci0100
+finished sys of TuneCP5 of ttbar_ci0010
+finished sys of TuneCP5 of ttbar_ci0001
+finished sys of TuneCP5 of ttbar_ci0200
+finished sys of nnlo_wt of ttbar_ci0000
+finished sys of nnlo_wt of ttbar_ci0100
+finished sys of nnlo_wt of ttbar_ci0010
+finished sys of nnlo_wt of ttbar_ci0001
+finished sys of nnlo_wt of ttbar_ci0200
+finished sys of EW_un of ttbar_ci0000
+finished sys of EW_un of ttbar_ci0100
+finished sys of EW_un of ttbar_ci0010
+finished sys of EW_un of ttbar_ci0001
+finished sys of EW_un of ttbar_ci0200
