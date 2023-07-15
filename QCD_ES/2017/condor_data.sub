@@ -1,0 +1,13 @@
+executable              = run_data.sh
+arguments               = $(dir)
+Initialdir              = /afs/cern.ch/user/y/yuekai/ttbar/condor/QCD_ES/2017/condor_out_data/$(dir)
+						
+output                  = run.out
+error                   = run.err
+log                     = run.log
+						
+RequestMemory           = 2000
+ShouldTransferFiles     = NO
++JobFlavour             = "nextweek"
+x509userproxy           = $ENV(HOME)/temp/x509up
+Queue dir from ./condor_list_data.txt
