@@ -24,6 +24,7 @@ void Add(){
                        "NNLO_15_TTToSemiLeptonic_TuneCP5_13TeV-powheg",
                        "NNLO_15_TTTo2L2Nu_TuneCP5_13TeV-powheg",
                        "NNLO_15_TTToHadronic_TuneCP5_13TeV-powheg"};
+    int num[12];
     TH2D* h2[12];
     Double_t xsec[12]={366.91*0.435, 89.05*0.435, 377.96*0.435, 366.91*0.301, 89.05*0.301, 377.96*0.301, 
                         366.91*0.122, 89.05*0.122, 377.96*0.122, 366.91*0.142, 89.05*0.142, 377.96*0.142};
@@ -39,7 +40,7 @@ void Add(){
     TH2D* nnlo =  new TH2D("NNLO", "", nbinsx, xbins, nbinsy, ylow, yhigh);
     for(int i=0; i<12; i++){
         h2[i] = new TH2D("h2_NNLO"+name[i], "", nbinsx, xbins, nbinsy, ylow, yhigh);
-        for(int j=0; j<10; j++){
+        for(int j=0; j<num[i]; j++){
             file = TFile::Open("./output/"+files[i]+Form("_%d.root", j+1));
             hist = (TH2D*)file->Get("h2_NNLO");
             h2[i]->Add(hist);

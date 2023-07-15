@@ -13,7 +13,7 @@ using namespace std;
 void derive_pu_w(int year){
     TString file_name[3] = {"-69200ub-99bins.root", "-66000ub-99bins.root", "-72400ub-99bins.root"};
     TString pu_name[3] = {"pu_nom", "pu_down", "pu_up"};
-    TString files = Form("/eos/user/y/yuekai/ttbar/select/%d/MC/*", year);
+    TString files = Form("/eos/user/y/yuekai/ttbar/pileup/%d/MC/*", year);
     //TString files = "./new_TT*";
     TString path = Form("./%d/", year);
     TH1D *pu_h1[3], *mu_data[3];

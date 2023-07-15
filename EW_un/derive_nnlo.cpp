@@ -138,7 +138,7 @@ void derive_nnlo(TString dir, TString file, TString output){
             p4_down.SetPtEtaPhiM(LHEPart_pt[index_down], LHEPart_eta[index_down],LHEPart_phi[index_down], LHEPart_mass[index_down]);
             p4_downbar.SetPtEtaPhiM(LHEPart_pt[index_downbar], LHEPart_eta[index_downbar],LHEPart_phi[index_downbar], LHEPart_mass[index_downbar]);
             p4_top = p4_b + p4_up + p4_downbar;
-            p4_antitop = p4_antib + p4_upbar + p4_down; 
+            p4_antitop = p4_antib + p4_upbar + p4_down;
         }
         top_pt = p4_top.Pt();
         top_eta = p4_top.Eta();
