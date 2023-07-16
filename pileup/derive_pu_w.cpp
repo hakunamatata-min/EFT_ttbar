@@ -13,24 +13,22 @@ using namespace std;
 void derive_pu_w(int year){
     TString file_name[3] = {"-69200ub-99bins.root", "-66000ub-99bins.root", "-72400ub-99bins.root"};
     TString pu_name[3] = {"pu_nom", "pu_down", "pu_up"};
-    TString files = Form("/eos/user/y/yuekai/ttbar/pileup/%d/MC/*", year);
+    
     //TString files = "./new_TT*";
-    TString path = Form("./%d/", year);
+    TString path = Form("/home/yksong/code/ttbar/output/pileup/%d/", year);
+    
+    TFile *data_file[3], *mc_file;
+    TH1D* mu_MC;
     TH1D *pu_h1[3], *mu_data[3];
-    TFile* file[3];
-    TChain* rawtree = new TChain("rawtree");
-    rawtree->Add(files);
-    TH1D* mu_MC= new TH1D("mu_MC", "", 99, 0 ,99);
-    rawtree->Draw("Pileup_nPU>>mu_MC");
-    mu_MC->Scale(1.0/mu_MC->GetSumOfWeights());
-
+    
+    mc_file = TFile::Open(path +"Mu_MC.root");
+    mu_MC = (TH1D*)mc_file->Get("mu_MC");
     TFile* nfile = new TFile(Form("./%d/pu_weight.root", year), "recreate");
-    nfile->cd();
-    mu_MC->Write();
+
     for(int i=0; i<3; i++){
         pu_h1[i] = new TH1D(pu_name[i], "", 99, 0 ,99);
-        file[i] = TFile::Open(Form("./%d/PileupHistogram-goldenJSON-13tev-%d",year,year)+file_name[i]);
-        mu_data[i] = (TH1D*)file[i]->Get("pileup");
+        data_file[i] = TFile::Open(Form("./%d/PileupHistogram-goldenJSON-13tev-%d",year,year)+file_name[i]);
+        mu_data[i] = (TH1D*)data_file[i]->Get("pileup");
         mu_data[i]->SetName(Form("mu_data_%d", i));
         mu_data[i]->Scale(1.0/mu_data[i]->GetSumOfWeights());
         for(int bin=0; bin<99; bin++){

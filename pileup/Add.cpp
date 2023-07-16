@@ -11,46 +11,42 @@
 #include<fstream>
 #include<iostream>
 using namespace std;
-void Add(){
-    TString files[] = { "NNLO_18_TTToSemiLeptonic_TuneCP5_13TeV-powheg",
-                       "NNLO_18_TTTo2L2Nu_TuneCP5_13TeV-powheg",
-                       "NNLO_18_TTToHadronic_TuneCP5_13TeV-powheg",
-                       "NNLO_17_TTToSemiLeptonic_TuneCP5_13TeV-powheg",
-                       "NNLO_17_TTTo2L2Nu_TuneCP5_13TeV-powheg",
-                       "NNLO_17_TTToHadronic_TuneCP5_13TeV-powheg",
-                       "NNLO_16_TTToSemiLeptonic_TuneCP5_13TeV-powheg",
-                       "NNLO_16_TTTo2L2Nu_TuneCP5_13TeV-powheg",
-                       "NNLO_16_TTToHadronic_TuneCP5_13TeV-powheg",
-                       "NNLO_15_TTToSemiLeptonic_TuneCP5_13TeV-powheg",
-                       "NNLO_15_TTTo2L2Nu_TuneCP5_13TeV-powheg",
-                       "NNLO_15_TTToHadronic_TuneCP5_13TeV-powheg"};
-    int num[12];
-    TH2D* h2[12];
-    Double_t xsec[12]={366.91*0.435, 89.05*0.435, 377.96*0.435, 366.91*0.301, 89.05*0.301, 377.96*0.301, 
-                        366.91*0.122, 89.05*0.122, 377.96*0.122, 366.91*0.142, 89.05*0.142, 377.96*0.142};
-    TString name[12] = {"_semi_18", "_2l_18", "_4q_18","_semi_17", "_2l_17", "_4q_17","_semi_16", "_2l_16", "_4q_16","_semi_15", "_2l_15", "_4q_15"};
-    const int nbinsx=14;
-    const int nbinsy=40;
-    const double ylow=-5.0;
-    const double yhigh=5.0;
-    double xbins[]={345,360,380,400,450,500,550,600,650,700,750,800,900,1200,2000};
-    TH2D* hist;
+void Add(int year){
+    TString files[] = { "Mu_TTToSemiLeptonic_TuneCP5_13TeV-powheg.root",
+                        "Mu_TTTo2L2Nu_TuneCP5_13TeV-powheg.root",
+                        "Mu_TTToHadronic_TuneCP5_13TeV-powheg.root",
+
+                        "Mu_DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM.root",
+                        "Mu_DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM.root",
+                        "Mu_DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM.root",
+                        "Mu_DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM.root",
+                        "Mu_DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM.root",
+                        "Mu_DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM.root",
+                        "Mu_DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM.root",                           
+                        "Mu_DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM.root",
+                    
+                        "Mu_ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo.root",
+                        "Mu_ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin.root",
+                        "Mu_ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin.root",
+                        "Mu_ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg.root",
+                        "Mu_ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg.root",                                                                               
+                        
+                        "Mu_W1JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
+                        "Mu_W2JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
+                        "Mu_W3JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
+                        "Mu_W4JetsToLNu_TuneCP5_13TeV-madgraphMLM.root"};
+    TH1D* h2;
     TFile* file;
-    TFile* nnlo_file = new TFile("NNLO.root", "RECREATE");
-    TH2D* nnlo =  new TH2D("NNLO", "", nbinsx, xbins, nbinsy, ylow, yhigh);
-    for(int i=0; i<12; i++){
-        h2[i] = new TH2D("h2_NNLO"+name[i], "", nbinsx, xbins, nbinsy, ylow, yhigh);
-        for(int j=0; j<num[i]; j++){
-            file = TFile::Open("./output/"+files[i]+Form("_%d.root", j+1));
-            hist = (TH2D*)file->Get("h2_NNLO");
-            h2[i]->Add(hist);
-            delete hist;
-            delete file;
-        }
-        h2[i]->Scale(xsec[i]/h2[i]->GetSumOfWeights());
-        nnlo->Add(h2[i]);
+    TFile* mu_file = new TFile(Form("./%d/Mu_MC.root", year), "RECREATE");
+    TH1D* mu_hist = new TH1D("mu_MC", "", 99, 0 ,99);
+    for(int i=0; i<20; i++){
+        file = TFile::Open(Form("/home/yksong/code/output/pileup/%d", year)+files[i]+".root");
+        h2 = (TH1D*)file->Get("h1_mu_MC");
+        mu_hist->Add(h2);
+        delete h2;
+        delete file;
     }
-    nnlo_file->cd();
-    nnlo->Write();
-    nnlo_file->Close();
+    mu_file->cd();
+    mu_hist->Write();
+    mu_file->Close();
 }

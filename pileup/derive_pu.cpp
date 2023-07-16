@@ -13,10 +13,10 @@ using namespace std;
 void derive_mu(TString dir, TString file, TString output){
     TFile* pu_file = new TFile(dir+"/Mu_"+output); 
 
-    TH1D* mu_MC= new TH1D("mu_MC", "", 99, 0 ,99);
+    TH1D* mu_MC= new TH1D("h1_mu_MC", "", 99, 0 ,99);
     TChain* rawtree = new TChain("Events");
     rawtree->Add(file);
-    rawtree->Draw("Pileup_nPU>>mu_MC");
+    rawtree->Draw("Pileup_nPU>>h1_mu_MC");
 
     pu_file->cd();
     mu_MC->Write();    

@@ -24,7 +24,7 @@ void Add(){
                        "NNLO_15_TTToSemiLeptonic_TuneCP5_13TeV-powheg",
                        "NNLO_15_TTTo2L2Nu_TuneCP5_13TeV-powheg",
                        "NNLO_15_TTToHadronic_TuneCP5_13TeV-powheg"};
-    TH2D* h2[12];
+    TH2D* h2;
     Double_t xsec[12]={366.91*0.435, 89.05*0.435, 377.96*0.435, 366.91*0.301, 89.05*0.301, 377.96*0.301, 
                         366.91*0.122, 89.05*0.122, 377.96*0.122, 366.91*0.142, 89.05*0.142, 377.96*0.142};
     TString name[12] = {"_semi_18", "_2l_18", "_4q_18","_semi_17", "_2l_17", "_4q_17","_semi_16", "_2l_16", "_4q_16","_semi_15", "_2l_15", "_4q_15"};
@@ -33,21 +33,16 @@ void Add(){
     const double ylow=-5.0;
     const double yhigh=5.0;
     double xbins[]={345,360,380,400,450,500,550,600,650,700,750,800,900,1200,2000};
-    TH2D* hist;
     TFile* file;
     TFile* nnlo_file = new TFile("NNLO.root", "RECREATE");
     TH2D* nnlo =  new TH2D("NNLO", "", nbinsx, xbins, nbinsy, ylow, yhigh);
     for(int i=0; i<12; i++){
-        h2[i] = new TH2D("h2_NNLO"+name[i], "", nbinsx, xbins, nbinsy, ylow, yhigh);
-        for(int j=0; j<10; j++){
-            file = TFile::Open("./output/"+files[i]+Form("_%d.root", j+1));
-            hist = (TH2D*)file->Get("h2_NNLO");
-            h2[i]->Add(hist);
-            delete hist;
-            delete file;
-        }
-        h2[i]->Scale(xsec[i]/h2[i]->GetSumOfWeights());
-        nnlo->Add(h2[i]);
+        file = TFile::Open("/home/yksong/code/output/EW_un/"+files[i]+".root");
+        h2 = (TH2D*)file->Get("h2_NNLO");
+        h2->Scale(xsec[i]/h2->GetSumOfWeights());
+        nnlo->Add(h2);
+        delete h2;
+        delete file;
     }
     nnlo_file->cd();
     nnlo->Write();
