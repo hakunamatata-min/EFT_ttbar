@@ -21,11 +21,11 @@
 #include<TKey.h>
 using namespace std;
 void Floor(TH1D* hist){
-	for (int i=0;i<hist->GetNbinsX();i++){
+    for (int i=0;i<hist->GetNbinsX();i++){
         if(!(hist->GetBinContent(i+1)>1.E-6)){
             hist->SetBinContent(i+1, 1.E-6);
         }
-	}
+    }
 }
 void test(TString cut_name){
     TFile *file = new TFile("ttbar_"+cut_name+".root", "update");

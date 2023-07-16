@@ -46,7 +46,7 @@ void add_pdf_weight(TString pdf_dir, TString outputDir, TString cut){
 void add_pdf(){
     int year[] = {2015, 2016, 2017, 2018};   
     TString div_name[4] = {"_y0", "_y1", "_y2", "_y3"};
-	TString cut_name[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
+    TString cut_name[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
     for(int y=1; y<4; y++){
         for(int i=0; i<4; i++){
             for(int j=0; j<4; j++){

@@ -16,11 +16,11 @@
 #include<iostream>
 using namespace std;
 void Floor(TH1D* hist){
-	for(int i=0;i<hist->GetNbinsX();i++){
+    for(int i=0;i<hist->GetNbinsX();i++){
         if(!(hist->GetBinContent(i+1)>1.E-6)){
             hist->SetBinContent(i+1, 1.E-6);
         }
-	}
+    }
 }
 void derive_qcd_nom(TString qcd_dir, TString cut){    
     TFile* file = new TFile(qcd_dir+"/QCD_"+cut+".root", "recreate");

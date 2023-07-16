@@ -161,13 +161,13 @@ void format_pad(TPad* pad1, TPad* pad2, TPad* pad3){
     pad1->SetLeftMargin(0.15);
     //pad1->SetTopMargin(0);
     pad2->cd();
-//	pad2->SetTopMargin(0);
+    //pad2->SetTopMargin(0);
     pad2->SetTopMargin(0.03);
     pad2->SetBottomMargin(0.35);
     pad2->SetLeftMargin(0.15);
 
     pad3->cd();
-//	pad2->SetTopMargin(0);
+    //pad2->SetTopMargin(0);
     pad3->SetTopMargin(0.03);
     pad3->SetBottomMargin(0.35);
     pad3->SetLeftMargin(0.15);
@@ -237,10 +237,10 @@ void draw_pre(int c, int l, int year, TString width){//2, 0
         auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600); // temporary canvas
         auto c2 = new TCanvas("c2", "c2", 8, 30, 650, 650);
         TPad *pad1 = new TPad("pad1","This is pad1",0.05,0.32,0.95,0.97);
-    	TPad *pad2 = new TPad("pad2","This is pad2",0.05,0.02,0.95,0.32);
+        TPad *pad2 = new TPad("pad2","This is pad2",0.05,0.02,0.95,0.32);
         TPad *pad3 = new TPad("pad3","This is pad3",0.05,0.02,0.95,0.32);
         c2->cd();
-    	format_pad(pad1, pad2, pad3);
+        format_pad(pad1, pad2, pad3);
         TLegend *leg = new TLegend(0.70, .65, 1.00, .90);
         format_leg(leg);
         format_canvas(c2);

@@ -204,8 +204,8 @@ void derive(TString path, TString cut, TString cut_name, int l, int g, int nbins
 void derive_qcd_em(int i, int j, int g){
     //TString cg[] = {"A", "B", "C", "D"};
     TString cuts[] = {"(jet_num == 3 && likelihood<20.0 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
-		"(jet_num == 3 && likelihood<20.0 && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
-	TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
+        "(jet_num == 3 && likelihood<20.0 && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
+    TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
     TString div_name[4] = {"_y0", "_y1", "_y2", "_y3"};
     TString div_con[4] = {"*(fabs(rapidity_tt)<0.4)", "*(fabs(rapidity_tt)<1.0 && fabs(rapidity_tt)>0.4)",
                             "*(fabs(rapidity_tt)<2.0 && fabs(rapidity_tt)>1.0)", "*(fabs(rapidity_tt)>2.0)"};

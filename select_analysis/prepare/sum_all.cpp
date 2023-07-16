@@ -38,23 +38,23 @@ void clear(){
     sysnum.clear();
 }
 void writeline(vector<TString> arr, ofstream& card){
-	for (int i=0;i<arr.size();i++)
-		card<< arr[i]<<"\t";
-	card<<endl;
+    for (int i=0;i<arr.size();i++)
+        card<< arr[i]<<"\t";
+    card<<endl;
 }
 
 void writeline(vector<int> arr, ofstream& card){
-	for (int i=0;i<arr.size();i++)
-		card<< arr[i]<<"\t";
-	card<<endl;
+    for (int i=0;i<arr.size();i++)
+        card<< arr[i]<<"\t";
+    card<<endl;
 }
 void writeline(vector<float> arr, ofstream& card){
-	//	gStyle->SetPaintTextFormat("2.2f");
-	card<< std::fixed;
-	card<< std::setprecision(3);
-	for (int i=0;i<arr.size();i++)
-		card<< arr[i]<<"\t";
-	card<<endl;
+    //	gStyle->SetPaintTextFormat("2.2f");
+    card<< std::fixed;
+    card<< std::setprecision(3);
+    for (int i=0;i<arr.size();i++)
+        card<< arr[i]<<"\t";
+    card<<endl;
 }
 void push(int c, double yield, TString name, TString category, int num_sig, int year){
     yield_array.push_back(yield);

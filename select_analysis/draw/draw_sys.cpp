@@ -67,7 +67,7 @@ void format_pad(TPad* pad1, TPad* pad2){
     pad1->SetLeftMargin(0.15);
     //pad1->SetTopMargin(0);
     pad2->cd();
-//	pad2->SetTopMargin(0);
+    //pad2->SetTopMargin(0);
     pad2->SetTopMargin(0.03);
     pad2->SetBottomMargin(0.45);
     pad2->SetLeftMargin(0.15);

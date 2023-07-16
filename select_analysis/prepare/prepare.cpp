@@ -2,11 +2,11 @@
 
 
 void prepare::Floor(TH1D* hist){
-	for (int i=0;i<hist->GetNbinsX();i++){
+    for (int i=0;i<hist->GetNbinsX();i++){
         if(!(hist->GetBinContent(i+1)>1.E-6)){
             hist->SetBinContent(i+1, 1.E-6);
         }
-	}
+    }
 }
 /*void sum_h1(TH1D* hs, TH1D* h1, TH1D *h2){
     for(int i=0; i<h1->GetNbinsX(); i++){
@@ -116,7 +116,7 @@ void prepare::draw(TH1D* h1, TString file, TString tree, TString weight){
 void prepare::draw(int c){
     TString other_con1 = "*((jet_num>=4)||(jet_num==3 && jet_pt[0]>50))";
     TString other_con2;
-	if(year==2018)
+    if(year==2018)
         other_con2 = "*(lep_flavour||((!lep_flavour) && lepton_pt>34))";
     else
         other_con2 = "*1";
@@ -148,7 +148,7 @@ void prepare::draw(int c){
 void prepare::draw(int c, int s){
     TString other_con1 = "*((jet_num>=4)||(jet_num==3 && jet_pt[0]>50))";
     TString other_con2;
-	if(year==2018)
+    if(year==2018)
         other_con2 = "*(lep_flavour||((!lep_flavour) && lepton_pt>34))";
     else
         other_con2 = "*1";
@@ -242,7 +242,7 @@ void prepare::set_dir(){
                             "new_W2JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
                             "new_W3JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
                             "new_W4JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
-                    		};
+                            };
     Float_t cross_section[nsample]={366.91, 89.05, 377.96,
                                     169.9, 147.4, 41.0, 5.7, 1.4, 0.63, 0.15, 0.0036,
                                     3.36, 136.02, 80.95, 35.6, 35.6,
@@ -261,9 +261,9 @@ void prepare::set_dir(){
         K_Factors[i] = K_Factor[i];
     }
     //Double_t mtt_edge[9]={0,370,420,500,600,700,800,950,2000};
-	//Double_t ytt_edge[10]={-4.0,-1.4,-0.9,-0.5,-0.15,0.15,0.5,0.9,1.4,4.0};
+    //Double_t ytt_edge[10]={-4.0,-1.4,-0.9,-0.5,-0.15,0.15,0.5,0.9,1.4,4.0};
     //Double_t mtt_edge[5]={0, 400, 500, 700, 2000};
-	//Double_t ytt_edge[6]={-3.0, -1.2, -0.3, 0.3, 1.2, 3.0};
+    //Double_t ytt_edge[6]={-3.0, -1.2, -0.3, 0.3, 1.2, 3.0};
     //Double_t xbin[2][20] = {{0,340,360,380,400,420,440,460,480,500,520,540,570,600,640,700,3000}, {0,450,500,570,630,700,820,3000}};
     //int nbin[2] = {16, 7};
     TString process_s[]={"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD"};
@@ -324,7 +324,7 @@ prepare::prepare(TString cut_s, TString cut_name_s, int year_s, double *xbin, in
     cut = cut_s;
     cut_name = cut_name_s;
     TString category="ttbar_"+cut_name;
-	file=new TFile(outputDir+"/"+category+".root","recreate");
+    file=new TFile(outputDir+"/"+category+".root","recreate");
     nbins = nbin;
     for(int i=0; i<nbin+1; i++)
         xbins[i] = xbin[i];
