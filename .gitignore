@@ -170,3 +170,4 @@ __MACOSX
 # Project files
 *.root
 *.pdf
+**/run_log
