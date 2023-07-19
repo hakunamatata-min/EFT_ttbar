@@ -215,7 +215,7 @@ void prepare::draw(int c, int s){
     sysnum.push_back(sys_num);
 }*/
 void prepare::set_dir(){
-    dir = Form("/home/yksong/code/output/select/%d", year);
+    dir = Form("/home/yksong/code/EFT-ttbar/select_analysis/output/%d", year);
     outputDir = "/home/yksong/code/EFT-ttbar/test/ttX/datacard/divided";
     const int nsample = 20;
     TString fileName[nsample] = {  
