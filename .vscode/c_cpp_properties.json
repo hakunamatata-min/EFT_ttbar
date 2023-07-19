@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${default}",
+                "${workspaceFolder}",
+                "/usr/local/root/6.24.04/include"
+            ],
+            "compilerPath": "/usr/bin/g++",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
