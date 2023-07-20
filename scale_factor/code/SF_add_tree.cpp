@@ -113,14 +113,28 @@ void SF_add_tree::sf_muonreco(Float_t pt, Float_t eta, Float_t weight[3]){
     weight[1]*=nom+root_muon_m_reco["NUM_TrackerMuons_DEN_genTracks"]["abseta_pt"][s[0]]["pt:[40,60]"]["error"].asDouble();
     weight[2]*=nom-root_muon_m_reco["NUM_TrackerMuons_DEN_genTracks"]["abseta_pt"][s[0]]["pt:[40,60]"]["error"].asDouble();
 }
-void SF_add_tree::sf_btag(BTagEntry_off::JetFlavor flav, Float_t pt, Float_t eta, Float_t sf[7]){
+void SF_add_tree::sf_btag(BTagEntry_off::JetFlavor flav, Float_t pt, Float_t eta, Float_t sf[9]){
     sf[0] = reader->eval_auto_bounds("central",flav, eta, pt);
-    sf[1] = reader->eval_auto_bounds("up_uncorrelated", flav, eta, pt);
-    sf[2] = reader->eval_auto_bounds("down_uncorrelated", flav, eta, pt);
-    sf[3] = reader->eval_auto_bounds("up_correlated", flav, eta, pt);
-    sf[4] = reader->eval_auto_bounds("down_correlated", flav, eta, pt);
-    sf[5] = reader->eval_auto_bounds("up", flav, eta, pt);
-    sf[6] = reader->eval_auto_bounds("down", flav, eta, pt);
+    if(flav == BTagEntry_off::FLAV_B || flav == BTagEntry_off::FLAV_C){
+        sf[1] = reader->eval_auto_bounds("up_uncorrelated", flav, eta, pt);
+        sf[2] = reader->eval_auto_bounds("down_uncorrelated", flav, eta, pt);
+        sf[3] = reader->eval_auto_bounds("up_correlated", flav, eta, pt);
+        sf[4] = reader->eval_auto_bounds("down_correlated", flav, eta, pt);
+        sf[5] = sf[0];
+        sf[6] = sf[0];
+        sf[7] = sf[0];
+        sf[8] = sf[0];
+    }
+    else{
+        sf[1] = sf[0];
+        sf[2] = sf[0];
+        sf[3] = sf[0];
+        sf[4] = sf[0];
+        sf[5] = reader->eval_auto_bounds("up_uncorrelated", flav, eta, pt);
+        sf[6] = reader->eval_auto_bounds("down_uncorrelated", flav, eta, pt);
+        sf[7] = reader->eval_auto_bounds("up_correlated", flav, eta, pt);
+        sf[8] = reader->eval_auto_bounds("down_correlated", flav, eta, pt);
+    }
 }
 Float_t SF_add_tree::btag_eff(Int_t flav, Float_t pt, Float_t eta){
     Int_t bin;
@@ -148,11 +162,14 @@ void SF_add_tree::sf_lep(Float_t pt, Float_t eta, Bool_t flavour, Float_t weight
         sf_muonid(pt,fabs(eta),weight);
     }
 }
-void SF_add_tree::sf_jet(Float_t *pt, Float_t *eta, Int_t *flavour, Float_t* score, UInt_t jet_num, Float_t weight[5]){
+void SF_add_tree::sf_jet(Float_t *pt, Float_t *eta, Int_t *flavour, Float_t* score, UInt_t jet_num, Float_t weight[9]){
     Float_t btag_num[]={0.2589,0.2489,0.3040,0.2783};
     Float_t mc=1;
-    Float_t sf[7], data[7];
-    for(int i=0; i<7; i++)
+    Float_t sf[9], data[9];
+    //0: central 
+    //1: btag_up_un; 2: btag_dn_un; 3: btag_up_co; 4: btag_dn_co
+    //5: btag_up_un; 6: btag_dn_un; 7: btag_up_co; 8: btag_dn_co
+    for(int i=0; i<9; i++)
         data[i]=1;
     BTagEntry_off::JetFlavor flav;
     for(int i=0; i<jet_num; i++){
@@ -166,17 +183,17 @@ void SF_add_tree::sf_jet(Float_t *pt, Float_t *eta, Int_t *flavour, Float_t* sco
         
         if(score[i]>btag_num[year-2015]){//Medium
             mc *= btag_eff(flavour[i], pt[i], fabs(eta[i]));
-            for(int j=0; j<7; j++)
+            for(int j=0; j<9; j++)
                 data[j] *= btag_eff(flavour[i], pt[i], fabs(eta[i]))*sf[j];
         }
         else{
             mc *= 1 - btag_eff(flavour[i], pt[i], fabs(eta[i]));
-            for(int j=0; j<7; j++)
+            for(int j=0; j<9; j++)
                 data[j] *= 1 - btag_eff(flavour[i], pt[i], fabs(eta[i]))*sf[j];
         }
        
     }
-    for(int i=0; i<7; i++){
+    for(int i=0; i<9; i++){
         weight[i] = data[i]/mc;
         if(weight[i]!=weight[i] || mc==0){
             weight[i]=1.0;
@@ -280,10 +297,12 @@ SF_add_tree::SF_add_tree(TString inputFile, TString tree_name, bool remain_sys, 
     Int_t jet_flavour[45];
     Float_t jet_score[45];
     Float_t electron_deltaEtaSC;
-    Float_t sf_lepton_up, sf_lepton_down, sf_btag_up, sf_btag_up_co, sf_btag_down_co, sf_btag_down, sf_btag_up_all, sf_btag_down_all; 
-    TBranch* newbranch[11];
+    Float_t sf_lepton_up, sf_lepton_down;
+    Float_t sf_btag_up, sf_btag_up_co, sf_btag_down_co, sf_btag_down;
+    Float_t sf_ltag_up, sf_ltag_up_co, sf_ltag_down_co, sf_ltag_down;
+    TBranch* newbranch[13];
     newbranch[0]=mytree->Branch("SF_lepton",&sf_lepton,"SF_lepton/F");
-    newbranch[1]=mytree->Branch("SF_btag1",&sf_btag,"SF_btag1/F");
+    newbranch[1]=mytree->Branch("SF_btag",&sf_btag,"SF_btag/F");
     newbranch[2]=mytree->Branch("SF_btag_it",&sf_btag_it,"SF_btag_it/F");
     if(remain_sys){
         newbranch[3]=mytree->Branch("SF_lepton_up", &sf_lepton_up, "sf_lepton_up/F");
@@ -292,13 +311,17 @@ SF_add_tree::SF_add_tree(TString inputFile, TString tree_name, bool remain_sys, 
         newbranch[6]=mytree->Branch("SF_btag_down", &sf_btag_down, "sf_btag_down/F");
         newbranch[7]=mytree->Branch("SF_btag_up_co", &sf_btag_up_co, "sf_btag_up_co/F");
         newbranch[8]=mytree->Branch("SF_btag_down_co", &sf_btag_down_co, "sf_btag_down_co/F");
-        newbranch[9]=mytree->Branch("SF_btag_up_all", &sf_btag_up_all, "sf_btag_up_all/F");
-        newbranch[10]=mytree->Branch("SF_btag_down_all", &sf_btag_down_all, "sf_btag_down_all/F");
+
+        newbranch[9]=mytree->Branch("SF_ltag_up", &sf_ltag_up, "sf_ltag_up/F");
+        newbranch[10]=mytree->Branch("SF_ltag_down", &sf_ltag_down, "sf_ltag_down/F");
+        newbranch[11]=mytree->Branch("SF_ltag_up_co", &sf_ltag_up_co, "sf_ltag_up_co/F");
+        newbranch[12]=mytree->Branch("SF_ltag_down_co", &sf_ltag_down_co, "sf_ltag_down_co/F");
+
     }
     mytree->SetBranchAddress("jet_num",&jet_num);
     mytree->SetBranchAddress("jet_pt",jet_pt);
     mytree->SetBranchAddress("jet_eta",jet_eta);
-    mytree->SetBranchAddress("jet_partonFlavour",jet_flavour);
+    mytree->SetBranchAddress("jet_hadronFlavour",jet_flavour);
     mytree->SetBranchAddress("jet_btagDeepFlavB",jet_score);
     mytree->SetBranchAddress("jet_num",&jet_num);
     mytree->SetBranchAddress("lep_flavour",&lep_flavour);
@@ -364,7 +387,7 @@ SF_add_tree::SF_add_tree(TString inputFile, TString tree_name, bool remain_sys, 
     reader_it->load(calib_it, BTagEntry_off::FLAV_B, "iterativefit");
     reader_it->load(calib_it, BTagEntry_off::FLAV_C, "iterativefit");
     reader_it->load(calib_it, BTagEntry_off::FLAV_UDSG, "iterativefit");
-    Float_t weight_jet[7], weight_lep[3], weight_jet_it; 
+    Float_t weight_jet[9], weight_lep[3], weight_jet_it; 
     for(int entry=0;entry<mytree->GetEntries();entry++){
         mytree->GetEntry(entry);
         weight_lep[0]=1;
@@ -376,7 +399,7 @@ SF_add_tree::SF_add_tree(TString inputFile, TString tree_name, bool remain_sys, 
         sf_lepton = weight_lep[0];
         sf_btag = weight_jet[0];
         sf_btag_it = weight_jet_it;
-        for(int nbra=1; nbra<2; nbra++){
+        for(int nbra=0; nbra<3; nbra++){
             newbranch[nbra]->Fill();
             //if()
         }
@@ -387,10 +410,12 @@ SF_add_tree::SF_add_tree(TString inputFile, TString tree_name, bool remain_sys, 
             sf_btag_down = weight_jet[2];
             sf_btag_up_co = weight_jet[3];
             sf_btag_down_co = weight_jet[4];
-            sf_btag_up_all = weight_jet[5];
-            sf_btag_down_all = weight_jet[6];
+            sf_ltag_up = weight_jet[5];
+            sf_ltag_down = weight_jet[6];
+            sf_ltag_up_co = weight_jet[7];
+            sf_ltag_down_co = weight_jet[8];
             //cout<<sf_btag_down<<endl;
-            for(int nbra=3; nbra<11; nbra++)
+            for(int nbra=3; nbra<13; nbra++)
                 newbranch[nbra]->Fill();
         }
     }
