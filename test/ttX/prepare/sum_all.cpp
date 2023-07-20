@@ -194,7 +194,7 @@ void sum_h1(TH1D* hs_up, TH1D* hs_dn, TH1D** h0, TH1D** h1, TH1D** h2, int* star
         delete h_nom[f];
     }
 }  
-void sum(TString path, TString path2, TString cut_name, TString type, int t, int year){
+void sum(TString path, TString path2, TString cut_name, int t, int year){
     clear();
     TString sys[] = {"jes","jer","unclus","SF_lepton",Form("SF_btag%d", year),"SF_btag_co", "pdf", "L1PF", "PU", "muR1","muF1","muR2","muF2","muR3","muF3","ISR","FSR","mtop","hdamp","TuneCP5","nnlo_wt","EW_un", "qcds"};
     TString type_nus[] = {"no/", "smooth/", "flat/"};
@@ -204,34 +204,6 @@ void sum(TString path, TString path2, TString cut_name, TString type, int t, int
     
     int num_sig = 5;
     std::vector<TString> process = {"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};;
-    if(type.Contains("impact_z")){
-        process = {"ttbar_ci0000", "ttbar_ci0010", "DYJets","STop", "WJets", "QCD", "data_obs"};
-        num_sig = 2;
-        if(type.Contains("sym")){
-            process = {"ttbar_ci0000", "ttbar_ci0100", "ttbar_ci0010", "DYJets","STop", "WJets", "QCD", "data_obs"};
-            num_sig = 3;
-        }
-    }
-    else if(type.Contains("impact_y")){
-        process = {"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-        num_sig = 4;
-        if(type.Contains("nomu")){
-            process = {"ttbar_ci0000","ttbar_ci0100",  "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-            num_sig-=1;
-        }
-        if(type.Contains("sym")){
-            process = {"ttbar_ci0000", "ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-            num_sig-=1;
-        }
-    }
-    else if(type.Contains("impact_k")){
-        process = {"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-        num_sig = 3;
-        if(type.Contains("nomu")){
-            process = {"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-            num_sig-=1;
-        }
-    }
     int num_pro = process.size() - 1 ;
     int beg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, num_sig, num_sig, num_sig+1, num_sig+1, num_sig+2, num_sig+2, 0, 0, 0, 0, 0, 0, 0, num_pro-1};
     int end[] = {num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_sig+1, num_sig+1, num_sig+2, num_sig+2, num_sig+3, num_sig+3, num_pro-1, num_pro-1, num_sig, num_sig, num_sig, num_sig, num_sig, num_pro};
@@ -239,11 +211,11 @@ void sum(TString path, TString path2, TString cut_name, TString type, int t, int
     double yield;
     ofstream card;
     TString category="ttbar"+cut_name+Form("_%d", year);
-    card.open (path+type+"/"+type_nus[t]+category+".txt");
-    cout<<path+type+"/"+type_nus[t]+category+".txt"<<endl;
-    TFile* sum_file = new TFile(path+type+"/"+type_nus[t]+category+".root", "recreate");
-    TString div_name[] = {"_y0", "_y1", "_y2", "_y3"};
-    int num=4;
+    card.open (path+type_nus[t]+category+".txt");
+    cout<<path+type_nus[t]+category+".txt"<<endl;
+    TFile* sum_file = new TFile(path+type_nus[t]+category+".root", "recreate");
+    TString div_name[] = {"_y0", "_y1"};
+    int num = 2;
     TH1D *hmc1[num], *hmc2[num], *hmc3[num];
     TFile *file[num];
     TH1D *h1, *h2, *h3;
@@ -252,7 +224,7 @@ void sum(TString path, TString path2, TString cut_name, TString type, int t, int
     bool no_sys;
     TH1D* hd[num];
     for(int f=0; f<num; f++){
-        file[f] = TFile::Open(path2+"datacard/"+"ttbar"+cut_name+div_name[f]+".root");
+        file[f] = TFile::Open(path2+"ttbar"+cut_name+div_name[f]+Form("_%d.root", year));
         TH1D* test = (TH1D*)file[f]->Get("data_obs_sub");
         start[f] = bin_num;
         bin_num += test->GetNbinsX();
@@ -274,8 +246,8 @@ void sum(TString path, TString path2, TString cut_name, TString type, int t, int
         h1->Write();
         delete h1;
         for(int s=0; s<22; s++){
-            //if(sys[s].Contains("pdf"))//no pdf now
-            //    continue;
+            if(sys[s].Contains("pdf"))//no pdf now
+                continue;
             if(c==0){
                 push_sys(s, sys[s], beg[s], end[s], num_pro);
             }
@@ -315,23 +287,18 @@ void sum(TString path, TString path2, TString cut_name, TString type, int t, int
     }
     write_card(card, category, num_pro);
     card.close();
-    for(int f=0; f<4; f++)
+    for(int f=0; f<num; f++)
         file[f]->Close();
 }
 void sum_all(){
     TString cut_name[4]={"_E_3jets", "_E_4jets", "_M_3jets", "_M_4jets"};
     int year[] = {2015, 2016, 2017, 2018};
-    TString path2;
-    TString type[] = {"datacard", "impact_z", "impact_k", "impact_y", "impact_y_nomu", "impact_k_nomu", "datacard_2018", "impact_z_2018", "impact_y_2018", "impact_y_nomu_2018"};
-    TString path = "/home/yksong/code/ttbar/combine/";
-    for(int j=0; j<10; j++){
-        for(int i=0; i<4; i++){
-            for(int y=0; y<4; y++){
-                for(int t=0; t<3; t++){
-                    path2 = Form("../%d/", year[y]);
-                    sum(path, path2, cut_name[i], type[j], t, year[y]);
-                }
-            }
+    TString path2 = "/home/yksong/code/EFT-ttbar/test/ttX/datacard/";
+    TString path = "/home/yksong/code/EFT-ttbar/combine/datacard_ttX/";
+    for(int i=0; i<4; i++){
+        for(int y=0; y<4; y++){
+            for(int t=0; t<3; t++)
+                sum(path, path2, cut_name[i], t, year[y]);
         }
     }
 }
