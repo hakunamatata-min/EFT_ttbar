@@ -171,3 +171,4 @@ __MACOSX
 *.root
 *.pdf
 **/run_log
+ttbar*.txt
