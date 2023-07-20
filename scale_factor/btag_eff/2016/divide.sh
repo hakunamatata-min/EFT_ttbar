@@ -1,6 +1,6 @@
 #writen by Renqi Pan in Oct 22,2021
 # to write dataset files into .txt and divide
-input="data.txt"
+input="MC.txt"
 i=0
 for dataset in `cat $input`
 do 
@@ -53,11 +53,11 @@ do
 	done
 	cd ../
 done
-out=condor_out_data
+out=condor_out_MC
 rm -rf $out
 mkdir $out
 exp="mv *_{1.."$max"} "$out
 eval $exp 2> /dev/null
 rm -rf Chunk*
-ls $out  > condor_list_data.txt
+ls $out  > condor_list_MC.txt
 echo "directories are written into condor_list.txt"

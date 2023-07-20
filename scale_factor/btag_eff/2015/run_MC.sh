@@ -6,7 +6,7 @@ mkdir -p myout
 output=$PWD/myout
 echo "output: $output"
 wrong="f"
-cd /afs/cern.ch/user/y/yuekai/ttbar/condor/btag_eff/2015/condor_out_MC/$1
+cd /afs/cern.ch/user/y/yuekai/ttbar/scale_factor/btag_eff/2015/condor_out_MC/$1
 file=$(ls ${1}.txt)
 dir_f=$(cat $file)
 #dir="root://cms-xrd-global.cern.ch/"$dir
@@ -41,16 +41,16 @@ then
         fi
     fi
 fi
-mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/condor/btag_eff/2015/condor_out_MC/$1
+mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/scale_factor/btag_eff/2015/condor_out_MC/$1
 if [[ $wrong == "f" ]]
 then
     input=$(ls $output/*root)
-    cd /afs/cern.ch/user/y/yuekai/ttbar/condor/btag_eff
+    cd /afs/cern.ch/user/y/yuekai/ttbar/scale_factor/btag_eff
     root -l -q -b pre_eff.cpp"(\"$output\",\"$inputFile\",\"$output/$input\", 2015)";
     num=$(ls $output | grep btageff_ | wc -l)
     if [[ $num -eq 1 ]]
     then
-        mv $(ls $output/btag_eff*.root) $eos
+        mv $(ls $output/btageff*.root) $eos
     fi
 fi
 rm -rf $output
