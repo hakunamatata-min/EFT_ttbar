@@ -17,7 +17,6 @@ do
         if [[ $dataset =~ "-pythia" ]]
         then
             temp=${dataset%%-pythia8*}
-        fi
         else
             temp=${dataset/\/Run/_Run}
             temp=${temp%%-UL*}
