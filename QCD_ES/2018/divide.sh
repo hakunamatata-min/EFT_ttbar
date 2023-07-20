@@ -1,7 +1,10 @@
+#!bin/bash
+#bash EW_un.sh
 #writen by Yuekai Song in Jul 21,2023
 # to write dataset files into .txt and divide
 type_name=(MC data)
 for((type=0;type<2;type++))
+do
     input=${type_name[type]}.txt
     i=0
     for dataset in `cat $input`
