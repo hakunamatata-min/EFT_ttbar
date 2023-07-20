@@ -218,7 +218,7 @@ void SF_add_tree::sf_jet_it(Float_t *pt, Float_t *eta, Int_t *flavour, Float_t* 
     }
     //cout<<endl;
     *weight = data/mc;
-    if(*weight != *weight){
+    if(*weight != *weight || mc == 0){
         *weight = 1.0;
     }
 }
@@ -268,7 +268,7 @@ void SF_add_tree::set_dir(){
         bfile_it=indir+"/"+sf_dir+"/btag/reshaping_deepJet_106XUL16postVFP_v3.csv";
     }
     else if(year == 2015){//2016_pre
-        indir="/home/yksong/code/ttbar/scale_factor";
+        //indir="/home/yksong/code/ttbar/scale_factor";
         sf_dir="UL2016_pre";
         muon_m_iso = "Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ISO.root";
         muon_m_id = "Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root";
