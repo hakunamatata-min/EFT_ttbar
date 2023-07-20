@@ -53,11 +53,11 @@ do
 	done
 	cd ../
 done
-out=condor_out_data
+out=condor_out_MC
 rm -rf $out
 mkdir $out
 exp="mv *_{1.."$max"} "$out
 eval $exp 2> /dev/null
 rm -rf Chunk*
-ls $out  > condor_list_data.txt
+ls $out  > condor_list_MC.txt
 echo "directories are written into condor_list.txt"
