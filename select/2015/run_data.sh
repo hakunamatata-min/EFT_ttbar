@@ -6,7 +6,7 @@ mkdir -p myout
 output=$PWD/myout
 echo "output: $output"
 wrong="f"
-cd /afs/cern.ch/user/y/yuekai/ttbar/condor/select/2017/condor_out_data/$1
+cd /afs/cern.ch/user/y/yuekai/ttbar/select/2015/condor_out_data/$1
 file=$(ls ${1}.txt)
 dir_f=$(cat $file)
 #dir="root://cms-xrd-global.cern.ch/"$dir
@@ -43,13 +43,13 @@ then
         fi
     fi
 fi
-mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/condor/select/2017/condor_out_data/$1
+mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/select/2015/condor_out_data/$1
 if [[ $wrong == "f" ]]
 then
     echo "input file: $dir"
     input=$(ls $output|grep root)
-    cd /afs/cern.ch/user/y/yuekai/ttbar/condor/select
-    root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2017,0)"
+    cd /afs/cern.ch/user/y/yuekai/ttbar/select
+    root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,0)"
     num=$(ls $output|grep new|wc -l)
     if [ $num -eq 1 ]
     then

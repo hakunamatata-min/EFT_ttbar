@@ -6,7 +6,7 @@ mkdir -p myout
 output=$PWD/myout
 echo "output: $output"
 wrong="f"
-cd /afs/cern.ch/user/y/yuekai/ttbar/condor/select/2015/condor_out_MC/$1
+cd /afs/cern.ch/user/y/yuekai/ttbar/select/2015/condor_out_MC/$1
 file=$(ls ${1}.txt)
 dir_f=$(cat $file)
 #dir="root://cms-xrd-global.cern.ch/"$dir
@@ -43,7 +43,7 @@ then
         fi
     fi
 fi
-mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/condor/select/2015/condor_out_MC/$1
+mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/select/2015/condor_out_MC/$1
 if [[ $wrong == "f" ]]
 then
     echo "input file: $dir"
@@ -51,7 +51,7 @@ then
     cd /afs/cern.ch/user/y/yuekai/ttbar/CMSSW_10_6_19_patch2/src/PhysicsTools/NanoAODTools/crab
     eval `scramv1 runtime -sh`
     python crab_script_16.py $ofile $output
-    cd /afs/cern.ch/user/y/yuekai/ttbar/condor/select
+    cd /afs/cern.ch/user/y/yuekai/ttbar/select
     input=$(ls $output|grep Skim)
     root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,1)"
     cd /afs/cern.ch/user/y/yuekai/ttbar/scale_factor/code

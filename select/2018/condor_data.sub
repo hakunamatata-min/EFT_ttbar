@@ -1,6 +1,6 @@
 executable              = run_data.sh
 arguments               = $(dir)
-Initialdir              = /afs/cern.ch/user/y/yuekai/ttbar/condor/select/2018/condor_out_data/$(dir)
+Initialdir              = /afs/cern.ch/user/y/yuekai/ttbar/select/2018/condor_out_data/$(dir)
 						
 output                  = run.out
 error                   = run.err

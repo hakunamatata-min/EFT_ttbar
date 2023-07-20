@@ -1,6 +1,6 @@
 executable              = run_sys.sh
 arguments               = $(dir)
-Initialdir              = /afs/cern.ch/user/y/yuekai/ttbar/condor/select/2015/condor_out_sys/$(dir)
+Initialdir              = /afs/cern.ch/user/y/yuekai/ttbar/select/2015/condor_out_sys/$(dir)
 						
 output                  = run.out
 error                   = run.err
@@ -10,4 +10,4 @@ RequestMemory           = 2000
 ShouldTransferFiles     = NO
 +JobFlavour             = "testmatch"
 x509userproxy           = $ENV(HOME)/temp/x509up
-Queue dir from ./wrong_sys.txt
+Queue dir from ./condor_list_sys.txt
