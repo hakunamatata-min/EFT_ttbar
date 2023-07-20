@@ -82,7 +82,10 @@ select_tree::select_tree(TString inputFile, TString outputFile, TString name_tre
     if(type != 0){
         jet_partonFlavour = new Int_t[nj];
         Jet_partonFlavour = new Int_t[nj];
+        jet_hadronFlavour = new Int_t[nj];
+        Jet_hadronFlavour = new Int_t[nj];
         chain->SetBranchAddress("Jet_partonFlavour", Jet_partonFlavour);
+        chain->SetBranchAddress("Jet_hadronFlavour", Jet_hadronFlavour);
         chain->SetBranchAddress("Generator_weight",&Generator_weight);
 
         chain->SetBranchAddress("L1PreFiringWeight_Nom", &L1PreFiringWeight_Nom);
@@ -228,8 +231,10 @@ Bool_t select_tree::select_jet(){
             jet_mass[i]=Jet_mass[jet_index[i]];
             jet_btagDeepB[i]=Jet_btagDeepB[jet_index[i]];
             jet_btagDeepFlavB[i]=Jet_btagDeepFlavB[jet_index[i]];
-            if(type != 0)
+            if(type != 0){
                 jet_partonFlavour[i]=Jet_partonFlavour[jet_index[i]];
+                jet_hadronFlavour[i]=Jet_hadronFlavour[jet_index[i]];
+            }
         }
     }
     return jet_flag;
@@ -491,42 +496,26 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
 void select_tree::write(){
     TTree *rawtree;
     TTree *mytree = new TTree(tree_name, " tree with branches of "+tree_name);
-    mytree->Branch("MET_phi", &MET_phi, "MET_phi/F");
-    mytree->Branch("MET_pt", &MET_pt, "MET_pt/F");
+
     mytree->Branch("lepton_eta", &lepton_eta, "lepton_eta/F");
     mytree->Branch("lepton_pt", &lepton_pt, "lepton_pt/F");
-    mytree->Branch("lepton_phi", &lepton_phi, "lepton_phi/F");
-    mytree->Branch("lepton_mass", &lepton_mass, "lepton_mass/F");
     mytree->Branch("lep_flavour", &lep_flavour, "lep_flavour/O");
     mytree->Branch("jet_num", &jet_num,"jet_num/i"); // number of jets satisfy the  seletion criteria
-    mytree->Branch("nBtag", &nBtag, "nBtag/i");
-    mytree->Branch("jet_btagDeepB", jet_btagDeepB, "jet_btagDeepB[jet_num]/F");
+
     mytree->Branch("jet_btagDeepFlavB", jet_btagDeepFlavB, "jet_btagDeepFlavB[jet_num]/F");
-    mytree->Branch("max_score",&max_score,"max_score/F");
     mytree->Branch("jet_eta", jet_eta, "jet_eta[jet_num]/F");
     mytree->Branch("jet_pt", jet_pt, "jet_pt[jet_num]/F");
-    mytree->Branch("jet_phi", jet_phi, "jet_phi[jet_num]/F");
-    mytree->Branch("jet_mass", jet_mass, "jet_mass[jet_num]/F");
 
     mytree->Branch("rapidity_tt", &rapidity_tt, "rapidity_tt/F");
     mytree->Branch("mass_tt", &mass_tt, "mass_tt/F");
     mytree->Branch("likelihood", &like, "likelihood/D" );
-    mytree->Branch("chi2", &chi, "chi2/D");
     mytree->Branch("MtW",&MtW,"MtW/F");
-    mytree->Branch("neutrino_pz", &neutrino_pz, "neutrino_pz/F");
-    mytree->Branch("mass_thad", &mass_thad, "mass_thad/F");
-    mytree->Branch("mass_tlep", &mass_tlep, "mass_tlep/F");
+
     mytree->Branch("mass_whad", &mass_whad, "mass_whad/F");
     mytree->Branch("mass_wlep", &mass_wlep, "mass_wlep/F");
     mytree->Branch("mass_t", &mass_t, "mass_t/F");
-    mytree->Branch("mass_at", &mass_at, "mass_at/F");
     mytree->Branch("rectop_pt", &rectop_pt, "rectop_pt/F");
-    mytree->Branch("recantitop_pt", &recantitop_pt, "recantitop_pt/F");
-    mytree->Branch("mass_bjj", &mass_bjj, "mass_bjj/F");
-    mytree->Branch("mass_jj", &mass_jj, "mass_jj/F");
-    mytree->Branch("mass_lb", &mass_lb, "mass_lb/F");
-    mytree->Branch("index", &index, "index/I");
-    mytree->Branch("PV_npvs",&PV_npvs,"PV_npvs/I");
+
     mytree->Branch("PV_npvsGood",&PV_npvsGood,"PV_npvsGood/I");
     if(type == 0){
         mytree->Branch("run",&run,"run/i");
@@ -537,26 +526,12 @@ void select_tree::write(){
         rawtree = new TTree("rawtree", "tree without selection");
         rawtree->Branch("nJet", &nJet, "nJet/i");
         rawtree->Branch("Generator_weight",&Generator_weight,"Generator_weight/F");
-        rawtree->Branch("Pileup_nPU",&Pileup_nPU,"Pileup_nPU/I");
         rawtree->Branch("PV_npvsGood",&PV_npvsGood,"PV_npvsGood/I");
-        rawtree->Branch("PV_npvs",&PV_npvs,"PV_npvs/I");
     }
     if(type == 1){
         if(input.Contains("TT")){
             mytree->Branch("top_pt", &top_pt, "top_pt/F");
-            mytree->Branch("top_eta", &top_eta, "top_eta/F");
-            mytree->Branch("top_phi", &top_phi, "top_phi/F");
-            mytree->Branch("top_mass", &top_mass, "top_mass/F");
-            mytree->Branch("antitop_pt", &antitop_pt, "antitop_pt/F");
-            mytree->Branch("antitop_eta", &antitop_eta, "antitop_eta/F");
-            mytree->Branch("antitop_phi", &antitop_phi, "antitop_phi/F");
-            mytree->Branch("antitop_mass", &antitop_mass, "antitop_mass/F");
         }
-        mytree->Branch("nGenJet", &nGenJet,"nGenJet/i");
-        mytree->Branch("GenJet_eta", GenJet_eta, "GenJet_eta[nGenJet]/F");
-        mytree->Branch("GenJet_pt", GenJet_pt, "GenJet_pt[nGenJet]/F");
-        mytree->Branch("GenJet_phi", GenJet_phi, "GenJet_phi[nGenJet]/F");
-        mytree->Branch("GenJet_mass", GenJet_mass, "GenJet_mass[nGenJet]/F");
         mytree->Branch("muR_up", &muR_up, "muR_up/F");
         mytree->Branch("muR_down", &muR_down, "muR_down/F");
         mytree->Branch("muF_up", &muF_up, "muF_up/F");
@@ -567,6 +542,8 @@ void select_tree::write(){
         mytree->Branch("FSR_down", &FSR_down, "FSR_down/F");
         mytree->Branch("nLHEPdfWeight", &nLHEPdfWeight, "nLHEPdfWeight/i");
         mytree->Branch("LHEPdfWeight", LHEPdfWeight, "LHEPdfWeight[nLHEPdfWeight]/F");
+        mytree->Branch("L1PreFiringWeight_Up",&L1PreFiringWeight_Up,"L1PreFiringWeight_Up/F");
+        mytree->Branch("L1PreFiringWeight_Dn",&L1PreFiringWeight_Dn,"L1PreFiringWeight_Dn/F");
     }
     if(type != 0){
         if(input.Contains("TT")){
@@ -575,12 +552,9 @@ void select_tree::write(){
             mytree->Branch("delta_rapidity_gen", &delta_rapidity_gen,"delta_rapidity_gen/F");
         }
         mytree->Branch("Generator_weight",&Generator_weight,"Generator_weight/F");
-        mytree->Branch("jet_partonFlavour", jet_partonFlavour, "jet_partonFlavour[jet_num]/I");
+        mytree->Branch("jet_hadronFlavour", jet_hadronFlavour, "jet_hadronFlavour[jet_num]/I");
         mytree->Branch("electron_deltaEtaSC",&electron_deltaEtaSC, "electron_deltaEtaSC/F");
-        
         mytree->Branch("L1PreFiringWeight_Nom",&L1PreFiringWeight_Nom,"L1PreFiringWeight_Nom/F");
-        mytree->Branch("L1PreFiringWeight_Up",&L1PreFiringWeight_Up,"L1PreFiringWeight_Up/F");
-        mytree->Branch("L1PreFiringWeight_Dn",&L1PreFiringWeight_Dn,"L1PreFiringWeight_Dn/F");
         mytree->Branch("Pileup_nPU",&Pileup_nPU,"Pileup_nPU/I");
     }
 
@@ -606,6 +580,8 @@ select_tree::~select_tree(){
     if(type != 0){
         delete[] jet_partonFlavour;
         delete[] Jet_partonFlavour;
+        delete[] jet_hadronFlavour;
+        delete[] Jet_hadronFlavour;
     }
     delete[] Electron_eta;
     delete[] Electron_mass;
