@@ -6,7 +6,7 @@ mkdir -p myout
 output=$PWD/myout
 echo "output: $output"
 wrong="f"
-cd /afs/cern.ch/user/y/yuekai/ttbar/condor/EW_un/condor_out_MC/$1
+cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/EW_un/condor_out_MC/$1
 file=$(ls ${1}.txt)
 dir_f=$(cat $file)
 #dir="root://cms-xrd-global.cern.ch/"$dir
@@ -41,11 +41,11 @@ then
         fi
     fi
 fi
-mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/condor/EW_un/condor_out_MC/$1
+mv $output/out*.txt /afs/cern.ch/user/y/yuekai/EFT-ttbar/EW_un/condor_out_MC/$1
 if [[ $wrong == "f" ]]
 then
     input=$(ls $output/*root)
-    cd /afs/cern.ch/user/y/yuekai/ttbar/condor/EW_un
+    cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/EW_un
     root -l -q -b derive_nnlo.cpp"(\"$output\", \"$input\", \"$inputFile\")";
     num=$(ls $output | grep NNLO_ | wc -l)
     if [[ $num -eq 1 ]]
@@ -55,14 +55,3 @@ then
 fi
 rm -rf $output
 echo "root files are storied in $eos"
-#var=$1
-#if [[ $var =~ "_pythia" ]]
-#then
-#	temp=${var%%_pythia8*}
-#else
-#    temp=${var%%-pythia8*}
-#fi
-#process=${temp:1}
-#dasgoclient --query "file dataset=$1" > ${process}.txt
-#dasgoclient -query="file dataset=$1" > ${process}.txt
-# root -l -q -b ../get_info.cpp"(\"$1\")"

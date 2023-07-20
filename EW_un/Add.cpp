@@ -37,7 +37,7 @@ void Add(){
     TFile* nnlo_file = new TFile("NNLO.root", "RECREATE");
     TH2D* nnlo =  new TH2D("NNLO", "", nbinsx, xbins, nbinsy, ylow, yhigh);
     for(int i=0; i<12; i++){
-        file = TFile::Open("/home/yksong/code/output/EW_un/"+files[i]+".root");
+        file = TFile::Open("./output/"+files[i]+".root");
         h2 = (TH2D*)file->Get("h2_NNLO");
         h2->Scale(xsec[i]/h2->GetSumOfWeights());
         nnlo->Add(h2);

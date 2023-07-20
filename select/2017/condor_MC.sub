@@ -1,6 +1,6 @@
 executable              = run_MC.sh
 arguments               = $(dir)
-Initialdir              = /afs/cern.ch/user/y/yuekai/ttbar/select/2017/condor_out_MC/$(dir)
+Initialdir              = /afs/cern.ch/user/y/yuekai/EFT-ttbar/select/2017/condor_out_MC/$(dir)
 						
 output                  = run.out
 error                   = run.err

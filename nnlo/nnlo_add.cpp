@@ -70,12 +70,18 @@ void nnlo_add_tree(TString inputFile, TString tree_name, bool remain_sys){
     file->Close();
 }
 
-void nnlo_add(TString inputFile, bool is_sys){
-    TString trees[]={"jesUp", "jesDown", "jerUp", "jerDown", "unclusUp", "unclusDown"};
+void nnlo_add(TString inputFile, bool is_sys, int year){
+    TString trees[]={"jerUp", "jerDown", "unclusUp", "unclusDown"};
+    TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
+    
     if(!is_sys){
         nnlo_add_tree(inputFile, "mytree", true);
-        for(int i=0; i<6; i++){
+        for(int i=0; i<4; i++){
             nnlo_add_tree(inputFile, trees[i], false);
+        }
+        for(int i=0; i<10; i++){
+            nnlo_add_tree(inputFile, "jes_"+jes_source[i]+"Up", false);
+            nnlo_add_tree(inputFile, "jes_"+jes_source[i]+"Down", false);
         }
     }
     else{

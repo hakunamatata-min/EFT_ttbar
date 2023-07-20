@@ -1,3 +1,5 @@
+#!bin/bash
+#bash pileup.sh
 files=( TTToSemiLeptonic_TuneCP5_13TeV-powheg.root \
         TTTo2L2Nu_TuneCP5_13TeV-powheg.root \
         TTToHadronic_TuneCP5_13TeV-powheg.root \
@@ -21,10 +23,14 @@ files=( TTToSemiLeptonic_TuneCP5_13TeV-powheg.root \
 year=( 2015 2016 2017 2018 )
 for ((y=0;i<4;y++))
 do
-    dir=/home/yksong/code/output/pileup/${year[y]}
+    sample_year=${year[y]}
+    dir=./$sample_year/output
     for ((i=0;i<20;i++))
     do
-        #echo $dir/${files[i]}
+        rm -f $dir/Mu_${files[i]}.root
         hadd $dir/Mu_${files[i]}.root $dir/Mu_${files[i]}_*.root
     done
+    cd ../..
+    root -l -q -b Add.cpp"($sample_year)"
+    root -l -q -b derive_pu_w.cpp"($sample_year)"
 done

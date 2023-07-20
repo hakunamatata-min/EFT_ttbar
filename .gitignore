@@ -170,5 +170,7 @@ __MACOSX
 # Project files
 *.root
 *.pdf
-**/run_log
-**combine/**/ttbar*.txt
+run_log
+combine/**/ttbar*.txt
+condor_out_*
+condor_list_*

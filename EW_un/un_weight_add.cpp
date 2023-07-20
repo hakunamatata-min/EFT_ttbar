@@ -11,24 +11,24 @@
 #include<fstream>
 #include<iostream>
 using namespace std;
-void un_weight_add(TString indir, TString file_name, int year){
+void un_weight_add(TString indir, TString file_name){
     Double_t nnlo_ratio;
     Float_t M_tt_gen, delta_rapidity_gen;
     //TString dir = "/afs/cern.ch/user/y/yuekai/ttbar/condor/EW_un";
-    TString dir = ".";
-    Int_t Cpq3[9]={ 0, 1, 0, 0, 0, 2, 0, 0, 0 };
-    Int_t Cpu[9]={  0, 0, 1, 0, 0, 0, 2, 0, 0 };
+    TString dir = "./";
+    Int_t Cpq3[9]={ 0, 0, 0, 0, 0, 2, 0, 0, 0 };
+    Int_t Cpu[9]={  0, 2, 1, 0, 0, 0, 2, 0, 0 };
     Int_t ReCup[9]={0, 0, 0, 1, 0, 0, 0, 2, 0 };
     Int_t ImCup[9]={0, 0, 0, 0, 1, 0, 0, 0, 2 };  
     Float_t weight_un_up[9], weight_un_dn[9];
     TBranch *un_up[9], *un_dn[9];
     Float_t weight_nom[9];
-    TFile* file = new TFile(indir+"/"+file_name, "update");
+    TFile* file = new TFile(indir+file_name, "update");
     TTree* mytree = (TTree*)file->Get("mytree");
     //TBranch* nnlo = mytree->Branch("nnlo_ratio", &nnlo_ratio, "nnlo_ratio/D"); 
     mytree->SetBranchAddress("M_tt_gen", &M_tt_gen);
     mytree->SetBranchAddress("delta_rapidity_gen", &delta_rapidity_gen);
-    TFile* ra_file = TFile::Open(dir+Form("/%d/ratio.root", year));
+    TFile* ra_file = TFile::Open(dir+"ratio.root");
     TH2D* h2_ratio = (TH2D*)ra_file->Get("ratio");
     for(int i=0; i<5; i++){
         TString weight_name_nom=Form("weight_ci%d%d%d%d",Cpq3[i],Cpu[i],ReCup[i],ImCup[i]);

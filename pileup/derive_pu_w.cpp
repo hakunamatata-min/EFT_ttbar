@@ -15,7 +15,7 @@ void derive_pu_w(int year){
     TString pu_name[3] = {"pu_nom", "pu_down", "pu_up"};
     
     //TString files = "./new_TT*";
-    TString path = Form("/home/yksong/code/ttbar/output/pileup/%d/", year);
+    TString path = Form("./%d/output/", year);
     
     TFile *data_file[3], *mc_file;
     TH1D* mu_MC;

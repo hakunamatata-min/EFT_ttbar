@@ -224,7 +224,7 @@ void SF_add_tree::sf_jet_it(Float_t *pt, Float_t *eta, Int_t *flavour, Float_t* 
 }
 void SF_add_tree::set_dir(){
     //indir="/home/yksong/code/ttbar/scale_factor";
-    indir="/afs/cern.ch/user/y/yuekai/ttbar/scale_factor";
+    indir="..";
     //indir="/afs/cern.ch/user/r/repan/work/yuekai/scale_factor";
     if(year == 2018){
         sf_dir="UL2018";

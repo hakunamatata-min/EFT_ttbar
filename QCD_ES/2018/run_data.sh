@@ -6,7 +6,7 @@ mkdir -p myout
 output=$PWD/myout
 echo "output: $output"
 wrong="f"
-cd /afs/cern.ch/user/y/yuekai/ttbar/condor/QCD_ES/2018/condor_out_data/$1
+cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/QCD_ES/2018/condor_out_data/$1
 file=$(ls ${1}.txt)
 dir_f=$(cat $file)
 #dir="root://cms-xrd-global.cern.ch/"$dir
@@ -43,11 +43,11 @@ then
         fi
     fi
 fi
-mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/condor/QCD_ES/2018/condor_out_data/$1
+mv $output/out*.txt /afs/cern.ch/user/y/yuekai/EFT-ttbar/QCD_ES/2018/condor_out_data/$1
 if [[ $wrong == "f" ]]
 then
     echo "input file: $dir"
-    cd /afs/cern.ch/user/y/yuekai/ttbar/condor/QCD_ES
+    cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/QCD_ES
     input=$(ls $output|grep root)
     root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2018,0,0)"
     root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2018,1,0)"
@@ -66,14 +66,3 @@ then
 fi
 rm -rf $output
 echo "root files are storied in $eos"
-#var=$1
-#if [[ $var =~ "_pythia" ]]
-#then
-#	temp=${var%%_pythia8*}
-#else
-#    temp=${var%%-pythia8*}
-#fi
-#process=${temp:1}
-#dasgoclient --query "file dataset=$1" > ${process}.txt
-#dasgoclient -query="file dataset=$1" > ${process}.txt
-# root -l -q -b ../get_info.cpp"(\"$1\")"

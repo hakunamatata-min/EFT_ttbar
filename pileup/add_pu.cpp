@@ -45,12 +45,17 @@ void add_pu_tree(TString fileName, TString tree_name, int year, bool remain_sys)
     file->Close();
 }
 void add_pu(TString inputFile, int year, bool is_sys){
-    TString trees[]={"jesUp", "jesDown", "jerUp", "jerDown", "unclusUp", "unclusDown"};
+    TString trees[]={"jerUp", "jerDown", "unclusUp", "unclusDown"};
+    TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
+    
     if(!is_sys){
-        add_pu_tree(inputFile, "rawtree", year, false);
         add_pu_tree(inputFile, "mytree", year, true);
-        for(int i=0; i<6; i++){
+        for(int i=0; i<4; i++){
             add_pu_tree(inputFile, trees[i], year, false);
+        }
+        for(int i=0; i<10; i++){
+            add_pu_tree(inputFile, "jes_"+jes_source[i]+"Up", year, false);
+            add_pu_tree(inputFile, "jes_"+jes_source[i]+"Down", year, false);
         }
     }
     else{

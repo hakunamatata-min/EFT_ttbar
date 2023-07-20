@@ -6,7 +6,7 @@ mkdir -p myout
 output=$PWD/myout
 echo "output: $output"
 wrong="f"
-cd /afs/cern.ch/user/y/yuekai/ttbar/select/2015/condor_out_sys/$1
+cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/select/2015/condor_out_sys/$1
 file=$(ls ${1}.txt)
 dir_f=$(cat $file)
 #dir="root://cms-xrd-global.cern.ch/"$dir
@@ -43,18 +43,18 @@ then
         fi
     fi
 fi
-mv $output/out*.txt /afs/cern.ch/user/y/yuekai/ttbar/select/2015/condor_out_sys/$1
+mv $output/out*.txt /afs/cern.ch/user/y/yuekai/EFT-ttbar/select/2015/condor_out_sys/$1
 if [[ $wrong == "f" ]]
 then
     echo "input file: $dir"
     ofile=$(ls $output/*.root)
     cd /afs/cern.ch/user/y/yuekai/ttbar/CMSSW_10_6_19_patch2/src/PhysicsTools/NanoAODTools/crab
     eval `scramv1 runtime -sh`
-    python crab_script_16.py $ofile $output
-    cd /afs/cern.ch/user/y/yuekai/ttbar/select
+    python crab_script_15.py $ofile $output
+    cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/select
     input=$(ls $output|grep Skim)
     root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,2)"
-    cd /afs/cern.ch/user/y/yuekai/ttbar/scale_factor/code
+    cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/scale_factor/code
     for outputFile in $(ls $output/new*.root)
     do
         root -l -q -b ./SF_add.cpp"(\"$outputFile\",1,2015)"
@@ -62,18 +62,18 @@ then
     done
     if [[ $inputFile =~ "TTTo" ]]
     then
-        cd /afs/cern.ch/user/y/yuekai/ttbar/nnlo
+        cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/nnlo
         for outputFile in $(ls $output/new*.root)
         do
             root -l -q -b ./nnlo_add.cpp"(\"$outputFile\",1)"
         done
-        cd /afs/cern.ch/user/y/yuekai/ttbar/EW_weight
+        cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/EW_weight
         for outputFile in $(ls $output/new*.root)
         do
             root -l -q -b ./add_weight_branch.cpp"(\"$outputFile\",1)"
         done
     fi
-    cd /afs/cern.ch/user/y/yuekai/ttbar/pileup
+    cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/pileup
     for outputFile in $(ls $output/new*.root)
     do
         root -l -q -b add_pu.cpp"(\"$outputFile\",2015,1)"
@@ -88,14 +88,3 @@ then
 fi
 rm -rf $output
 echo "root files are storied in $eos"
-#var=$1
-#if [[ $var =~ "_pythia" ]]
-#then
-#	temp=${var%%_pythia8*}
-#else
-#    temp=${var%%-pythia8*}
-#fi
-#process=${temp:1}
-#dasgoclient --query "file dataset=$1" > ${process}.txt
-#dasgoclient -query="file dataset=$1" > ${process}.txt
-# root -l -q -b ../get_info.cpp"(\"$1\")"
