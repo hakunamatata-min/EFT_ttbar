@@ -1,12 +1,13 @@
 #include "select_tree.cpp"
 void process(TString outdir, TString outputFile, TString input, int year, int type){
-    TString tree_name[] = {"mytree", "mytree", "jesUp", "jesDown", "jerUp", "jerDown", "unclusUp", "unclusDown"};
-    TString jet_name[] = {"Jet_pt", "Jet_pt_nom", "Jet_pt_jesTotalUp", "Jet_pt_jesTotalDown", "Jet_pt_jerUp", "Jet_pt_jerDown", "Jet_pt_nom", "Jet_pt_nom"};
-    TString MET_name[] = {"MET_pt", "MET_T1Smear_pt", "MET_T1Smear_pt_jesTotalUp", "MET_T1Smear_pt_jesTotalDown", "MET_T1Smear_pt_jerUp", "MET_T1Smear_pt_jerDown", "MET_T1Smear_pt_unclustEnUp", "MET_T1Smear_pt_unclustEnDown"};
+    TString tree_name[] = {"mytree", "mytree", "jerUp", "jerDown", "unclusUp", "unclusDown"};
+    TString jet_name[] = {"Jet_pt", "Jet_pt_nom", "Jet_pt_jerUp", "Jet_pt_jerDown", "Jet_pt_nom", "Jet_pt_nom"};
+    TString MET_name[] = {"MET_pt", "MET_T1Smear_pt", "MET_T1Smear_pt_jerUp", "MET_T1Smear_pt_jerDown", "MET_T1Smear_pt_unclustEnUp", "MET_T1Smear_pt_unclustEnDown"};
+    
     TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
     int num_j, num_e, num_m, num_g;
     read_object r(input, type);
-    select_tree *s, *s1;
+    select_tree *s, *s1, *s2;
     num_j = r.nj;
     num_e = r.ne;
     num_m = r.nm;
@@ -21,13 +22,23 @@ void process(TString outdir, TString outputFile, TString input, int year, int ty
         delete s;
     }
     else if(type == 1){
-        s = new select_tree(input, outdir+"/"+"new_"+outputFile, tree_name[0], jet_name[0], MET_name[0], year, 1, num_j, num_e, num_m, num_g);
+        s = new select_tree(input, outdir+"/"+"new_"+outputFile, tree_name[1], jet_name[1], MET_name[1], year, 1, num_j, num_e, num_m, num_g);
         s->write();
         delete s;
-        for(int sys=2; sys<1; sys++){
+        //uncertainties for JER, MET_uncluster
+        for(int sys=2; sys<6; sys++){
             s1 = new select_tree(input, outdir+"/"+"new_"+outputFile, tree_name[sys], jet_name[sys], MET_name[sys], year, 2, num_j, num_e, num_m);
             s1->write();
             delete s1;
+        }
+        //uncertainties for different JES sources
+        for(int sour=0; sour<10; sour++){
+            s1 = new select_tree(input, outdir+"/"+"new_"+outputFile, "jes_"+jes_source[sour]+"Up", "Jet_pt_jes"+jes_source[sour]+"Up", "MET_T1Smear_pt_jes"+jes_source[sour]+"Up", year, 2, num_j, num_e, num_m);
+            s2 = new select_tree(input, outdir+"/"+"new_"+outputFile, "jes_"+jes_source[sour]+"Down", "Jet_pt_jes"+jes_source[sour]+"Down", "MET_T1Smear_pt_jes"+jes_source[sour]+"Down", year, 2, num_j, num_e, num_m);
+            s1->write();
+            s2->write();
+            delete s1;
+            delete s2;
         }
     }
     else if(type == 2){
@@ -35,12 +46,4 @@ void process(TString outdir, TString outputFile, TString input, int year, int ty
         s->write();
         delete s;
     }
-    else if(type == 3){
-        for(int sour=0; sour<10; sour++){
-            s = new select_tree(input, outdir+"/"+"new_"+outputFile, tree_name[1], jet_name[1], MET_name[1], year, 3, num_j, num_e, num_m);
-            s->write();
-            delete s;
-        }
-    }
 }
-
