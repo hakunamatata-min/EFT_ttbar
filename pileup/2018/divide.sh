@@ -1,6 +1,6 @@
 #writen by Renqi Pan in Oct 22,2021
 # to write dataset files into .txt and divide
-input="mtop.txt"
+input="MC.txt"
 i=0
 for dataset in `cat $input`
 do 
@@ -10,23 +10,9 @@ do
     mkdir $var
     cd $var
 	mkdir condor_out
-	if [[ $dataset =~ "_pythia" ]]
-	then
-		temp=${dataset%%_pythia8*}
-    elif [[ $dataset =~ "-pythia" ]]
+	if [[ $dataset =~ "-pythia" ]]
     then
         temp=${dataset%%-pythia8*}
-    elif [[ $dataset =~ "/RunIISummer20UL18NanoAOD" ]]
-    then
-        temp=${dataset%%/RunIISummer20UL18NanoAOD*}
-    else
-        temp=${dataset/\/Run/_Run}
-        temp=${temp%%-UL*}
-    fi
-    process=${temp:1}
-    if [[ $dataset =~ "19UL18" ]]
-    then
-        process=19_${process}
     fi
     #dasgoclient --query "file dataset=$dataset" > ${process}.txt
     dasgoclient -query="file dataset=$dataset" > ${process}.txt
@@ -67,11 +53,11 @@ do
 	done
 	cd ../
 done
-out=condor_out_mtop
+out=condor_out_data
 rm -rf $out
 mkdir $out
 exp="mv *_{1.."$max"} "$out
 eval $exp 2> /dev/null
 rm -rf Chunk*
-ls $out  > condor_list_mtop.txt
+ls $out  > condor_list_data.txt
 echo "directories are written into condor_list.txt"

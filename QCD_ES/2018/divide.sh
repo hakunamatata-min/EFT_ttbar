@@ -1,6 +1,6 @@
 #writen by Renqi Pan in Oct 22,2021
 # to write dataset files into .txt and divide
-input="data.txt"
+input="MC.txt"
 i=0
 for dataset in `cat $input`
 do 
@@ -10,23 +10,9 @@ do
     mkdir $var
     cd $var
 	mkdir condor_out
-	if [[ $dataset =~ "_pythia" ]]
-	then
-		temp=${dataset%%_pythia8*}
-    elif [[ $dataset =~ "-pythia" ]]
+	if [[ $dataset =~ "-pythia" ]]
     then
         temp=${dataset%%-pythia8*}
-    elif [[ $dataset =~ "/RunIISummer20UL18NanoAOD" ]]
-    then
-        temp=${dataset%%/RunIISummer20UL18NanoAOD*}
-    else
-        temp=${dataset/\/Run/_Run}
-        temp=${temp%%-UL*}
-    fi
-    process=${temp:1}
-    if [[ $dataset =~ "19UL18" ]]
-    then
-        process=19_${process}
     fi
     #dasgoclient --query "file dataset=$dataset" > ${process}.txt
     dasgoclient -query="file dataset=$dataset" > ${process}.txt

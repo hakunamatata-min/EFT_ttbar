@@ -10,15 +10,9 @@ do
     mkdir $var
     cd $var
 	mkdir condor_out
-	if [[ $dataset =~ "_pythia" ]]
-	then
-		temp=${dataset%%_pythia8*}
-    elif [[ $dataset =~ "-pythia" ]]
+    if [[ $dataset =~ "-pythia" ]]
     then
         temp=${dataset%%-pythia8*}
-    else
-        temp=${dataset/\/Run/_Run}
-        temp=${temp%%-UL*}
     fi
     process=${temp:1}
     if [[ $dataset =~ "UL18" ]]
