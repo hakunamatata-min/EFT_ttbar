@@ -26,6 +26,7 @@ void add_weight_branch_tree(TString fileName, TString tree_name){
         hist[i]=(TH2F*)fhist->Get("h2");
     }
     TFile *file=new TFile(fileName,"update");
+    cout<<"add NLO_EW weight on "<<tree_name<<endl;
     TTree *mytree=(TTree*) file->Get(tree_name);
     Float_t M_tt, delta_rapidity;
     mytree->SetBranchAddress("M_tt_gen",&M_tt);
@@ -55,7 +56,7 @@ void add_weight_branch(TString inputFile, bool is_sys, int year){
     TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
     add_weight_branch_tree(inputFile, "mytree");
     if(!is_sys){
-        for(int i=0; i<6; i++){
+        for(int i=0; i<4; i++){
             add_weight_branch_tree(inputFile, trees[i]);
         }
         for(int i=0; i<10; i++){

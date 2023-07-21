@@ -15,6 +15,7 @@ void nnlo_add_tree(TString inputFile, TString tree_name, bool remain_sys){
     Double_t nnlo_wt_nom, nnlo_wt, nnlo_wt_up, nnlo_wt_down;
     Float_t mtt, ctstar;
     TFile* file=new TFile(inputFile,"update");
+    cout<<"add NNLO_QCD weight on "<<tree_name<<endl;
     TTree* mytree=(TTree*) file->Get(tree_name);
     TBranch* nnlo = mytree->Branch("nnlo_wt", &nnlo_wt, "nnlo_wt/D"); 
     TBranch* nnlo_nom = mytree->Branch("nnlo_wt_nom", &nnlo_wt_nom, "nnlo_wt_nom/D"); 

@@ -7,8 +7,10 @@ void process(TString outdir, TString outputFile, TString input, int year, int ty
     TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
     TString pt_jes_source[10];
     if(year == 2015){
-        for(int i=0; i<10; i++)
-            pt_jes_source[i] = jes_source[i].ReplaceAll("2015", "2016");
+        for(int i=0; i<10; i++){
+            pt_jes_source[i] = "Jet_pt_jes"+jes_source[i];
+            pt_jes_source[i] = pt_jes_source[i].ReplaceAll("2015", "2016");
+        }
     }
     int num_j, num_e, num_m, num_g;
     read_object r(input, type);

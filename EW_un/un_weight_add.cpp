@@ -11,7 +11,7 @@
 #include<fstream>
 #include<iostream>
 using namespace std;
-void un_weight_add(TString indir, TString file_name){
+void un_weight_add(TString input){
     Double_t nnlo_ratio;
     Float_t M_tt_gen, delta_rapidity_gen;
     //TString dir = "/afs/cern.ch/user/y/yuekai/ttbar/condor/EW_un";
@@ -23,7 +23,7 @@ void un_weight_add(TString indir, TString file_name){
     Float_t weight_un_up[9], weight_un_dn[9];
     TBranch *un_up[9], *un_dn[9];
     Float_t weight_nom[9];
-    TFile* file = new TFile(indir+file_name, "update");
+    TFile* file = new TFile(input, "update");
     TTree* mytree = (TTree*)file->Get("mytree");
     //TBranch* nnlo = mytree->Branch("nnlo_ratio", &nnlo_ratio, "nnlo_ratio/D"); 
     mytree->SetBranchAddress("M_tt_gen", &M_tt_gen);
