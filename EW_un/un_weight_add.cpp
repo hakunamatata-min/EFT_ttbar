@@ -24,6 +24,7 @@ void un_weight_add(TString input){
     TBranch *un_up[9], *un_dn[9];
     Float_t weight_nom[9];
     TFile* file = new TFile(input, "update");
+    cout<<"add EW uncertainties on mytree"<<endl;
     TTree* mytree = (TTree*)file->Get("mytree");
     //TBranch* nnlo = mytree->Branch("nnlo_ratio", &nnlo_ratio, "nnlo_ratio/D"); 
     mytree->SetBranchAddress("M_tt_gen", &M_tt_gen);

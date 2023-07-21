@@ -16,6 +16,7 @@ void add_pu_tree(TString fileName, TString tree_name, int year, bool remain_sys)
     TH1D *hn, *hu, *hd;
     Double_t pu_wt, pu_wt_up, pu_wt_dn;
     TFile *file=new TFile(fileName,"update");
+    cout<<"add Pileup weight on "+tree_name<<endl;
     TTree *mytree=(TTree*) file->Get(tree_name);
     mytree->SetBranchAddress("Pileup_nPU",&Pileup_nPU);
     TFile* nfile = TFile::Open(Form("./%d/pu_weight.root", year));
