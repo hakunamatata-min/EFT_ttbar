@@ -171,6 +171,8 @@ __MACOSX
 *.root
 *.pdf
 run_log
-combine/**/ttbar*.txt
+!combine/datacard/**/*.root
+!combine/**/limit*.root
+!test/**/datacard/**/sumed/**/*.root
 condor_out_*
 condor_list_*
