@@ -176,5 +176,3 @@ run_log
 !test/**/datacard/**/sumed/**/*.root
 condor_out_*
 condor_list_*
-check_condor*.sh
-find*.sh
