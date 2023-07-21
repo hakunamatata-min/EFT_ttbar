@@ -31,13 +31,13 @@ void process(TString outdir, TString outputFile, TString input, int year, int ty
         s->write();
         delete s;
         //uncertainties for JER, MET_uncluster
-        for(int sys=6; sys<6; sys++){
+        for(int sys=2; sys<6; sys++){
             s1 = new select_tree(input, outdir+"/"+"new_"+outputFile, tree_name[sys], jet_name[sys], MET_name[sys], year, 2, num_j, num_e, num_m);
             s1->write();
             delete s1;
         }
         //uncertainties for different JES sources
-        for(int sour=0; sour<1; sour++){
+        for(int sour=0; sour<10; sour++){
             //cout<<"jes_"+jes_source[sour]+"Up"<<endl;
             s1 = new select_tree(input, outdir+"/"+"new_"+outputFile, "jes_"+jes_source[sour]+"Up", "Jet_pt_jes"+pt_jes_source[sour]+"Up", "MET_T1Smear_pt_jes"+pt_jes_source[sour]+"Up", year, 2, num_j, num_e, num_m);
             s1->write();
