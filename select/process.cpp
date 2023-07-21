@@ -11,16 +11,16 @@ void process(TString outdir, TString outputFile, TString input, int year, int ty
         pt_jes_source[i] = pt_jes_source[i].ReplaceAll("2015", "2016");
     }
     int num_j, num_e, num_m, num_g;
-    //read_object r(input, type);
+    read_object r(input, type);
     select_tree *s, *s1, *s2;
-    /*num_j = r.nj;
+    num_j = r.nj;
     num_e = r.ne;
     num_m = r.nm;
-    num_g = r.ng;*/
-    num_j = 50;
+    num_g = r.ng;
+    /*num_j = 50;
     num_e = 20;
     num_m = 20;
-    num_g = 50;
+    num_g = 50;*/
     if(type == 0){
         s = new select_tree(input, outdir+"/"+"new_"+outputFile, tree_name[0], jet_name[0], MET_name[0], year, 0, num_j, num_e, num_m);
         s->write();
