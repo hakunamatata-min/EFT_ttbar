@@ -70,7 +70,7 @@ then
         cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/EW_weight
         for outputFile in $(ls $output/new*.root)
         do
-            root -l -q -b ./add_weight_branch.cpp"(\"$outputFile\",0 )"
+            root -l -q -b ./add_weight_branch.cpp"(\"$outputFile\",0,2016)"
         done
         cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/EW_un
         for outputFile in $(ls $output/new*.root)
