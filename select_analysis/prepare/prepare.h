@@ -39,7 +39,7 @@ private:
     Float_t K_Factors[20];
     TString cut, cut_name;
     int edge_i[8], edge_f[8];
-    TString sys_n[20], sys[20], sys_up[20], sys_down[20];
+    TString sys_n[30], sys[30], sys_up[30], sys_down[30];
     TString process[9];
     TString EW[5];
     TString weight_nom, weight_up, weight_dn;
@@ -51,7 +51,6 @@ private:
     void renew_weight(TString* weight, TString file, int f);
     void draw(TH1D* h1, TString file, TString tree, TString weight);
     void set_dir();
-    void add_qcd();
     void draw(int c);
     void draw(int c, int s);
     void draw_data();
