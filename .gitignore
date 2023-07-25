@@ -176,3 +176,4 @@ run_log
 !test/**/datacard/**/sumed/**/*.root
 condor_out_*
 condor_list_*
+test_code
