@@ -50,7 +50,7 @@ then
     num=$(ls $output | grep btageff_ | wc -l)
     if [[ $num -eq 1 ]]
     then
-        mv $(ls $output/btag_eff*.root) $eos
+        mv $(ls $output/btageff*.root) $eos
     fi
 fi
 rm -rf $output
