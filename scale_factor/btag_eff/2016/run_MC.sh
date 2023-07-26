@@ -46,7 +46,7 @@ if [[ $wrong == "f" ]]
 then
     input=$(ls $output/*root)
     cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/scale_factor/btag_eff
-    root -l -q -b pre_eff.cpp"(\"$output\",\"$inputFile\",\"$output/$input\", 2016)";
+    root -l -q -b pre_eff.cpp"(\"$output\",\"$inputFile\",\"$input\", 2016)";
     num=$(ls $output | grep btageff_ | wc -l)
     if [[ $num -eq 1 ]]
     then
