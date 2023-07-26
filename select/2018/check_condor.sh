@@ -8,6 +8,7 @@ do
     then 
 	    disk=`cat $var/run.err|grep "Disk quota exceeded"`
         close=`cat $var/run.err|grep "trying to recover"`
+        exe=`cat $var/run.err|grep "condor_exec.exe:"`
         if [[ $disk != "" ]]
         then
             echo "$var Disk quota exceeded"
@@ -15,6 +16,10 @@ do
         elif [[ $close != "" ]]
         then
             echo "$var not closed, trying to recover"
+            echo ${var} >> $txt
+        elif [[ $exe != "" ]]
+        then
+            echo "$var is wrong with condor_exec.exe"
             echo ${var} >> $txt
         fi
     #else
