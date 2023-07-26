@@ -404,6 +404,18 @@ void select_tree::read_LHE(){
         delta_rapidity_gen = p4_top.Rapidity() - p4_antitop.Rapidity();
     }
 }
+void select_tree::pdf_w(Float_t LHEPdfWeight[103], Float_t &alphas_up, Float_t &alphas_dn, Float_t &pdf_up, Float_t &pdf_dn){
+    pdf_up = LHEPdfWeight[0];
+    pdf_dn = LHEPdfWeight[0];
+    alphas_dn = LHEPdfWeight[101];
+    alphas_up = LHEPdfWeight[102];
+    for(int i=1; i<101; i++){
+        if(pdf_up < LHEPdfWeight[i])
+            pdf_up = LHEPdfWeight[i];
+        if(pdf_dn > LHEPdfWeight[i])
+            pdf_dn = LHEPdfWeight[i];
+    }
+}
 void select_tree::read_sys(){
     muR_up = 1.0*LHEScaleWeight[3]/LHEScaleWeight[4];
     muR_down = 1.0*LHEScaleWeight[5]/LHEScaleWeight[4];
@@ -482,8 +494,10 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
                 lepton_eta = mom_lep.Eta();
                 lepton_mass = mom_lep.M();
                 lepton_phi = mom_lep.Phi();
-                if(type == 1)
+                if(type == 1){
                     read_sys();
+                    pdf_w(LHEPdfWeight, alphas_up, alphas_dn, pdf_up, pdf_dn);
+                }
                 if(type != 0)
                     read_LHE();
                 mytree->Fill();
@@ -540,8 +554,12 @@ void select_tree::write(){
         mytree->Branch("ISF_down", &ISR_down, "ISR_down/F");
         mytree->Branch("FSR_up", &FSR_up, "FSR_up/F");
         mytree->Branch("FSR_down", &FSR_down, "FSR_down/F");
-        mytree->Branch("nLHEPdfWeight", &nLHEPdfWeight, "nLHEPdfWeight/i");
-        mytree->Branch("LHEPdfWeight", LHEPdfWeight, "LHEPdfWeight[nLHEPdfWeight]/F");
+        mytree->Branch("pdf_up", &pdf_up, "pdf_up/F");
+        mytree->Branch("pdf_dn", &pdf_dn, "pdf_dn/F");
+        mytree->Branch("alphas_up", &alphas_up, "alphas_up/F");
+        mytree->Branch("alphas_dn", &alphas_dn, "alphas_dn/F");
+        //mytree->Branch("nLHEPdfWeight", &nLHEPdfWeight, "nLHEPdfWeight/i");
+        //mytree->Branch("LHEPdfWeight", LHEPdfWeight, "LHEPdfWeight[nLHEPdfWeight]/F");
         mytree->Branch("L1PreFiringWeight_Up",&L1PreFiringWeight_Up,"L1PreFiringWeight_Up/F");
         mytree->Branch("L1PreFiringWeight_Dn",&L1PreFiringWeight_Dn,"L1PreFiringWeight_Dn/F");
     }

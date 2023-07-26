@@ -52,7 +52,7 @@ private:
     Int_t LHEPart_pdgId[9], LHEPart_status[9];
     UInt_t nLHEPart;
     Float_t LHEScaleWeight[9], PSWeight[4],LHEPdfWeight[150];
-    UInt_t nLHEPdfWeight,nLHEScaleWeight,nPSWeight;
+    UInt_t nLHEPdfWeight, nLHEScaleWeight, nPSWeight;
 
     Float_t L1PreFiringWeight_Nom, L1PreFiringWeight_Up, L1PreFiringWeight_Dn; 
     Bool_t Flag_met[11];
@@ -86,12 +86,14 @@ private:
     Int_t LHE_nhad, LHE_nlep;
     Float_t muR_up, muF_up, ISR_up, FSR_up;
     Float_t muR_down, muF_down, ISR_down, FSR_down;
+    Float_t pdf_up, pdf_dn, alphas_dn, alphas_up;
     Bool_t select_jet();
     Bool_t select_lep();
     void loop(TTree* tree1, TTree* tree2);
     Bool_t is_lep_from_jet(TLorentzVector mom_lep);
     void read_LHE();
     void read_sys();
+    void pdf_w(Float_t LHEPdfWeight[103], Float_t &alphas_up, Float_t &alphas_dn, Float_t &pdf_up, Float_t &pdf_dn);
 public:
     select_tree(TString inputfile, TString outputFile, TString name_tree, TString name_jet, TString name_MET, int s_year, int s_type, int num_j, int num_e, int num_m, int num_g = 0);//type: 0:data; 1:MC nom; 2:MC sys 3:sys nom
     void write();
