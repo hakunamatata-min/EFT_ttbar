@@ -40,11 +40,11 @@ void derive_nnlo(TString dir, TString file, TString output){
     TFile* nfile = TFile::Open("./NNLO_to_Powheg_Ratios_Summer20UL_CombineYears.root");
     TH2D* h2_nom = (TH2D*) nfile->Get("MATRIX_xsec_central_over_AllYears_Summer20UL_Normalized_Ratios");
 
-    const int nbinsx=14;
+    const int nbinsx=24;
 	const int nbinsy=40;
 	const double ylow=-5.0;
 	const double yhigh=5.0;
-	double xbins[]={345,360,380,400,450,500,550,600,650,700,750,800,900,1200,2000};
+	double xbins[]={340,360,380,400,420,440,460,480,500,520,540,560,580,600,620,640,660,680,700,750,800,900,1100,1500,3000};
     TH2D *h2_NNLO = new TH2D("h2_NNLO","", nbinsx, xbins, nbinsy, ylow, yhigh);
     TFile* nnlo_file = new TFile(dir+"/NNLO_"+output, "RECREATE");
     
