@@ -13,7 +13,7 @@
 using namespace std;
 //int main(){
 void pre_eff(TString indir, TString inputfile, TString input, int year){
-    TString output = "btageff_"+inputfile+".root";
+    TString output = "btageff_"+inputfile;
     /*TString inputfile[]={
         "TTsemi.root",
         "TTdilepton.root",
