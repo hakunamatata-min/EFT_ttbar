@@ -11,6 +11,18 @@
 #include<fstream>
 #include<iostream>
 using namespace std;
+/*void Floor(TH2D* h1){
+    double value;
+    for(int ix=0; ix<h1->GetNbinsX(); ix++){
+        for(int iy=0; iy<h1->GetNbinsY(); iy++){
+            value = h1->GetBinContent(ix+1, iy+1);
+            if(abs(value) < 1e-4){
+                value = 1e-4;
+                h1->SetBinContent(ix+1, iy+1, value);
+            }                
+        }
+    }
+}*/
 void derive_ratio(){
     const int nbinsx=14;
     const int nbinsy=40;
@@ -22,22 +34,22 @@ void derive_ratio(){
     TFile* lo_file = TFile::Open("./EW_LO.root");
     TH2D* h2_nnlo = (TH2D*)nnlo_file->Get("NNLO");
     TH2D* h2_lo = (TH2D*)lo_file->Get("h2_LO");
+    h2_lo->SetName("LO");
     h2_lo->Scale(477.478/h2_lo->GetSumOfWeights());
-    TH2D* h2_ratio =  new TH2D("ratio", "", nbinsx, xbins, nbinsy, ylow, yhigh);
-    double nnlo, lo, ratio;
-    for(int i=0; i<h2_ratio->GetNbinsX(); i++){
-        for(int j=0; j<h2_ratio->GetNbinsY(); j++){
-            int bin = h2_ratio->GetBin(i+1, j+1);
-            nnlo = h2_nnlo->GetBinContent(bin);
-            lo = h2_lo->GetBinContent(bin);
-            if(nnlo > 1e-4)
-                ratio = (nnlo - lo)/nnlo;
-            else
-                ratio = 0;
-            h2_ratio->SetBinContent(bin, ratio);
-        }
-    }
+
+    //h2_lo->Smooth();
+    //h2_nnlo->Smooth();
+    //Floor(h2_lo);
+    //Floor(h2_nnlo);
+    //TH2D* h2_ratio =  new TH2D("ratio", "", nbinsx, xbins, nbinsy, ylow, yhigh);
+    TH2D* h2_ratio = (TH2D*)h2_nnlo->Clone();
+    h2_ratio->SetName("ratio");
+    h2_ratio->Add(h2_lo, -1.0);
+    h2_ratio->Divide(h2_nnlo);
+
     ra_file->cd();
+    h2_lo->Write();
+    h2_nnlo->Write();
     h2_ratio->Write();
     ra_file->Close();
 }
