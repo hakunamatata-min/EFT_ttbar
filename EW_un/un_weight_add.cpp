@@ -41,7 +41,7 @@ void un_weight_add(TString input){
     }
     for(int i=0; i<mytree->GetEntries(); i++){
         mytree->GetEntry(i);
-        if(M_tt_gen<=2000 && M_tt_gen>=345){
+        if(M_tt_gen<=3000 && M_tt_gen>=340){
             int bin = h2_ratio->FindBin(M_tt_gen, delta_rapidity_gen);
             nnlo_ratio = h2_ratio->GetBinContent(bin);
         }
