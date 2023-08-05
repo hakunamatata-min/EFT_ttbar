@@ -12,7 +12,7 @@
 #include<iostream>
 using namespace std;
 //int main(){
-void eff_get(TString inputFile){
+void derive_eff(TString inputFile){
 
     TFile *outfile=new TFile(inputFile,"update");
     

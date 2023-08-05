@@ -346,7 +346,11 @@ SF_add_tree::SF_add_tree(TString inputFile, TString tree_name, bool remain_sys, 
         fhist_beff=TFile::Open(indir+"/"+sf_dir+"/btag/btageff_QCD.root");
     else if(inputFile.Contains("W1")||inputFile.Contains("W2")||inputFile.Contains("W3")||inputFile.Contains("W4"))
         fhist_beff=TFile::Open(indir+"/"+sf_dir+"/btag/btageff_W.root");
-    else
+    else if(inputFile.Contains("ST")) 
+        fhist_beff=TFile::Open(indir+"/"+sf_dir+"/btag/btageff_ST.root");
+    else if(inputFile.Contains("DY")) 
+        fhist_beff=TFile::Open(indir+"/"+sf_dir+"/btag/btageff_DY.root");
+    else 
         fhist_beff=TFile::Open(indir+"/"+sf_dir+"/btag/btageff_TT.root");
     hist_muon_m_iso=(TH2F*)fhist_muon_m_iso->Get("NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt_efficiencyMC");
     hist_muon_m_id=(TH2F*)fhist_muon_m_id->Get("NUM_TightID_DEN_TrackerMuons_abseta_pt_efficiencyMC");
