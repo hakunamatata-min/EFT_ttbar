@@ -31,7 +31,7 @@ void derive_ratio(){
     double xbins[]={345,360,380,400,450,500,550,600,650,700,750,800,900,1200,2000};
     TFile* nnlo_file = TFile::Open("NNLO.root");
     TFile* ra_file = new TFile("ratio.root", "RECREATE");
-    TFile* lo_file = TFile::Open("./EW_LO.root");
+    TFile* lo_file = TFile::Open("./EW_LO_none.root");
     TH2D* h2_nnlo = (TH2D*)nnlo_file->Get("NNLO");
     TH2D* h2_lo = (TH2D*)lo_file->Get("h2_LO");
     h2_lo->SetName("LO");
