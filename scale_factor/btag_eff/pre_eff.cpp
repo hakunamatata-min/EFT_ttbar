@@ -23,7 +23,7 @@ void pre_eff(TString indir, TString inputfile, TString input, int year){
     Float_t dc_nums[] = {0.6001,0.5847,0.4506,0.4168};
     TChain *mytree = new TChain("Events");
     mytree->Add(input);
-    TFile *outfile=new TFile(indir+"/"+output,"RECREATE");
+    TFile *outfile=new TFile(indir+"/"+output, "RECREATE");
     Float_t ptbins[]={20,30,50,70,100,140,200,300,600,10000};
     Float_t etabins[]={0., 0.6, 1.2, 2.1, 2.5};
     Float_t dc_vaule = dc_nums[year-2015];

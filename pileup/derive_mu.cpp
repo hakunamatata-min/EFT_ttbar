@@ -11,7 +11,7 @@
 using namespace std;
 
 void derive_mu(TString dir, TString file, TString output){
-    TFile* pu_file = new TFile(dir+"/Mu_"+output); 
+    TFile* pu_file = new TFile(dir+"/Mu_"+output, "RECREATE"); 
 
     TH1D* mu_MC= new TH1D("h1_mu_MC", "", 99, 0 ,99);
     TChain* rawtree = new TChain("Events");
