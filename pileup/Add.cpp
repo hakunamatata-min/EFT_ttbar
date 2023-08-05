@@ -40,7 +40,7 @@ void Add(int year){
     TFile* mu_file = new TFile(Form("./%d/Mu_MC.root", year), "RECREATE");
     TH1D* mu_hist = new TH1D("mu_MC", "", 99, 0 ,99);
     for(int i=0; i<20; i++){
-        file = TFile::Open(Form("./%d/output", year)+files[i]+".root");
+        file = TFile::Open(Form("./%d/output/", year)+files[i]);
         h2 = (TH1D*)file->Get("h1_mu_MC");
         mu_hist->Add(h2);
         delete h2;
