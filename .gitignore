@@ -181,3 +181,4 @@ condor_out_*
 condor_list_*
 test_code
 err.txt
+*.vscode
