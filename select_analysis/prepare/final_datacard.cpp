@@ -9,7 +9,8 @@
 #include<TF1.h>
 #include<TH1D.h>
 #include<TCanvas.h>
-#include<TH2F.h>
+#include<TH2D.h>
+#include<TH3D.h>
 #include<THStack.h>
 #include<string.h>
 #include<TGraph.h>
@@ -64,7 +65,7 @@ void push(int c, double yield, TString name, TString category, int num_sig, int 
     TString uns[] = {"1.012", "1.012", "1.023", "1.025"};
     cms_lumi.push_back(uns[year-2015]);
 }
-void push_sys(int s, TString sys_n, int begin, int end, int num_pro){
+void push_sys(TString sys_n, int begin, int end, int num_pro){
     std::vector<TString> sys_num;
     for(int c=0; c<num_pro; c++){
         if(c<begin || c>=end)
@@ -113,13 +114,14 @@ void write_card(ofstream& card, TString category, int num_pro){
         writeline(sysnum[s], card);
     }
 }
-void sum_h1(TH1D* hs, TH1D** h1, int* start, int num){
+void sum_TH1D(TH1D* hs, TH1D** h1, int* start, int num){
     for(int f=0; f<num; f++){
         for(int i=0; i<h1[f]->GetNbinsX(); i++){
             hs->SetBinContent(i+1+start[f], h1[f]->GetBinContent(i+1));
             hs->SetBinError(i+1+start[f], h1[f]->GetBinError(i+1));
         }
-    }  
+    }
+    hs->ResetStats();
 }
 void set_val(TH1D* h1, double val){
     for(int i=0; i<h1->GetNbinsX(); i++)
@@ -132,25 +134,27 @@ void copy(TH1D* h0, TH1D* h1){
     }
 
 }
-/*void get_max_min_1(TH1D* h1, double& max, double &min){
-    max = -1000; min = 1000;
-    for(int i=0; i<h1->GetNbinsX(); i++){
-        if(max < h1->GetBinContent(i+1))
-            max = h1->GetBinContent(i+1);
-        if(min > h1->GetBinContent(i+1))
-            min = h1->GetBinContent(i+1);
+void get_TH1D(TH1D* h1, TString h1_name, TH3D* h3, int like_cut, int ycut_low, int ycut_up, int* xbins, int nbins){
+    h1->SetBins(nbins, 0, nbins);
+    h1->SetName(h1_name);
+    TH1D* h3_1 = h3->ProjectionX("3_px", ycut_low, ycut_up, 0, like_cut);
+
+    double value;
+    double err2;
+    for(int i=0; i<nbins; i++){
+        value = 0;
+        err2 = 0;
+        for(int bin=xbins[i]; bin<xbins[i+1]; bin++){
+            value += h3_1->GetBinContent(bin+1);
+            err2 += h3_1->GetBinError(bin+1)*h3_1->GetBinError(bin+1);
+        }
+        h1->SetBinContent(i+1, value);
+        h1->SetBinError(i+1, sqrt(err2));
     }
+    //cout<<h1->GetSumOfWeights()<<endl;
+    delete h3_1;
 }
-void get_max_min_2(TH1D* h1, TH1D* h2, double& max, double &min){
-    double tmp_max[2], tmp_min[2];
-    get_max_min_1(h1, tmp_max[0], tmp_min[0]);
-    get_max_min_1(h1, tmp_max[1], tmp_min[1]);
-    max = tmp_max[0]>tmp_max[1] ? tmp_max[0]:tmp_max[1];
-    min = tmp_min[0]<tmp_min[1] ? tmp_min[0]:tmp_min[1];
-}*/
-//option1:: 0: no, 1:smooth, 2:flat, 3:flat_all, 
-//option2: 0:no, 1:up_symmetry 2:down_symmetry
-void sum_h1(TH1D* hs_up, TH1D* hs_dn, TH1D** h0, TH1D** h1, TH1D** h2, int* start, int num, int option){
+void sum_TH1D(TH1D* hs_up, TH1D* hs_dn, TH1D** h0, TH1D** h1, TH1D** h2, int* start, int num, int option){
     TH1D *hd_up[4], *hd_dn[4], *h_nom[4];
     double norm_up = 0, norm_dn = 0, norm_nom = 0;
     for(int f=0; f<num; f++){
@@ -164,11 +168,10 @@ void sum_h1(TH1D* hs_up, TH1D* hs_dn, TH1D** h0, TH1D** h1, TH1D** h2, int* star
         //cout<<hd_up[f]->GetNbinsY()<<" "<<hd_dn[f]->GetNbinsY()<<" "<<h0[f]->GetNbinsY()<<endl;
         hd_up[f]->Divide(h_nom[f]);
         hd_dn[f]->Divide(h_nom[f]);
-        cout<<h1[f]->GetSumOfWeights()<<endl;
+        //cout<<h1[f]->GetSumOfWeights()<<endl;
         norm_up += h1[f]->GetSumOfWeights();
         norm_dn += h2[f]->GetSumOfWeights();
         norm_nom += h0[f]->GetSumOfWeights();
-        //cout<<"here"<<endl;
     }
     if(option == 1){
         for(int f=0; f<num; f++){
@@ -193,91 +196,79 @@ void sum_h1(TH1D* hs_up, TH1D* hs_dn, TH1D** h0, TH1D** h1, TH1D** h2, int* star
         delete hd_dn[f];
         delete h_nom[f];
     }
+    hs_up->ResetStats();
+    hs_dn->ResetStats();
 }  
-void sum(TString path, TString path2, TString cut_name, TString type, int t, int year){
+void sum(TString cut_name, int t, int year, int like_cut, int* ycut, int nycut, int** mbin, int* nbins){
     clear();
-    TString sys[] = {"jes","jer","unclus","SF_lepton",Form("SF_btag%d", year),"SF_btag_co", "pdf", "L1PF", "PU", "muR1","muF1","muR2","muF2","muR3","muF3","ISR","FSR","mtop","hdamp","TuneCP5","nnlo_wt","EW_un", "qcds"};
+    TString path = "../../combine/datacard";
+    TString path2 = Form("../output/%d/datacard/", year);
+    TString sys[] = {"jes","jer","unclus","SF_lepton","SF_btag", Form("SF_btag%d", year), "SF_ltag", Form("SF_ltag%d", year), "pdf", "alphas", "L1PF", "PU", "muR1","muF1","muR2","muF2","muR3","muF3","ISR","FSR","mtop","hdamp","TuneCP5","nnlo_wt","EW_un", "qcds"};
+    TString sys_n;
+    if(cut_name.Contains("E"))
+        sys[4] = "SF_Elec";
+    else
+        sys[4] = "SF_Muon";
+    TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
     TString type_nus[] = {"no/", "smooth/", "flat/"};
-    int option[][30] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                      {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                      {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}};
-    
+
+    int option[][30] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}};
     int num_sig = 5;
-    std::vector<TString> process = {"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};;
-    if(type.Contains("impact_z")){
-        process = {"ttbar_ci0000", "ttbar_ci0010", "DYJets","STop", "WJets", "QCD", "data_obs"};
-        num_sig = 2;
-        if(type.Contains("sym")){
-            process = {"ttbar_ci0000", "ttbar_ci0100", "ttbar_ci0010", "DYJets","STop", "WJets", "QCD", "data_obs"};
-            num_sig = 3;
-        }
-    }
-    else if(type.Contains("impact_y")){
-        process = {"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-        num_sig = 4;
-        if(type.Contains("nomu")){
-            process = {"ttbar_ci0000","ttbar_ci0100",  "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-            num_sig-=1;
-        }
-        if(type.Contains("sym")){
-            process = {"ttbar_ci0000", "ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-            num_sig-=1;
-        }
-    }
-    else if(type.Contains("impact_k")){
-        process = {"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-        num_sig = 3;
-        if(type.Contains("nomu")){
-            process = {"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};
-            num_sig-=1;
-        }
-    }
+    auto process = std::vector<TString>{"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};;
     int num_pro = process.size() - 1 ;
-    int beg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, num_sig, num_sig, num_sig+1, num_sig+1, num_sig+2, num_sig+2, 0, 0, 0, 0, 0, 0, 0, num_pro-1};
-    int end[] = {num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_sig+1, num_sig+1, num_sig+2, num_sig+2, num_sig+3, num_sig+3, num_pro-1, num_pro-1, num_sig, num_sig, num_sig, num_sig, num_sig, num_pro};
+    int beg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, num_sig, num_sig, num_sig+1, num_sig+1, num_sig+2, num_sig+2, 0, 0, 0, 0, 0, 0, 0, num_pro-1};
+    int end[] = {num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_sig+1, num_sig+1, num_sig+2, num_sig+2, num_sig+3, num_sig+3, num_pro-1, num_pro-1, num_sig, num_sig, num_sig, num_sig, num_sig, num_pro};
     num_pro = process.size() - 2 ;
     double yield;
     ofstream card;
     TString category="ttbar"+cut_name+Form("_%d", year);
-    card.open (path+type+"/"+type_nus[t]+category+".txt");
-    cout<<path+type+"/"+type_nus[t]+category+".txt"<<endl;
-    TFile* sum_file = new TFile(path+type+"/"+type_nus[t]+category+".root", "recreate");
-    TString div_name[] = {"_y0", "_y1", "_y2", "_y3"};
-    int num=4;
+    card.open (path+"/"+type_nus[t]+category+".txt");
+    cout<<path+"/"+type_nus[t]+category+".txt"<<endl;
+    TFile* sum_file = new TFile(path+"/"+type_nus[t]+category+".root", "recreate");
+    
+    const int num = nycut;
+    TH3D *hmc31[num], *hmc32[num], *hmc33[num];
     TH1D *hmc1[num], *hmc2[num], *hmc3[num];
-    TFile *file[num];
+    TFile *file;
     TH1D *h1, *h2, *h3;
     int bin_num = 0;
-    int start[4];
+    int start[num];
     bool no_sys;
     TH1D* hd[num];
-    for(int f=0; f<num; f++){
-        file[f] = TFile::Open(path2+"datacard/"+"ttbar"+cut_name+div_name[f]+".root");
-        TH1D* test = (TH1D*)file[f]->Get("data_obs_sub");
-        start[f] = bin_num;
-        bin_num += test->GetNbinsX();
-        delete test;
+    for(int i=0; i<num; i++){
+        start[i] = bin_num;
+        bin_num += nbins[i];      
     }
-    for(int c=0; c<process.size(); c++){
+    file = TFile::Open(path2+"ttbar"+cut_name+".root");
+    
+    for(int c=0; c<1; c++){
         if(process[c].Contains("QCD"))//no QCD now
             continue;
         h1 = new TH1D(process[c], "", bin_num, 0, bin_num);
         for(int f=0; f<num; f++){
-            hmc1[f] = (TH1D*)file[f]->Get(process[c]+"_sub");
-            hmc1[f]->SetName(Form("hmc1_%d", f));
+            hmc31[f] = (TH3D*)file->Get(process[c]+"_sub");
+            hmc31[f]->SetName(Form("hmc31_%d", f));
+            hmc1[f] = new TH1D;
+            get_TH1D(hmc1[f], Form("hmc1_%d", f), hmc31[f], like_cut, ycut[f]+1, ycut[f+1], mbin[f], nbins[f]);
         }
-        sum_h1(h1, hmc1, start, num);
+        sum_TH1D(h1, hmc1, start, num);
         yield = h1->GetSumOfWeights();
+        //cout<<yield<<endl;
         if(!(process[c].Contains("QCD")||process[c].Contains("data")))
             push(c, yield, process[c], category, num_sig, year);
         sum_file->cd();
         h1->Write();
         delete h1;
-        for(int s=0; s<22; s++){
+        for(int s=0; s<0; s++){
+            if(s==0){
+
+            }
             //if(sys[s].Contains("pdf"))//no pdf now
             //    continue;
             if(c==0){
-                push_sys(s, sys[s], beg[s], end[s], num_pro);
+                push_sys(sys[s], beg[s], end[s], num_pro);
             }
             if(c<beg[s] || c>=end[s])
                 continue;
@@ -286,52 +277,84 @@ void sum(TString path, TString path2, TString cut_name, TString type, int t, int
             h3 = new TH1D(process[c]+"_"+sys[s]+"Down", "", bin_num, 0 ,bin_num);
             for(int f=0; f<num; f++){
                 cout<<process[c]+"_"+sys[s]+"Up_sub"<<endl;
-                hmc2[f] = (TH1D*)file[f]->Get(process[c]+"_"+sys[s]+"Up_sub");
-                hmc3[f] = (TH1D*)file[f]->Get(process[c]+"_"+sys[s]+"Down_sub");
-                /*if(hmc2[f] == NULL){
-                    delete hmc2[f]; delete hmc3[f];
+                hmc32[f] = (TH3D*)file->Get(process[c]+"_"+sys[s]+"Up_sub");
+                hmc33[f] = (TH3D*)file->Get(process[c]+"_"+sys[s]+"Down_sub");
+                /*if(hmc32[f] == NULL){
+                    delete hmc32[f]; delete hmc33[f];
                     no_sys = true;
                     break;
                 }*/
-                hmc2[f]->SetName(Form("hmc2_%d", f));
-                hmc3[f]->SetName(Form("hmc3_%d", f));
-                
+                hmc32[f]->SetName(Form("hmc2_%d", f));
+                hmc33[f]->SetName(Form("hmc3_%d", f));
+                hmc2[f] = new TH1D;
+                hmc3[f] = new TH1D;
+                get_TH1D(hmc2[f], Form("hmc2_%d", f), hmc32[f], like_cut, ycut[f], ycut[f+1], mbin[f], nbins[f]);
+                get_TH1D(hmc3[f], Form("hmc3_%d", f), hmc33[f], like_cut, ycut[f], ycut[f+1], mbin[f], nbins[f]);
             }
             /*if(no_sys == true){
                 delete h2; delete h3;
                 continue;
             }*/
-            sum_h1(h2, h3, hmc1, hmc2, hmc3, start, num, option[t][s]);
+            sum_TH1D(h2, h3, hmc1, hmc2, hmc3, start, num, option[t][s]);
             sum_file->cd();
             h2->Write();
             h3->Write();
             for(int f=0; f<num; f++){
+                delete hmc32[f]; delete hmc33[f];
                 delete hmc2[f]; delete hmc3[f];
             }
             delete h2; delete h3;
         }
-        for(int f=0; f<num; f++)
-            delete hmc1[f];
+        for(int f=0; f<num; f++){
+            delete hmc1[f]; delete hmc31[f];
+        }
     }
     write_card(card, category, num_pro);
     card.close();
-    for(int f=0; f<4; f++)
-        file[f]->Close();
+    file->Close();
+    sum_file->Close();
 }
-void sum_all(){
+void final_datacard(){
     TString cut_name[4]={"_E_3jets", "_E_4jets", "_M_3jets", "_M_4jets"};
     int year[] = {2015, 2016, 2017, 2018};
-    TString path2;
-    TString type[] = {"datacard", "impact_z", "impact_k", "impact_y", "impact_y_nomu", "impact_k_nomu", "datacard_2018", "impact_z_2018", "impact_y_2018", "impact_y_nomu_2018"};
-    TString path = "/home/yksong/code/ttbar/combine/";
-    for(int j=0; j<10; j++){
-        for(int i=0; i<4; i++){
-            for(int y=0; y<4; y++){
-                for(int t=0; t<3; t++){
-                    path2 = Form("../%d/", year[y]);
-                    sum(path, path2, cut_name[i], type[j], t, year[y]);
-                }
+    
+    double likelihood_cut = 1000;
+    int like_cut;
+    if(likelihood_cut <= 50.0 && likelihood_cut>=13.0)
+        like_cut = int(likelihood_cut-13.0);
+    else
+        like_cut = -1;
+    
+    const int nycut = 4;
+    int ycut[nycut+1];
+    double ycut_user[nycut] = {0.0, 0.4, 1.0, 2.0};
+    for(int i=1; i<nycut; i++)
+        ycut[i] = int((ycut_user[i]-0.0)/0.1);
+    ycut[nycut] = 41;
+    ycut[0] = -1;
+
+    int *xbins[20];
+    int nbins[] = {9, 11, 10, 11};
+    double xbins_user[nycut][20] = {{0,300,340,380,420,460,500,600,800,3000}, {0,300,350,400,450,500,550,600,700,800,1000,3000}, 
+                               {0,400,450,500,550,600,650,700,800,1000,3000}, {0,450,550,650,700,750,800,900,1000,1200,1400,3000}};
+    for(int i=0; i<nycut; i++){
+        xbins[i] = new int[nbins[i]+1];
+        for(int j=0; j<nbins[i]+1; j++){
+            if(xbins_user[i][j]<300)
+                xbins[i][j] = -1;
+            else if(xbins_user[i][j]>3000)
+                xbins[i][j] = 271;
+            else
+                xbins[i][j] = int((xbins_user[i][j]-300)/10);
+        }
+    }
+    for(int i=3; i<4; i++){
+        for(int y=2; y<3; y++){
+            for(int t=0; t<1; t++){
+                sum(cut_name[i], t, year[y], like_cut, ycut, nycut, xbins, nbins);
             }
         }
     }
+    for(int i=0; i<nycut; i++)
+        delete[] xbins[i];
 }
