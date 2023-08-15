@@ -66,17 +66,17 @@ void prepare_3D::renew_weight(TString* weight, TString file, int f){ //global we
     double lumi_s[4]={19.5, 16.8, 41.48, 59.83};
     double lumi = lumi_s[year-2015];
     auto c0 = new TCanvas("c0", "c0", 8, 30, 600, 600);
-    TChain* tree1=new TChain("rawtree"); 
-    tree1->Add(dir+"/MC/"+file);
+    TChain* tree0=new TChain("rawtree"); 
+    tree0->Add(dir+"/MC/"+file);
     TH1D *nmc=new TH1D("nmc","",50,0,100);
     //nmc->Sumw2();
     c0->cd();
-    tree1->Draw("nJet>>nmc","Generator_weight");
+    tree0->Draw("nJet>>nmc","Generator_weight");
     //cout<<nmc->GetSumOfWeights()<<endl;
     float weight1=cross_sections[f]*lumi/(nmc->GetSumOfWeights())*K_Factors[f]*1000;
     //cout<<weight1<<endl;
     *weight = Form("%f*", weight1) + (*weight);
-    delete tree1;
+    delete tree0;
     delete nmc;
     delete c0;
 }

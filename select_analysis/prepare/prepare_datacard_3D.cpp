@@ -3,7 +3,6 @@ void prepare_datacard_3D(int i, int year){
     TString cuts[] = {"(jet_num == 3 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
                       "(jet_num == 3 && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
-    TString div_name[4] = {"_y0", "_y1", "_y2", "_y3"};
     int xyz_bins[] = {270, 40, 37};
     double xyz_range[] = {300, 3000, 0, 4.0, 13, 50};
 
