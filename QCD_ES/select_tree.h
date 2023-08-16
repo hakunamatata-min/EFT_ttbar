@@ -20,9 +20,8 @@ class select_tree{
 private:
     TString input;
     int year;
-    bool is_data;
     int category;
-    int QCD_EM; //0:no; 1:EMEnriched; 2:MuEnriched
+    int type; //0:no; 1:EM; 2:Muon
     TChain* chain;
     TFile* output;
     Float_t btag_criteria;
@@ -95,7 +94,7 @@ private:
     Bool_t tight_noiso(Int_t i);
     Int_t iso_select(Int_t i);
 public:
-    select_tree(TString inputfile, TString outputFile, int s_year, int s_cate, bool s_data, int em, int num_j, int num_e, int num_m, int num_g = 0);//type: 0:MC; 1:EGMMA; 2:SingleMuon
+    select_tree(TString inputfile, TString outputFile, int s_year, int s_cate, int s_type, int num_j, int num_e, int num_m, int num_g = 0);//type: 0:MC; 1:EGMMA; 2:SingleMuon
     void write();
     ~select_tree(); 
 };
