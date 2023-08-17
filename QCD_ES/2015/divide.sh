@@ -19,7 +19,7 @@ do
             temp=${dataset%%-pythia8*}
         else
             temp=${dataset/\/Run/_Run}
-            temp=${temp%%-UL*}
+            temp=${temp%%_UL*}
         fi
         process=${temp:1}
         #dasgoclient --query "file dataset=$dataset" > ${process}.txt
