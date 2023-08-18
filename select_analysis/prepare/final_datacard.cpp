@@ -217,10 +217,10 @@ void sum(TString cut_name, int t, int year, int like_cut, int* ycut, int nycut, 
                         {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}};
     int num_sig = 5;
     auto process = std::vector<TString>{"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD", "data_obs"};;
-    int num_pro = process.size() - 1 ;
-    int beg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, num_sig, num_sig, num_sig+1, num_sig+1, num_sig+2, num_sig+2, 0, 0, 0, 0, 0, 0, 0, num_pro-1};
-    int end[] = {num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_pro-1, num_sig+1, num_sig+1, num_sig+2, num_sig+2, num_sig+3, num_sig+3, num_pro-1, num_pro-1, num_sig, num_sig, num_sig, num_sig, num_sig, num_pro};
-    num_pro = process.size() - 2 ;
+    int num_pro = process.size();
+    int beg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, num_sig, num_sig, num_sig+1, num_sig+1, num_sig+2, num_sig+2, 0, 0, 0, 0, 0, 0, 0, num_pro-2};
+    int end[] = {num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_pro-2, num_sig+1, num_sig+1, num_sig+2, num_sig+2, num_sig+3, num_sig+3, num_pro-1, num_pro-1, num_sig, num_sig, num_sig, num_sig, num_sig, num_pro-1};
+
     double yield;
     ofstream card;
     TString category="ttbar"+cut_name+Form("_%d", year);
@@ -243,9 +243,7 @@ void sum(TString cut_name, int t, int year, int like_cut, int* ycut, int nycut, 
     }
     file = TFile::Open(path2+"ttbar"+cut_name+".root");
     
-    for(int c=0; c<1; c++){
-        if(process[c].Contains("QCD"))//no QCD now
-            continue;
+    for(int c=0; c<num_pro; c++){
         h1 = new TH1D(process[c], "", bin_num, 0, bin_num);
         for(int f=0; f<num; f++){
             hmc31[f] = (TH3D*)file->Get(process[c]+"_sub");
