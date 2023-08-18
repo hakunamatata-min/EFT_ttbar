@@ -507,10 +507,6 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
                 //mu_trigger=HLT_Mu50||HLT_OldMu100||HLT_TkMu100;
                 ele_trigger=HLT_Ele23_CaloIdM_TrackIdM_PFJet30;
                 mu_trigger=HLT_Mu27;
-                if(type == 1)
-                    mu_trigger = false;
-                else if(type == 2)
-                    ele_trigger = false;
             }
         }
         else if(year==2016||year==2015){
@@ -537,6 +533,10 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
                 mu_trigger=HLT_Mu27;
             }
         }
+        if(type == 1)
+            mu_trigger = false;
+        else if(type == 2)
+            ele_trigger = false;
         met_match = true;
         for(int i=0; i<nFlag_met; i++){
             met_match *= Flag_met[i];
