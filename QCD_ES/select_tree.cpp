@@ -498,7 +498,7 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
             rawtree->Fill();
         index = entry;
         if(year==2018){
-            if(category<2){
+            if(category < 2){
                 ele_trigger=HLT_Ele32_WPTight_Gsf;
                 mu_trigger=HLT_IsoMu24;
             }
@@ -510,7 +510,7 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
             }
         }
         else if(year==2016||year==2015){
-            if(category<2){
+            if(category < 2){
                 ele_trigger=HLT_Ele27_WPTight_Gsf;
                 mu_trigger=HLT_IsoMu24||HLT_IsoTkMu24;
             }
@@ -522,7 +522,7 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
             }
         }
         else{
-            if(category<2){
+            if(category < 2){
                 ele_trigger=HLT_Ele35_WPTight_Gsf;
                 mu_trigger=HLT_IsoMu27;
             }
@@ -533,10 +533,12 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
                 mu_trigger=HLT_Mu27;
             }
         }
-        if(type == 1)
-            mu_trigger = false;
-        else if(type == 2)
-            ele_trigger = false;
+        if(category >= 2){
+            if(type == 1)
+                mu_trigger = false;
+            else if(type == 2)
+                ele_trigger = false;
+        }
         met_match = true;
         for(int i=0; i<nFlag_met; i++){
             met_match *= Flag_met[i];
