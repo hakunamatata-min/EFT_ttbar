@@ -115,10 +115,10 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     //Lepton_triggers in C and D regions have prescales
     TString dataset = "";
     if(g>1 && cut_name.Contains("M"))
-        dataset = "S";
+        dataset = "M";
     else if(g>1 && cut_name.Contains("E"))
         dataset = "E"; 
-    Double_t pre_scale_year[][2] = {{1536.28, 474.95}, {1536.28, 474.95}, {1536.28, 474.95}, {1536.28, 474.95}};
+    Double_t pre_scale_year[][2] = {{572.37, 143.42}, {572.37, 143.42}, {1085.83, 224.41}, {1536.28, 474.95}};
     Double_t pre_scale;
     if(g < 2)
         pre_scale = 1.0;
@@ -148,7 +148,7 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
 
     TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+".root", "recreate");
     TChain* data_tree = new TChain("mytree");
-    data_tree->Add(input_path+"data/"+cg+"/new_data"+dataset+"*.root");
+    data_tree->Add(input_path+"data/"+cg+"/new_data_"+dataset+"*.root");
     auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600);
     c1->cd();
     data_tree->Draw("likelihood:fabs(rapidity_tt):mass_tt>>QCD_derived", cut+other_con1+other_con2);
