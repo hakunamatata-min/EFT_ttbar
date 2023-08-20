@@ -38,9 +38,9 @@ private:
     Int_t *Muon_charge, *Electron_charge;
     Float_t *Jet_btagDeepB, *Jet_btagDeepFlavB, *Jet_eta, *Jet_mass, *Jet_phi, *Jet_pt;
     Float_t *GenJet_pt, *GenJet_eta, *GenJet_phi, *GenJet_mass;
-    Int_t *Jet_partonFlavour;
+    Int_t *Jet_partonFlavour, *Jet_hadronFlavour;
     Float_t *Muon_pfRelIso04_all;
-    Int_t *Electron_cutBased, *Jet_jetId, PV_npvsGood;
+    Int_t *Electron_cutBased, *Jet_jetId;
     Bool_t *Muon_tightId, *Muon_looseId;
     UChar_t *Muon_highPtId;
     Float_t *Electron_deltaEtaSC, *Electron_dxy, *Electron_dz;
@@ -53,6 +53,7 @@ private:
     Float_t LHEPart_eta[9], LHEPart_mass[9], LHEPart_phi[9], LHEPart_pt[9];
     Int_t LHEPart_pdgId[9], LHEPart_status[9];
     UInt_t nLHEPart;
+    Int_t Pileup_nPU, PV_npvsGood;
 
     Float_t L1PreFiringWeight_Nom, L1PreFiringWeight_Up, L1PreFiringWeight_Dn; 
     Bool_t Flag_met[11];
@@ -61,7 +62,7 @@ private:
 
     Float_t lepton_mass, lepton_phi, lepton_eta, lepton_pt;
     Float_t *jet_btagDeepB, *jet_btagDeepFlavB, *jet_eta, *jet_pt, *jet_phi, *jet_mass;
-    Int_t *jet_partonFlavour;
+    Int_t *jet_partonFlavour, *jet_hadronFlavour;
     Float_t max_score;
     Float_t MtW;
     Float_t electron_deltaEtaSC;

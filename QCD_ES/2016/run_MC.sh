@@ -64,7 +64,7 @@ then
         cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/nnlo
         for outputFile in $(ls $output/new*.root)
         do
-            root -l -q -b ./nnlo_add.cpp"(\"$outputFile\",1)"
+            root -l -q -b ./nnlo_add.cpp"(\"$outputFile\",1,2016)"
         done
     fi
     cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/pileup

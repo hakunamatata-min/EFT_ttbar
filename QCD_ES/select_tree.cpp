@@ -1,6 +1,33 @@
 #include "select_tree.h"
 #include "reco.cpp"
 
+read_object::read_object(TString input, Bool_t type){
+    TChain* chain = new TChain("Events");
+    UInt_t nMuon, nJet, nElectron, nGenJet;
+    chain->Add(input);
+    cout<<input<<" is reading and processing"<<endl;
+    cout<<"total number of events: "<<chain->GetEntries()<<endl;
+    chain->SetBranchAddress("nMuon", &nMuon);
+    chain->SetBranchAddress("nJet", &nJet);
+    chain->SetBranchAddress("nElectron", &nElectron);
+    if(type)
+        chain->SetBranchAddress("nGenJet", &nGenJet);
+    nm = 0, ne = 0, nj = 0, ng = 0;
+    for(int num=0; num<chain->GetEntries(); num++){
+        chain->GetEntry(num);
+        if(nm < nMuon)
+            nm = nMuon;
+        if(ne < nElectron)
+            ne = nElectron;
+        if(nj < nJet)
+            nj=nJet;
+        if(type){
+            if(ng < nGenJet)
+                ng = nGenJet;
+        }
+    }
+    delete chain;
+}
 
 Bool_t select_tree::loose_noiso(Int_t i){
     Bool_t flag=true;
@@ -67,35 +94,6 @@ Int_t select_tree::iso_select(int i){
         }
     }
 }
-read_object::read_object(TString input, Bool_t type){
-    TChain* chain = new TChain("Events");
-    UInt_t nMuon, nJet, nElectron, nGenJet;
-    chain->Add(input);
-    cout << input << " is reading and processing" << endl;
-    cout << "total number of events: " << chain->GetEntries() << endl;
-    chain->SetBranchAddress("nMuon", &nMuon);
-    chain->SetBranchAddress("nJet", &nJet);
-    chain->SetBranchAddress("nElectron", &nElectron);
-    if(type)
-        chain->SetBranchAddress("nGenJet", &nGenJet);
-    nm=0, ne=0, nj=0, ng=0;
-    for(int num=0; num<chain->GetEntries(); num++){
-        chain->GetEntry(num);
-        if(nm<nMuon)
-            nm = nMuon;
-        if(ne<nElectron)
-            ne = nElectron;
-        if(nj<nJet)
-            nj=nJet;
-        if(type){
-            if(ng<nGenJet)
-                ng=nGenJet;
-        }
-    }
-    delete chain;
-}
-
-
 Bool_t select_tree::is_lep_from_jet(TLorentzVector mom_lep){
     Bool_t flag=false;
     if(category>1)
@@ -135,16 +133,20 @@ select_tree::select_tree(TString inputFile, TString outputFile, int sample_year,
         GenJet_eta = new Float_t[ng];
         jet_partonFlavour = new Int_t[nj];
         Jet_partonFlavour = new Int_t[nj];
+        jet_hadronFlavour = new Int_t[nj];
+        Jet_hadronFlavour = new Int_t[nj];
         chain->SetBranchAddress("nGenJet", &nGenJet);
         chain->SetBranchAddress("GenJet_eta", GenJet_eta);
         chain->SetBranchAddress("GenJet_pt", GenJet_pt);
         chain->SetBranchAddress("GenJet_phi", GenJet_phi);
         chain->SetBranchAddress("GenJet_mass", GenJet_mass);
         chain->SetBranchAddress("Jet_partonFlavour", Jet_partonFlavour);
+        chain->SetBranchAddress("Jet_hadronFlavour", Jet_hadronFlavour);
         chain->SetBranchAddress("Generator_weight",&Generator_weight);
         chain->SetBranchAddress("L1PreFiringWeight_Nom", &L1PreFiringWeight_Nom);
         chain->SetBranchAddress("L1PreFiringWeight_Up", &L1PreFiringWeight_Up);
         chain->SetBranchAddress("L1PreFiringWeight_Dn", &L1PreFiringWeight_Dn);
+        chain->SetBranchAddress("Pileup_nPU", &Pileup_nPU);
     }
 
     Electron_eta = new Float_t[ne];
@@ -307,8 +309,10 @@ Bool_t select_tree::select_jet(){
             jet_mass[i]=Jet_mass[jet_index[i]];
             jet_btagDeepB[i]=Jet_btagDeepB[jet_index[i]];
             jet_btagDeepFlavB[i]=Jet_btagDeepFlavB[jet_index[i]];
-            if(type == 0)
+            if(type == 0){
                 jet_partonFlavour[i]=Jet_partonFlavour[jet_index[i]];
+                jet_hadronFlavour[i]=Jet_hadronFlavour[jet_index[i]];
+            }
         }
     }
     return jet_flag;
@@ -665,11 +669,12 @@ void select_tree::write(){
         mytree->Branch("GenJet_phi", GenJet_phi, "GenJet_phi[nGenJet]/F");
         mytree->Branch("GenJet_mass", GenJet_mass, "GenJet_mass[nGenJet]/F");
         mytree->Branch("Generator_weight",&Generator_weight,"Generator_weight/F");
-        mytree->Branch("jet_partonFlavour", jet_partonFlavour, "jet_partonFlavour[jet_num]/I");
+        mytree->Branch("jet_hadronFlavour", jet_hadronFlavour, "jet_hadronFlavour[jet_num]/I");
         mytree->Branch("electron_deltaEtaSC",&electron_deltaEtaSC, "electron_deltaEtaSC/F");      
         mytree->Branch("L1PreFiringWeight_Nom",&L1PreFiringWeight_Nom,"L1PreFiringWeight_Nom/F");
         mytree->Branch("L1PreFiringWeight_Up",&L1PreFiringWeight_Up,"L1PreFiringWeight_Up/F");
         mytree->Branch("L1PreFiringWeight_Dn",&L1PreFiringWeight_Dn,"L1PreFiringWeight_Dn/F");
+        mytree->Branch("Pileup_nPU",&Pileup_nPU,"Pileup_nPU/I");
     }
 
     loop(mytree, rawtree);
@@ -692,6 +697,8 @@ select_tree::~select_tree(){
         delete[] GenJet_eta;
         delete[] jet_partonFlavour;
         delete[] Jet_partonFlavour;
+        delete[] jet_hadronFlavour;
+        delete[] Jet_hadronFlavour;
     }
     delete[] Electron_eta;
     delete[] Electron_mass;

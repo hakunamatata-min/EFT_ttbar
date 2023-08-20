@@ -5,25 +5,25 @@ read_object::read_object(TString input, int type){
     TChain* chain = new TChain("Events");
     UInt_t nMuon, nJet, nElectron, nGenJet;
     chain->Add(input);
-    cout << input << " is reading and processing" << endl;
-    cout << "total number of events: " << chain->GetEntries() << endl;
+    cout<<input<<" is reading and processing"<<endl;
+    cout<<"total number of events: "<<chain->GetEntries()<<endl;
     chain->SetBranchAddress("nMuon", &nMuon);
     chain->SetBranchAddress("nJet", &nJet);
     chain->SetBranchAddress("nElectron", &nElectron);
     if(type != 0)
         chain->SetBranchAddress("nGenJet", &nGenJet);
-    nm=0, ne=0, nj=0, ng=0;
+    nm = 0, ne = 0, nj = 0, ng = 0;
     for(int num=0; num<chain->GetEntries(); num++){
         chain->GetEntry(num);
-        if(nm<nMuon)
+        if(nm < nMuon)
             nm = nMuon;
-        if(ne<nElectron)
+        if(ne < nElectron)
             ne = nElectron;
-        if(nj<nJet)
+        if(nj < nJet)
             nj=nJet;
         if(type == 1){
-            if(ng<nGenJet)
-                ng=nGenJet;
+            if(ng < nGenJet)
+                ng = nGenJet;
         }
     }
     delete chain;
