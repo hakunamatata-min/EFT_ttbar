@@ -22,8 +22,8 @@ void set0(TH3D* h1){
         for(int j=0; j<=h1->GetNbinsY()+1; j++){
             for(int k=0; k<=h1->GetNbinsZ()+1; k++){
                 if(h1->GetBinContent(i, j, k) < 0){
-                    h1->SetBinContent(i, 0);
-                    h1->SetBinError(i, 0);
+                    h1->SetBinContent(i, j, k, 0);
+                    h1->SetBinError(i, j, k, 0);
                 }
             }
         }
@@ -47,7 +47,7 @@ void renew_weight(TString dir, TString* weight, TString file, int f, int year){ 
     double lumi = lumi_s[year-2015];
     auto c0 = new TCanvas("c0", "c0", 8, 30, 600, 600);
     TChain* tree1=new TChain("rawtree"); 
-    tree1->Add(dir+"/MC/"+file);
+    tree1->Add(dir+file);
     TH1D *nmc=new TH1D("nmc","",50,0,100);
     //nmc->Sumw2();
     c0->cd();
@@ -143,17 +143,16 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     hmc_b[1]->Sumw2();
     hmc_qa->Sumw2();
 
-    TString input_path = Form("../../QCD_analysis/output/%d/",year);
-    TString output_path = Form("../output/%d/QCD",year);
+    TString input_path = Form("./output/%d/",year);
+    TString output_path = Form("./output/%d/",year);
 
     TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+".root", "recreate");
     TChain* data_tree = new TChain("mytree");
     data_tree->Add(input_path+"data/"+cg+"/new_data_"+dataset+"*.root");
     auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600);
     c1->cd();
-    data_tree->Draw("likelihood:fabs(rapidity_tt):mass_tt>>QCD_derived", cut+other_con1+other_con2);
+    data_tree->Draw("likelihood:fabs(rapidity_tt):mass_tt>>QCD_other_removed", cut+other_con1+other_con2);
     hdata->Scale(pre_scale);
-    set0(hdata);
 
     TChain* MC_tree;
     for(int k=0; k<2; k++){
@@ -176,7 +175,7 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     cout<<"finished Control region"<<endl;
     //cout<<hdata->GetSumOfWeights()<<endl;
     hdata->Add(hmc_b[0], -1.0);//shape
-
+    set0(hdata);
     for(int j=edge[1]; j<edge[2]; j++){
         MC_tree = new TChain("mytree");
         MC_tree->Add(input_path+"MC/A/"+fileNames[j]);
