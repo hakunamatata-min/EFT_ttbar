@@ -30,6 +30,7 @@ void sum_TH1D(TH1D* hs, TH1D** h1, int* start, int num){
     }
     hs->ResetStats();
 }
+
 void get_TH1D(TH1D* h1, TString h1_name, TH3D* h3, int like_cut, int ycut_low, int ycut_up, int* xbins, int nbins){
     h1->SetBins(nbins, 0, nbins);
     h1->SetName(h1_name);
@@ -50,8 +51,10 @@ void get_TH1D(TH1D* h1, TString h1_name, TH3D* h3, int like_cut, int ycut_low, i
     //cout<<h1->GetSumOfWeights()<<endl;
     delete h3_1;
 }
-void derive_qcd(TString file){
+void convert_3Dto1D(){
     //choose to divide
+    TString input = "../select_analysis/output/2018/datacard/ttbar_M_4jets_3D.root";
+    TString output = "./ttbar_M_4jets_3D.root";
     double likelihood_cut = 1000;
     const int nycut = 4;
     int nbins[] = {9, 11, 10, 11};
@@ -59,7 +62,7 @@ void derive_qcd(TString file){
                                {0,400,450,500,550,600,650,700,800,1000,3000}, {0,450,550,650,700,750,800,900,1000,1200,1400,3000}};
     //convert
     int like_cut;
-    if(likelihood_cut <= 50.0 && likelihood_cut>=13.0)
+    if(likelihood_cut <= 50.0 && likelihood_cut >= 13.0)
         like_cut = int(likelihood_cut-13.0);
     else
         like_cut = -1;
@@ -84,35 +87,41 @@ void derive_qcd(TString file){
         }
     }
   
-    TFile *f = new TFile(file);
+    TFile *f = new TFile(input);
     TList *list = f->GetListOfKeys();
-    TFile *outFile = new TFile(file.ReplaceAll("_3D", ""), "recreate");
+    TFile *outFile = new TFile(output, "recreate");
     TKey *key;
     TIter iter(list); //or TIter iter(list->MakeIterator());
     static TString classname("TH3D");
-    int start[nycut];
+    int start[nycut+1];
     int bin_num = 0;
     for(int i=0; i<nycut; i++){
         start[i] = bin_num;
         bin_num += nbins[i];      
     }
+    start[nycut] = bin_num;
+    TString histname;
     while((key = (TKey*)iter())) {
         if (key->GetClassName() == classname) {
-        TH3D* hist3 = (TH3D*)key->ReadObj();
-        if(hist3) {
-            TH1D* hists = new TH1D;
-            TH1D* hist1 = new TH1D[4];
-            for(int f=0; f<nycut; f++){
-                get_TH1D(&hist1[f], hist3->GetName(), hist3, like_cut, ycut[f]+1, ycut[f+1], xbins[f], nbins[f]);
-                sum_TH1D();
+            TH3D* hist3 = (TH3D*)key->ReadObj();
+            histname = TString(hist3->GetName());
+            if(hist3) {
+                cout<<hist3->GetName()<<endl;
+                TH1D* hists = new TH1D(histname, "", bin_num, 0 ,bin_num);
+                TH1D* hist1[4];
+                for(int f=0; f<nycut; f++){
+                    hist1[f] = new TH1D;
+                    get_TH1D(hist1[f], histname+Form("_%d", f), hist3, like_cut, ycut[f]+1, ycut[f+1], xbins[f], nbins[f]);
+                }
+                sum_TH1D(hists, hist1, start, nycut);
+                outFile->cd();
+                hists->Write();
+                
+                delete hist3;
+                delete hists;
+                delete hist1[0]; delete hist1[1]; delete hist1[2]; delete hist1[3]; 
             }
-            outFile->WriteTObject(hist1);
-            delete hist3;
-            delete[] hist1;
-        }
         }
     }
-    outFile->cd();      
-    outFile->Write();
     outFile->Close();
 }
