@@ -28,7 +28,7 @@ class prepare{
 private:
     TFile* file;
     int year;
-    TString dir, outputDir, qcd_dir, pdf_dir;
+    TString dir, outputDir;
     //Double_t mtt_edges[9];
     //Double_t ytt_edges[10];
     double xbins[20];
@@ -60,6 +60,7 @@ private:
     void draw(int c, int s);
     void draw_data();
 public:
+    prepare(TString dir_s, TString outputDir_s);
     void run(TString cut_s, TString cut_name_s, int year_s, int s_num);
     void set_bins(TString xvar_s, TString title_s, int nbin, double *xbin);
     void set_bins(TString xvar_s, TString title_s, int nbin, double xlow_s, double xup_s);

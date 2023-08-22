@@ -126,9 +126,9 @@ void prepare::draw(int c){
     TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom" + other_con1 + other_con2;
     TH1D *h1, *hist;
     if(equal_bin)
-        hist = new TH1D(process[c]+"_sub", "", nbins, xlow, xup);
+        hist = new TH1D(process[c], "", nbins, xlow, xup);
     else
-        hist = new TH1D(process[c]+"_sub", "", nbins, 0, nbins);
+        hist = new TH1D(process[c], "", nbins, 0, nbins);
     if(c < 5)
         weight = weight + EW[c] + "*nnlo_wt";
     for(int i=edge_i[c]; i<edge_f[c]; i++){
@@ -166,20 +166,20 @@ void prepare::draw(int c, int s){
         hist_dn = new TH1D("hist_dn", "", nbins, 0, nbins);
     }
     if(c>4 && (sys_n[s].Contains("muR")||sys_n[s].Contains("muF"))){
-        hist_up->SetName(process[c]+"_"+sys_n[s]+Form("%dUp_sub",c-4));
-        hist_dn->SetName(process[c]+"_"+sys_n[s]+Form("%dDown_sub",c-4));
+        hist_up->SetName(process[c]+"_"+sys_n[s]+Form("%dUp",c-4));
+        hist_dn->SetName(process[c]+"_"+sys_n[s]+Form("%dDown",c-4));
     }
     else if(sys_n[s].Contains("SF_lepton") && cut_name.Contains("E_")){
-        hist_up->SetName(process[c]+"_SF_ElecUp_sub");
-        hist_dn->SetName(process[c]+"_SF_ElecDown_sub");
+        hist_up->SetName(process[c]+"_SF_ElecUp");
+        hist_dn->SetName(process[c]+"_SF_ElecDown");
     }
     else if(sys_n[s].Contains("SF_lepton") && cut_name.Contains("M_")){
-        hist_up->SetName(process[c]+"_SF_MuonUp_sub");
-        hist_dn->SetName(process[c]+"_SF_MuonDown_sub");
+        hist_up->SetName(process[c]+"_SF_MuonUp");
+        hist_dn->SetName(process[c]+"_SF_MuonDown");
     }
     else{
-        hist_up->SetName(process[c]+"_"+sys_n[s]+"Up_sub");
-        hist_dn->SetName(process[c]+"_"+sys_n[s]+"Down_sub");
+        hist_up->SetName(process[c]+"_"+sys_n[s]+"Up");
+        hist_dn->SetName(process[c]+"_"+sys_n[s]+"Down");
     }
     if(c < 5)
         weight = weight + EW[c] + "*nnlo_wt";
@@ -214,8 +214,6 @@ void prepare::draw(int c, int s){
 }
 
 void prepare::set_dir(){
-    dir = Form("../output/%d", year);
-    outputDir = Form("../sys_root/%d", year);
     const int nsample = 20;
     TString fileName[nsample] = {  
                             "new_TTToSemiLeptonic_TuneCP5_13TeV-powheg.root",
@@ -329,18 +327,20 @@ void prepare::draw_data(){
     delete h1;
     delete c0;
 }
-
+prepare::prepare(TString dir_s, TString outputDir_s){
+    dir = dir_s;
+    outputDir = outputDir_s;
+}
 void prepare::run(TString cut_s, TString cut_name_s, int year_s, int s_num){
-    year = year_s;
     signal_num = s_num;
+    year = year_s;
     set_dir();
     cut = cut_s;
     cut_name = cut_name_s;
     TString category=title+"_"+cut_name;
     file=new TFile(outputDir+"/"+category+".root","recreate");
-    
     for(int c=0; c<8; c++){
-        if(c<5 && c>signal_num)
+        if(c<5 && c>=signal_num)
             continue;
         draw(c);
         cout<<"finished nom of "<<process[c]<<endl;
@@ -348,7 +348,7 @@ void prepare::run(TString cut_s, TString cut_name_s, int year_s, int s_num){
     //add_qcd();
     for(int s=0; s<30; s++){
         for(int c=0; c<8; c++){
-            if(c<5 && c>signal_num)
+            if(c<5 && c>=signal_num)
                 continue;
             if(c>4 && s>22)//sys only for signal
                 break;
@@ -356,7 +356,7 @@ void prepare::run(TString cut_s, TString cut_name_s, int year_s, int s_num){
             cout<<"finished sys of "<<sys_n[s]<<" of "<<process[c]<<endl;
         }
     }
-    draw_data();
+    //draw_data();
 }
 prepare::~prepare(){
     file->Close();

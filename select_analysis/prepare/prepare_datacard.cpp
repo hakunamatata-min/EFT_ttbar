@@ -12,7 +12,9 @@ void prepare_datacard(int i, int j, int year){
     
     
     cout<<"begin "<<cutsName[i]<<":"<<endl;
-    prepare p; 
+    TString dir = Form("../output/%d", year);
+    TString outputDir = Form("../output/%d", year);
+    prepare p(dir, outputDir); 
     p.set_bins("mass_tt", "ttbar", nbins[j], xbins[j]);
     p.run(cuts[i]+div_con[j], cutsName[i]+div_name[j]+"_1D", year, 5);
 
