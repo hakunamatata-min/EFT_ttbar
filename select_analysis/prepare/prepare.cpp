@@ -317,11 +317,11 @@ void prepare::draw_data(){
     auto c0 = new TCanvas("c0", "c0", 8, 30, 600, 600); // temporary canvas
     TH1D* h1;
     if(equal_bin)
-        h1 = new TH1D("data", "", nbins, xlow, xup);
+        h1 = new TH1D(data_name, "", nbins, xlow, xup);
     else
-        h1 = new TH1D("data", "", nbins, 0, nbins);
+        h1 = new TH1D(data_name, "", nbins, 0, nbins);
     c0->cd();
-    chain_data.Draw(">>data", cut);
+    chain_data.Draw(xvar+">>"+data_name, cut);
     file->cd();
     h1->Write();
     delete h1;
@@ -350,13 +350,13 @@ void prepare::run(TString cut_s, TString cut_name_s, int year_s, int s_num){
         for(int c=0; c<8; c++){
             if(c<5 && c>=signal_num)
                 continue;
-            if(c>4 && s>22)//sys only for signal
+            if(c>4 && s>24)//sys only for signal
                 break;
             draw(c, s);
             cout<<"finished sys of "<<sys_n[s]<<" of "<<process[c]<<endl;
         }
     }
-    //draw_data();
+    draw_data();
 }
 prepare::~prepare(){
     file->Close();
