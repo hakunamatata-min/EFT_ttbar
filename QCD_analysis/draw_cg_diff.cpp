@@ -64,8 +64,7 @@ void format_th(TH1D* h1, TString xtitle){
     h1->GetYaxis()->SetRangeUser(0.0, h1->GetMaximum()*1.5);
     //h1->GetYaxis()->SetRangeUser(-0.2, 0.25);
 }
-void draw_pre(TString behind, TString dir){
-    TString cg[] = {"_B", "_C", "_D"};
+void draw_pre(TString cut, int year){
     TString cg_n[] = {"B", "C", "D"};
     TString title[] = {"top_pt", "Mtt", "deltay"};
     int color[] = {2, 1, 4};
@@ -79,11 +78,11 @@ void draw_pre(TString behind, TString dir){
         format_leg(leg);
         format_canvas(c2);
         for(int f=0; f<3; f++){
-            file = new TFile("./QCD_1D/QCD"+behind+cg[f]+".root");
-            h1 = (TH1D*)file->Get(title[i]);
+            file = TFile::Open(Form("./output/%d/QCD_root/QCD", year)+cut+"_"+cg_n[f]+"_1D.root");
+            h1 = (TH1D*)file->Get(title[i]+"_QCD_derived");
             c2->cd();
             cout<<h1->GetSumOfWeights()<<endl;
-            if(f==0){
+            if(f == 0){
                 h1->Draw("hist");
                 format_th(h1, xtitle[i]);
             }
@@ -96,14 +95,16 @@ void draw_pre(TString behind, TString dir){
         }
         c2->cd();
         leg->Draw();
-        c2->Print(dir+title[i]+".pdf");
+        c2->Print(Form("./pdf/%d/", year)+title[i]+"_diff.pdf");
         delete leg;
         delete c2;
     }
 }
 void draw_cg_diff(){
-    TString behind[] = {"_4jets", "_3jets", "_ s4jets"};
-    TString dir[] = {"./CG/CG_4jets/", "./CG/CG_3jets/", "CG/"};
-    for(int i=0; i<2; i++)
-        draw_pre(behind[i], dir[i]);
+    TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
+    int year[] = {2015, 2016, 2017, 2018};
+    for(int i=0; i<4; i++){
+        for(int y=0; y<4; y++)
+            draw_pre(cutsName[i], year[y]);
+    }
 }

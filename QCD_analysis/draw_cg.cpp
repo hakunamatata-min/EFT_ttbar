@@ -117,96 +117,28 @@ void set_ratio(TH1D* h1, double a){
     for(int i=1; i<=h1->GetNbinsX(); i++)
         h1->SetBinContent(i, a);
 }
-void draw(int dir_num, int c, int l, TString tex){
-    const int nsample = 29;
-    TString fileNames[nsample] = {  
-                            "new_TTToSemiLeptonic_TuneCP5_13TeV-powheg.root",
-                            "new_TTTo2L2Nu_TuneCP5_13TeV-powheg.root",
-                            "new_TTToHadronic_TuneCP5_13TeV-powheg.root",
-
-                            "new_DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM.root",
-                            "new_DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM.root",
-                            "new_DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM.root",
-                            "new_DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM.root",
-                            "new_DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM.root",
-                            "new_DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM.root",
-                            "new_DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM.root",                           
-                            "new_DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM.root",
-                        
-                            "new_ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo.root",
-                            "new_ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin.root",
-                            "new_ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin.root",
-                            "new_ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg.root",
-                            "new_ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg.root",                                                                               
-                            
-                            "new_W1JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_W2JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_W3JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_W4JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
-                            //"new_WJetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
-                            /*"new_WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM.root",
-                            "new_WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM.root",*/
-
-                            "new_QCD_HT50to100_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT200to300_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph.root",};
-    Float_t cross_sections[nsample]={366.91, 89.05, 377.96,
-                                    169.9, 147.4, 41.0, 5.7, 1.4, 0.63, 0.15, 0.0036,
-                                    3.36, 136.02, 80.95, 35.6, 35.6,
-                                    8927.0, 2809.0, 826.3, 544.3,	
-                                    //53870.0,
-                                    //1264.0,1345.7, 359.7, 48.9, 12.1, 5.5, 1.3, 0.032,//LO
-                                    186100000.0, 23590000, 1555000, 324500, 30310, 6444, 1127, 109.8, 21.98};
-    Float_t K_Factor[nsample]={1.0, 1.0, 1.0,
-                                1.23,1.23,1.23,1.23,1.23,1.23,1.23,1.23,
-                                1.0,1.0,1.0,1.0,1.0,
-                                1.21,1.21,1.21,1.21,//1.21,1.21,1.21,1.21,
-                                0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
+    TString Enrich_name[2] = {"", "_En"};
     TString legend[] = {"tt","DY","single top","V+jets","QCD"};
     TString legendd = "data";
-    TString xtitle[] = {"M_{tl}","P_{T}^{l}","P_{T}^{leading-jet}","jet_num","p_{T}^{t}","M_{t#bar{t}}","#Deltay_{t#bar{t}}"};
+    TString cg_n[] = {"A", "B", "C", "D"};
+    TString cg = cg_n[g];
+    TString xtitle[] = {"p_{T}^{t}","M_{t#bar{t}}","#Deltay_{t#bar{t}}"};
     TString title[] = {"mass_tlep","lepton_pt","leading_pt","jet_num","top_pt","Mtt", "deltay"};
-    TString xvars[] = {"mass_tlep","lepton_pt","jet_pt[0]","jet_num","rectop_pt","mass_tt", "rapidity_tt"};
     Double_t xup[] = {400, 250, 400, 7, 500, 1500, 3};
-    Double_t xdown[] = {100, 0, 0, 3, 0, 300, -3};
+    Double_t xlow[] = {100, 0, 0, 3, 0, 300, -3};
     Int_t bins[]={20, 20, 20, 4, 20, 20, 20};
-    TString date_name[][3] = {{"","",""},{"","",""},{"","E","S"},{"","E","S"}};
-    Double_t pre_scale[][3] = {{1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1.0, 1536.28, 474.95}, {1.0, 1536.28, 474.95}};
-    float lumi=59.83;
-    int edge[]={0,3,11,16,20,29};//23,31}; 
     int color[] = {97, 46, 9, 29, 209, kYellow, 93};
-    for(int i=0;i<nsample;i++)
-        fileNames[i]=fileNames[i].ReplaceAll(".root","*.root");
-    TString lep[] = {"*1","*(!lep_flavour)","*(lep_flavour)"};
-    TString lep_name[] = {"","_E","_M"};
-    TString cate[] = {"*1","*(jet_num>=4)","*(jet_num==3)"};
-    TString cate_name[] = {"","_4jets","_3jets"};
-    TString dir_name[]={"A","B","C","D"};
-    TString other_con1 = "((jet_num>=4)||(jet_num==3 && jet_pt[0]>50))";
-    //TString other_con2 = "*(lep_flavour||((!lep_flavour) && lepton_pt>34))";
-    //TString other_con1 = "*1";
-    TString other_con2 = "*1";
-    TChain *mytree;
-    TH1D *nmc, *hist, *h1[5];
-    TH1D *hdata, *hdatad, *hdata0, *hmc;
+
+    TH1D *hist, *hmc;
+    TH1D *hdata, *hdatad;
     TH1D* hratio[3];
     Double_t nums, events;
-    for(int i = 5; i < 7; i++){
+    TString path = Form("./output/%d/",year);
+    TFile* file = TFile::Open(path+"QCD_"+cut_name+"_"+cg+Enrich_name[isEnriched]+"_CG.root");
+    for(int var = 5; var < 7; var++){
         //if(i == 6)
         //    lep[0] = lep[0] + "*(mass_tt>500)";
-        auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600); // temporary canvas
         auto c2 = new TCanvas("c2", "c2", 8, 30, 650, 650);
         TPad *pad1 = new TPad("pad1","This is pad1",0.05,0.32,0.95,0.97);
     	TPad *pad2 = new TPad("pad2","This is pad2",0.05,0.02,0.95,0.32);
@@ -215,75 +147,30 @@ void draw(int dir_num, int c, int l, TString tex){
         TLegend *leg = new TLegend(0.70, .65, 1.00, .90);
         format_leg(leg);
         format_canvas(c2);
-        TChain* tree2 = new TChain("mytree");
-        tree2->Add("./data/"+dir_name[dir_num]+"/new_data"+date_name[dir_num][l]+"*.root");
-        hdata0 = new TH1D("data0", "", bins[i], xdown[i], xup[i]);
-        tree2->Draw(xvars[i]+">>data0",other_con1+other_con2+lep[l]+cate[c]);
-        hdata0->Scale(pre_scale[dir_num][l]);
-        delete tree2;
-
+        hdata = (TH1D*)file->Get("data");
         THStack* hstack = new THStack("hstack", "");
+        hmc = new TH1D("MC", "", bins[var], xlow[var], xup[var]);
         for (int k = 4; k >= 0; k--){
-            for(int j=edge[k];j<edge[k+1];j++){
-                TChain* tree=new TChain("mytree");
-                TChain* tree1=new TChain("rawtree"); 
-                tree->Add("./MC/"+dir_name[dir_num]+"/"+fileNames[j]);
-                tree1->Add("./MC/"+dir_name[dir_num]+"/"+fileNames[j]);
-                nmc=new TH1D("nmc","",50,0,100);
-                nmc->Sumw2();
-                c1->cd();
-                tree1->Draw("nJet>>nmc","Generator_weight");
-                //cout<<nmc->GetSumOfWeights()<<endl;   
-                float weight1=cross_sections[j]*lumi/(nmc->GetSumOfWeights())*K_Factor[j]*1000;
-                //cout<<weight1<<endl;
-                TString weight=Form("%f*Generator_weight*SF_btag_it*SF_lepton*"+other_con1+other_con2+lep[l]+cate[c],weight1);
-                if(k==0)
-                    weight = weight + "*nnlo_wt";
-                c1->cd();
-                hist = new TH1D("CG","", bins[i], xdown[i], xup[i]);
-                hist->Sumw2();
-                tree->Draw(xvars[i]+">>CG", weight);
-                //cout<<fileNames[j]<<": "<<hist->GetSumOfWeights()<<endl;
-                if(j==edge[k]){
-                    h1[k]=(TH1D*)hist->Clone();
-                    h1[k]->SetName(legend[k]);
-                }
-                else
-                    h1[k]->Add(hist);                
-                delete tree;
-                delete tree1;
-                delete nmc;
-                delete hist;
-            }
-            //cout<<legend[k]<<": "<<h1[k]->GetSumOfWeights()<<endl;
-            if(k==4)
-                hmc = (TH1D*) h1[k]->Clone();
-            else
-                hmc->Add(h1[k]);
-            h1[k]->SetFillColor(color[k]);
-            hstack->Add(h1[k]);
+            hist = (TH1D*)file->Get(title[var]);
+            hist->SetFillColor(color[k]);
+            hstack->Add(hist);
+            leg->AddEntry(hist, legend[k], "f");
+            delete hist;
         }
-        hdatad=(TH1D*)hdata0->Clone();
-        hdatad->SetName("hdatad");
-        hdata=(TH1D*)hdata0->Clone();
-        hdata->SetName("hdata");
-
-        //set0(hmc);
-        set0(hdata);
-        double max = hdata->GetMaximum()*1.3;
+        hdatad=(TH1D*)hdata->Clone();
+        hdatad->SetName("datad");
         hdatad->Divide(hmc);
         set0(hdatad);
+        set0(hdata);
         /*TPaveText *lt = new TPaveText(0.45,0.75,0.55,0.85,"NDC");
         format_text(lt);
         lt->AddText(tex);*/
         pad1->cd();
         hstack->Draw("hist");
         //lt->Draw("same");
-
-        format_stack(hstack, xtitle[i],max);
-        for(int k=0;k<5;k++)
-            leg->AddEntry(h1[k], legend[k], "f");
-        leg->AddEntry(hdata,legendd,"p");
+        double max = hdata->GetMaximum()*1.3;
+        format_stack(hstack, xtitle[var],max);
+        leg->AddEntry(hdata, legendd, "p");
         pad1->cd();
         leg->Draw("same");
         hdata->Draw("PSame");
@@ -292,42 +179,37 @@ void draw(int dir_num, int c, int l, TString tex){
     
         pad2->cd();
         gStyle->SetOptStat(0);
-        format_th(hdatad,xtitle[i]);
+        format_th(hdatad,xtitle[var]);
         hdatad->Draw("P");
         
         pad2->cd();
-
         for(int r=0; r<3; r++){
-            hratio[r]=new TH1D(Form("ratio%d",r),"",bins[i], xdown[i], xup[i]);
+            hratio[r]=new TH1D(Form("ratio%d",r),"",bins[var], xlow[var], xup[var]);
             set_ratio(hratio[r], 0.5*(r+1));
             hratio[r]->Draw("LSame");
             hratio[r]->SetLineStyle(7);
             hratio[r]->SetLineColor(1);
         }
-       
-        c2->Print("./qcd_pdf/"+dir_name[dir_num]+"/"+title[i]+lep_name[l]+cate_name[c]+".pdf");
-        for(int k=0; k<5; k++)
-            delete h1[k];
+    
+        c2->Print(Form("./pdf/%d/", year)+title[var]+cut_name+"/"+cg+".pdf");
         for(int k=0; k<3; k++)
             delete hratio[k];
         delete hdata;
         delete hdatad;
-        delete hdata0;
         delete hmc;
         delete hstack;
         delete leg;
         delete pad1;
         delete pad2;
-        delete c1;
         delete c2;
     }
 }
-void draw_cg(){
-    int dir[] = {1, 2, 3};
+void draw_cg( int g, int year, bool isEnriched){
+    TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
     TString tex1[] = {"", "e","#mu"};
     TString tex2[] = {"region B", "region C","region D"};
-    for(int i=0; i<3; i++)
-        draw(dir[i], 1, 2, "");
+    for(int i=0; i<4; i++)
+        draw(cutsName[i], g, year, isEnriched, "");
     /*for(int i=0; i<3; i++){
         for(int j=1; j<3; j++){
             draw(dir[i], 1, j, tex1[j]+", "+"4+jets, "+tex2[i]);

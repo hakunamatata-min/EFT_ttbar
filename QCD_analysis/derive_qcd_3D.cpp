@@ -30,19 +30,23 @@ void set0(TH3D* h1){
     }
 }
 void renew_weight(TString dir, TString* weight, TString file, int f, int year){ //global weight
-    const int nsample = 29;
+    const int nsample = 45;
     Float_t cross_sections[nsample]={366.91, 89.05, 377.96,
                                     169.9, 147.4, 41.0, 5.7, 1.4, 0.63, 0.15, 0.0036,
                                     3.36, 136.02, 80.95, 35.6, 35.6,
                                     8927.0, 2809.0, 826.3, 544.3,	
                                     //53870.0,
                                     //1264.0,1345.7, 359.7, 48.9, 12.1, 5.5, 1.3, 0.032,//LO
-                                    186100000.0, 23590000, 1555000, 324500, 30310, 6444, 1127, 109.8, 21.98};
+                                    186100000.0, 23590000, 1555000, 324500, 30310, 6444, 1127, 109.8, 21.98,
+                                    6401000.0, 1993000.0, 364000.0, 66600.0, 16620.0, 1101.0,
+                                    1367000.0, 381700.0, 87740.0, 21280.0, 7000.0, 622.6, 58.9, 18.12, 3.318, 1.085};
     Float_t K_Factor[nsample]={1.0, 1.0, 1.0,
                                 1.23,1.23,1.23,1.23,1.23,1.23,1.23,1.23,
                                 1.0,1.0,1.0,1.0,1.0,
                                 1.21,1.21,1.21,1.21,//1.21,1.21,1.21,1.21,
-                                0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+                                0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     double lumi_s[4]={19.5, 16.8, 41.48, 59.83};
     double lumi = lumi_s[year-2015];
     auto c0 = new TCanvas("c0", "c0", 8, 30, 600, 600);
@@ -60,8 +64,8 @@ void renew_weight(TString dir, TString* weight, TString file, int f, int year){ 
     delete nmc;
     delete c0;
 }
-void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, double* xyz_range){
-    const int nsample = 29;
+void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, double* xyz_range, bool isEnriched){
+    const int nsample = 45;
     int xbins = xyz_bins[0];
     int ybins = xyz_bins[1];
     int zbins = xyz_bins[2];
@@ -103,11 +107,40 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
                                   "new_QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph.root",
                                   "new_QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph.root",
                                   "new_QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph.root",};
+                                  "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph.root",
+                                  
+                                  "new_QCD_Pt-30to50_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-50to80_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-80to120_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-120to170_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-170to300_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-300toInf_EMEnriched_TuneCP5_13TeV.root",
+                                    
+                                  "new_QCD_Pt-30To50_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-50To80_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-80To120_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-120To170_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-170To300_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-300To470_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-470To600_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-600To800_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-800To1000_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-1000_MuEnrichedPt5_TuneCP5_13TeV.root"};
     
     TString cg_n[] = {"A", "B", "C", "D"};
     TString cg = cg_n[g];
-    int edge[]={0, 20, 29}; 
+    int edge_dn[]={0, 20}; 
+    int edge_up[]={20, 29};
+    if(isEnriched){
+        if(cut_name.Contains("E")){
+            edge_dn[1] = 29;
+            edge_up[1] = 35;
+        }
+        else if(cut_name.Contains("M")){
+            edge_dn[1] = 35;
+            edge_up[1] = 45;
+        }
+    }
     TString edge_name[] = {"other", "QCD"};
     for(int i=0;i<nsample;i++)
         fileNames[i]=fileNames[i].ReplaceAll(".root","*.root");
@@ -144,19 +177,20 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     hmc_qa->Sumw2();
 
     TString input_path = Form("./output/%d/",year);
-    TString output_path = Form("./output/%d/",year);
+    TString output_path = Form("./output/%d/QCD_root/",year);
 
-    TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+".root", "recreate");
+    TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+"_3D.root", "recreate");
     TChain* data_tree = new TChain("mytree");
     data_tree->Add(input_path+"data/"+cg+"/new_data_"+dataset+"*.root");
     auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600);
     c1->cd();
     data_tree->Draw("likelihood:fabs(rapidity_tt):mass_tt>>QCD_other_removed", cut+other_con1+other_con2);
     hdata->Scale(pre_scale);
+    delete data_tree;
 
     TChain* MC_tree;
     for(int k=0; k<2; k++){
-        for(int j=edge[k]; j<edge[k+1]; j++){
+        for(int j=edge_dn[k]; j<edge_up[k]; j++){
             MC_tree = new TChain("mytree");
             MC_tree->Add(input_path+"MC/"+cg+"/"+fileNames[j]);
             TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
@@ -176,7 +210,7 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     //cout<<hdata->GetSumOfWeights()<<endl;
     hdata->Add(hmc_b[0], -1.0);//shape
     set0(hdata);
-    for(int j=edge[1]; j<edge[2]; j++){
+    for(int j=edge_dn[1]; j<edge_up[1]; j++){
         MC_tree = new TChain("mytree");
         MC_tree->Add(input_path+"MC/A/"+fileNames[j]);
         TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
@@ -214,7 +248,7 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     delete c1;
     file->Close();
 }
-void derive_qcd_3D(int i, int g, int year){
+void derive_qcd_3D(int i, int g, int year, bool isEnriched){
     //TString cg[] = {"A", "B", "C", "D"};
     TString cuts[] = {"(jet_num == 3 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
         "(jet_num == 3  && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
@@ -223,5 +257,5 @@ void derive_qcd_3D(int i, int g, int year){
     int nbins[] = {9, 11, 10, 11};
     int xyz_bins[] = {270, 40, 37};
     double xyz_range[] = {300, 3000, 0, 4.0, 13, 50};
-    derive(cuts[i], cutsName[i], g, year, xyz_bins, xyz_range);
+    derive(cuts[i], cutsName[i], g, year, xyz_bins, xyz_range, isEnriched);
 } 

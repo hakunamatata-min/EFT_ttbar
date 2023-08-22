@@ -56,9 +56,9 @@ void renew_weight(TString dir, TString* weight, TString file, int f, int year){ 
     delete nmc;
     delete c0;
 }
-void derive(TString cut, TString cut_name, int g, int year){
-    const int nsample = 29;
-
+void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
+    const int nsample = 45;
+    TString Enrich_name[2] = {"", "_En"}; 
     TString fileNames[nsample] = {"new_TTToSemiLeptonic_TuneCP5_13TeV-powheg.root",
                                   "new_TTTo2L2Nu_TuneCP5_13TeV-powheg.root",
                                   "new_TTToHadronic_TuneCP5_13TeV-powheg.root",
@@ -91,7 +91,24 @@ void derive(TString cut, TString cut_name, int g, int year){
                                   "new_QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph.root",
                                   "new_QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph.root",
                                   "new_QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph.root",};
+                                  "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph.root",
+                                  "new_QCD_Pt-30to50_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-50to80_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-80to120_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-120to170_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-170to300_EMEnriched_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-300toInf_EMEnriched_TuneCP5_13TeV.root",
+                                    
+                                  "new_QCD_Pt-30To50_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-50To80_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-80To120_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-120To170_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-170To300_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-300To470_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-470To600_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-600To800_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-800To1000_MuEnrichedPt5_TuneCP5_13TeV.root",
+                                  "new_QCD_Pt-1000_MuEnrichedPt5_TuneCP5_13TeV.root"};
     TString title[] = {"likelihood","mass_t","mass_at","mass_wlep","mass_whad","mass_thad","mass_tlep","lepton_pt","leading_pt","jet_num","top_pt","Mtt", "deltay"};
     TString xvars[] = {"likelihood","mass_t","mass_at","mass_wlep","mass_whad","mass_thad","mass_tlep","lepton_pt","jet_pt[0]","jet_num","rectop_pt","mass_tt", "rapidity_tt"};
     Double_t xup[] = {50, 450, 450, 140, 140, 450, 450, 250, 400, 7, 500, 1500, 4};
@@ -100,7 +117,18 @@ void derive(TString cut, TString cut_name, int g, int year){
 
     TString cg_n[] = {"A", "B", "C", "D"};
     TString cg = cg_n[g];
-    int edge[]={0, 20, 29}; 
+    int edge_dn[]={0, 20}; 
+    int edge_up[]={20, 29};
+    if(isEnriched){
+        if(cut_name.Contains("E")){
+            edge_dn[1] = 29;
+            edge_up[1] = 35;
+        }
+        else if(cut_name.Contains("M")){
+            edge_dn[1] = 35;
+            edge_up[1] = 45;
+        }
+    }
     TString edge_name[] = {"other", "QCD"};
     for(int i=0;i<nsample;i++)
         fileNames[i]=fileNames[i].ReplaceAll(".root","*.root");
@@ -132,7 +160,7 @@ void derive(TString cut, TString cut_name, int g, int year){
     TString input_path = Form("./output/%d/",year);
     TString output_path = Form("./output/%d/",year);
 
-    TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+"_1D.root", "recreate");
+    TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+Enrich_name[isEnriched]+"_1D.root", "recreate");
     TChain* data_tree = new TChain("mytree");
     data_tree->Add(input_path+"data/"+cg+"/new_data_*"+dataset+"*.root");
     auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600);
@@ -150,7 +178,7 @@ void derive(TString cut, TString cut_name, int g, int year){
         data_tree->Draw(xvars[var]+">>"+title[var]+"_QCD_other_removed", cut+other_con1+other_con2);
         hdata->Scale(pre_scale);
         for(int k=0; k<2; k++){
-            for(int j=edge[k]; j<edge[k+1]; j++){
+            for(int j=edge_dn[k]; j<edge_up[k]; j++){
                 MC_tree = new TChain("mytree");
                 MC_tree->Add(input_path+"MC/"+cg+"/"+fileNames[j]);
                 TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
@@ -171,7 +199,7 @@ void derive(TString cut, TString cut_name, int g, int year){
 
         hdata->Add(hmc_b[0], -1.0);//shape
         set0(hdata);
-        for(int j=edge[1]; j<edge[2]; j++){
+        for(int j=edge_dn[1]; j<edge_up[1]; j++){
             MC_tree = new TChain("mytree");
             MC_tree->Add(input_path+"MC/A/"+fileNames[j]);
             TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
@@ -211,11 +239,11 @@ void derive(TString cut, TString cut_name, int g, int year){
     
     file->Close();
 }
-void derive_qcd_1D(int i, int g, int year){
+void derive_qcd_1D(int i, int g, int year, bool isEnriched){
     //TString cg[] = {"A", "B", "C", "D"};
     TString cuts[] = {"(jet_num == 3 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
         "(jet_num == 3  && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
 
-    derive(cuts[i], cutsName[i], g, year);
+    derive(cuts[i], cutsName[i], g, year, isEnriched);
 } 

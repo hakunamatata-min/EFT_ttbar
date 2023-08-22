@@ -51,10 +51,8 @@ void get_TH1D(TH1D* h1, TString h1_name, TH3D* h3, int like_cut, int ycut_low, i
     //cout<<h1->GetSumOfWeights()<<endl;
     delete h3_1;
 }
-void convert_3Dto1D(){
+void convert(TString input, TString output){
     //choose to divide
-    TString input = "../select_analysis/output/2018/datacard/ttbar_M_4jets_3D.root";
-    TString output = "./ttbar_M_4jets_3D.root";
     double likelihood_cut = 1000;
     const int nycut = 4;
     int nbins[] = {9, 11, 10, 11};
@@ -124,4 +122,19 @@ void convert_3Dto1D(){
         }
     }
     outFile->Close();
+}
+void convert_3Dto1D(){
+    TString cutsName[] = {"_E_3jets", "_E_4jets", "_M_3jets", "_M_4jets"};
+    TString cg_n[] = {"_B", "_C", "_D"};
+    TString year[] = {"2015", "2016", "2017", "2018"};
+    TString output, input;
+    for(int i=0; i<4; i++){
+        for(int y=0; y<4; y++){
+            for(int g=0; g<3; g++){
+                input = "./output/"+year[y]+"/QCD"+cutsName[i]+cg_n[g]+"_3D.root";
+                output = "./output/"+year[y]+"/QCD"+cutsName[i]+cg_n[g]+".root";
+                convert(input, output);
+            }
+        }
+    }
 }
