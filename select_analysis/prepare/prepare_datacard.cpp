@@ -9,9 +9,11 @@ void prepare_datacard(int i, int j, int year){
     int nbins[] = {9, 11, 10, 11};
     double xbins[][20] = {{0,300,340,380,420,460,500,600,800,3000}, {0,300,350,400,450,500,550,600,700,800,1000,3000}, 
                         {0,400,450,500,550,600,650,700,800,1000,3000}, {0,450,550,650,700,750,800,900,1000,1200,1400,3000}};
-
+    
+    
     cout<<"begin "<<cutsName[i]<<":"<<endl;
-    prepare* p = new prepare(cuts[i]+div_con[j], cutsName[i]+div_name[j], year, xbins[j], nbins[j]);
-    delete p;
+    prepare p; 
+    p.set_bins("mass_tt", "ttbar", nbins[j], xbins[j]);
+    p.run(cuts[i]+div_con[j], cutsName[i]+div_name[j]+"_1D", year, 5);
 
 }

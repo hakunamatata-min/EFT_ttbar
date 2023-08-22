@@ -106,7 +106,7 @@ void prepare_3D::draw(int c){
     for(int i=edge_i[c]; i<edge_f[c]; i++){
         weight_nom = weight;
         renew_weight(&weight_nom, fileNames[i], i);
-        TH3D* h1 = new TH3D("hm1", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
+        TH3D* h1 = new TH3D("h1", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
         h1->Sumw2();
         draw(h1, fileNames[i], "mytree", weight_nom);
         hist->Add(h1);
@@ -149,8 +149,8 @@ void prepare_3D::draw(int c, int s){
         give_sys_name(fileNames[i], weight, s, c);
         renew_weight(&weight_up, file_up, i);
         renew_weight(&weight_dn, file_dn, i);
-        TH3D* h1_up = new TH3D("CG_up", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
-        TH3D* h1_dn = new TH3D("CG_dn", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
+        TH3D* h1_up = new TH3D("h1_up", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
+        TH3D* h1_dn = new TH3D("h1_dn", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
         h1_up->Sumw2();
         h1_dn->Sumw2();
         draw(h1_up, file_up, tree_up, weight_up);

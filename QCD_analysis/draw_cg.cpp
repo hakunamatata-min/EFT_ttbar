@@ -184,7 +184,7 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
         
         pad2->cd();
         for(int r=0; r<3; r++){
-            hratio[r]=new TH1D(Form("ratio%d",r),"",bins[var], xlow[var], xup[var]);
+            hratio[r]=new TH1D(Form("ratio%d",r), "", bins[var], xlow[var], xup[var]);
             set_ratio(hratio[r], 0.5*(r+1));
             hratio[r]->Draw("LSame");
             hratio[r]->SetLineStyle(7);
@@ -204,12 +204,18 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
         delete c2;
     }
 }
-void draw_cg( int g, int year, bool isEnriched){
+void draw_cg(){
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
+    int year[] = {2015, 2016, 2017, 2018};
+    bool isEnriched = false;
     TString tex1[] = {"", "e","#mu"};
     TString tex2[] = {"region B", "region C","region D"};
     for(int i=0; i<4; i++)
-        draw(cutsName[i], g, year, isEnriched, "");
+        for(int y=0; y<4; y++){
+            for(int g=0; g<3; g++)
+                draw(cutsName[i], g, year[y], isEnriched, "");
+        }   
+        
     /*for(int i=0; i<3; i++){
         for(int j=1; j<3; j++){
             draw(dir[i], 1, j, tex1[j]+", "+"4+jets, "+tex2[i]);
