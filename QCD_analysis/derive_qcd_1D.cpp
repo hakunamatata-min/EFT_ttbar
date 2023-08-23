@@ -111,9 +111,9 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
                                   "new_QCD_Pt-1000_MuEnrichedPt5_TuneCP5_13TeV.root"};
     TString title[] = {"likelihood","mass_t","mass_at","mass_wlep","mass_whad","mass_thad","mass_tlep","lepton_pt","leading_pt","jet_num","top_pt","Mtt", "deltay"};
     TString xvars[] = {"likelihood","mass_t","mass_at","mass_wlep","mass_whad","mass_thad","mass_tlep","lepton_pt","jet_pt[0]","jet_num","rectop_pt","mass_tt", "rapidity_tt"};
-    Double_t xup[] = {50, 450, 450, 140, 140, 450, 450, 250, 400, 7, 500, 1500, 4};
-    Double_t xlow[] = {13, 50, 50, 50, 50, 50, 50, 0, 0, 3, 50, 200, -4};
-    Int_t bins[]={37, 40, 40, 36, 36, 40, 40, 20, 20, 4, 20, 20, 16};
+    Double_t xup[] = {50, 450, 450, 140, 140, 450, 450, 250, 400, 7, 500, 1500, 3};
+    Double_t xlow[] = {13, 50, 50, 50, 50, 50, 50, 0, 0, 3, 50, 200, -3};
+    Int_t bins[]={37, 40, 40, 36, 36, 40, 40, 20, 20, 4, 24, 24, 20};
 
     TString cg_n[] = {"A", "B", "C", "D"};
     TString cg = cg_n[g];
@@ -158,7 +158,7 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
     TH1D *hdata, *hmc_b[2], *hmc_qa;
 
     TString input_path = Form("./output/%d/",year);
-    TString output_path = Form("./output/%d/",year);
+    TString output_path = Form("./derived_roots/%d/",year);
 
     TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+Enrich_name[isEnriched]+"_1D.root", "recreate");
     TChain* data_tree = new TChain("mytree");
@@ -166,7 +166,7 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
     auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600);
 
     TChain* MC_tree;
-    for(int var=11; var<12; var++){
+    for(int var=0; var<13; var++){
         hdata = new TH1D(title[var]+"_QCD_other_removed", "", bins[var], xlow[var], xup[var]);//final QCD;
         hmc_b[0] = new TH1D(title[var]+"_other_MC_CG", "",  bins[var], xlow[var], xup[var]);
         hmc_b[1] = new TH1D(title[var]+"_QCD_MC_CG", "",  bins[var], xlow[var], xup[var]);
@@ -234,15 +234,14 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
         delete hdata;
         delete hqcd;
         delete hqcd_MCde;
-        delete c1;
     }
-    
+    delete c1;
     file->Close();
 }
 void derive_qcd_1D(int i, int g, int year, bool isEnriched){
     //TString cg[] = {"A", "B", "C", "D"};
-    TString cuts[] = {"(jet_num == 3 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
-        "(jet_num == 3  && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
+    TString cuts[] = {"(jet_num == 3 && (!lep_flavour)) && (likelihood < 20.0)","(jet_num >= 4  && (!lep_flavour))",
+                      "(jet_num == 3  && lep_flavour)  && (likelihood < 20.0)",  "(jet_num >= 4 && lep_flavour)"};
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
 
     derive(cuts[i], cutsName[i], g, year, isEnriched);

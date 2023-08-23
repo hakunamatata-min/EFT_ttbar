@@ -9,7 +9,7 @@ do
     do
         for c in ${year[*]}
         do
-            nohup root -l -q -b derive_qcd_3D.cpp"($a, $b, $c)"  >run_log/qcd_$a$b$c.txt 2>&1 &
+            nohup root -l -q -b derive_qcd_1D.cpp"($a, $b, $c, 0)"  >run_log/qcd_1D_$a$b$c.txt 2>&1 &
         done
     done
 done
