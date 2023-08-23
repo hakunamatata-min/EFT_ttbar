@@ -20,6 +20,7 @@
 #include<RooFit.h>
 #include<RooRealVar.h>
 #include<TKey.h>
+#include<map>
 using namespace std;
 using namespace RooFit;
 std::vector<TString> process_names; //names of sigal and bkg
@@ -29,6 +30,7 @@ std::vector<float> yield_array;  //rate(event yeild)
 std::vector<TString> cms_lumi;
 std::vector<TString> sysNames;
 std::vector<std::vector<TString>> sysnum;
+int num_pro;
 void Clear(){
     process_names.clear();
     process_id.clear();  
@@ -65,13 +67,13 @@ void push(int c, double yield, TString name, TString category, int num_sig, int 
     TString uns[] = {"1.012", "1.012", "1.023", "1.025"};
     cms_lumi.push_back(uns[year-2015]);
 }
-void push_sys(TString sys_n, int begin, int end, int num_pro){
+void push_sys(TString sys_n, bool sys_pro[9]){
     std::vector<TString> sys_num;
     for(int c=0; c<num_pro; c++){
-        if(c<begin || c>=end)
-            sys_num.push_back("-");
-        else
+        if(sys_pro[c])
             sys_num.push_back("1");
+        else
+            sys_num.push_back("-");
     }
     sysnum.push_back(sys_num);
     sysNames.push_back(sys_n);
@@ -119,32 +121,28 @@ void write(TString cut_name, int t, int year){
     Clear();
     TString type_nus[] = {"no/", "smooth/", "flat/"};
     TString path = "./datacard/"+type_nus[t];
-    TString input = path+"ttbar"+cut_name+Form("_%d.root", year);
-    TString sys[] = {"jes","jer","unclus","SF_lepton","SF_btag", Form("SF_btag%d", year), "SF_ltag", Form("SF_ltag%d", year), "pdf", "alphas", "L1PF", "PU", "muR1","muF1","muR2","muF2","muR3","muF3","ISR","FSR","mtop","hdamp","TuneCP5","nnlo_wt","EW_un", "qcds"};
-    TString sys_n;
-    if(cut_name.Contains("E"))
-        sys[4] = "SF_Elec";
-    else
-        sys[4] = "SF_Muon";
-    TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
-    
+    TString category="ttbar"+cut_name+Form("_%d", year);
+    cout<<path+category+".txt"<<endl;
+
+    ofstream card;
+    card.open (path+category+".txt");
+    TFile *file = TFile::Open(path+category+".root");;
 
     int num_sig = 5;
-    auto process = std::vector<TString>{"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD"};;
-    int num_pro = process.size() - 1;
-    int beg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, num_sig, num_sig, num_sig+1, num_sig+1, num_sig+2, num_sig+2, 0, 0, 0, 0, 0, 0, 0, num_pro-1};
-    int end[] = {num_pro, num_pro, num_pro, num_pro, num_pro, num_pro, num_pro, num_pro, num_pro, num_pro, num_pro, num_pro, num_sig+1, num_sig+1, num_sig+2, num_sig+2, num_sig+3, num_sig+3, num_pro, num_pro, num_sig, num_sig, num_sig, num_sig, num_sig, num_pro};
+    auto process = std::vector<TString>{"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets", "STop", "WJets", "QCD"};;
+    num_pro = process.size() - 1;
+    
+    TString sys[] = {"jer","unclus","SF_lepton","SF_btag", Form("SF_btag%d", year), "SF_ltag", Form("SF_ltag%d", year), "pdf", "alphas", "L1PF", "PU","muR1","muF1","muR2","muF2","muR3","muF3","ISR","FSR","mtop","hdamp","TuneCP5","nnlo_wt","EW_un", "qcds"};
+    bool sys_pro[34][9];
+    TString sys_n;
+    if(cut_name.Contains("E"))
+        sys[2] = "SF_Elec";
+    else
+        sys[2] = "SF_Muon";
+    TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
 
     double yield;
-    ofstream card;
-    TString category="ttbar"+cut_name+Form("_%d", year);
-    card.open (path+category+".txt");
-    cout<<path+category+".txt"<<endl;
-    
-    TFile *file;
     TH1D *h1;
-    file = TFile::Open(input);
-    cout<<input<<endl;
     for(int c=0; c<num_pro; c++){//no QCD now
         h1 = (TH1D*)file->Get(process[c]);
         yield = h1->GetSumOfWeights();
@@ -153,12 +151,22 @@ void write(TString cut_name, int t, int year){
             push(c, yield, process[c], category, num_sig, year);
         delete h1;
     }
-    for(int s=0; s<25; s++){
-        if(s == 0){
-            for(int sour=0; sour<10; sour++)
-                push_sys(sys[s]+"_"+jes_source[sour], beg[s], end[s], num_pro);
+    for(int s=0; s<34; s++){
+        if(s < 10){
+            sys_n = "jes_"+jes_source[s];
         }
-        push_sys(sys[s], beg[s], end[s], num_pro);
+        else
+            sys_n = sys[s-10];
+        for(int c=0; c<num_pro; c++){//Check if the sys exists for a given process
+            h1 = (TH1D*)file->Get(process[c]+"_"+sys_n+"Up");
+            if(h1 != NULL){
+                sys_pro[s][c] = true;
+                delete h1;
+            }
+            else
+                sys_pro[s][c] = false;
+        }
+        push_sys(sys_n, sys_pro[s]);
     }
     write_card(card, category, num_pro);
     card.close();

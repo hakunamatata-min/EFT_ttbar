@@ -161,9 +161,11 @@ void convert(TString cut_name, int t, int year){
     while((key = (TKey*)iter())) {
         if (key->GetClassName() == classname) {
             TH3D* hist3 = (TH3D*)key->ReadObj();
-            histname = TString(hist3->GetName());
-            histname.ReplaceAll("_sub", "");
             if(hist3) {
+                histname = TString(hist3->GetName());
+                histname.ReplaceAll("_sub", "");
+                if(histname.Contains("STop_pdf") || histname.Contains("STop_alphas"))//no pdf or alphas for STop
+                    continue;
                 cout<<histname<<endl;
                 TH1D* hists = new TH1D(histname, "", bin_num, 0 ,bin_num);
                 TH1D* hist1[4];

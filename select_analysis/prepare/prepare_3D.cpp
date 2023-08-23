@@ -296,6 +296,8 @@ prepare_3D::prepare_3D(TString cut_s, TString cut_name_s, int year_s, int* xyz_b
         for(int c=0; c<8; c++){
             if(c>4 && s>24)//sys only for signal
                 break;
+            if(c==5 && (s==23 || s==24))//no pdf or alphas for STop
+                break;
             draw(c, s);
             cout<<"finished sys of "<<sys_n[s]<<" of "<<process[c]<<endl;
         }
