@@ -117,10 +117,10 @@ void write_card(ofstream& card, TString category, int num_pro){
     }
 }
 
-void write(TString cut_name, int t, int year){
+void write(TString cut_name, int t, int year, TString datacard_name){
     Clear();
     TString type_nus[] = {"no/", "smooth/", "flat/"};
-    TString path = "./datacard/"+type_nus[t];
+    TString path = "./"+datacard_name+type_nus[t];
     TString category="ttbar"+cut_name+Form("_%d", year);
     cout<<path+category+".txt"<<endl;
 
@@ -171,16 +171,4 @@ void write(TString cut_name, int t, int year){
     write_card(card, category, num_pro);
     card.close();
     file->Close();
-}
-
-void write_datacard(){
-    TString cut_name[4]={"_E_3jets", "_E_4jets", "_M_3jets", "_M_4jets"};
-    int year[] = {2015, 2016, 2017, 2018};
-    for(int i=0; i<4; i++){
-        for(int y=0; y<4; y++){
-            for(int t=0; t<3; t++){
-                write(cut_name[i], t, year[y]);
-            }
-        }
-    }
 }
