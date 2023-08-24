@@ -118,11 +118,12 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
                             "new_QCD_Pt-1000_MuEnrichedPt5_TuneCP5_13TeV.root"};
     
 
-    TString title[] = {"mass_tlep","lepton_pt","leading_pt","jet_num","top_pt","Mtt", "deltay"};
-    TString xvars[] = {"mass_tlep","lepton_pt","jet_pt[0]","jet_num","rectop_pt","mass_tt", "rapidity_tt"};
-    Double_t xup[] = {400, 250, 400, 7, 500, 1500, 3};
-    Double_t xlow[] = {100, 0, 0, 3, 0, 300, -3};
-    Int_t bins[]={20, 20, 20, 4, 20, 20, 20};
+    TString title[] = {"likelihood","mass_t","top_pt","Mtt", "deltay"};
+    TString xvars[] = {"likelihood","mass_t","rectop_pt","mass_tt", "rapidity_tt"};
+    Double_t xup[] = {50, 450, 500, 1500, 3};
+    Double_t xlow[] = {13, 50, 50, 200, -3};
+    Int_t bins[]={37, 40, 24, 24, 20};
+
 
     TString dataset = "";
     if(g>1 && cut_name.Contains("M"))
@@ -167,17 +168,19 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
     TChain *mytree;
     TH1D  *hist, *h1;
     TH1D *hdata;
-    TString path = Form("./output/%d/",year);
-    TFile* file = new TFile(path+"QCD_"+cut_name+"_"+cg+Enrich_name[isEnriched]+"_CG.root", "recreate");
-    for(int var=5; var<7; var++){
+    TString inpath = Form("./output/%d/",year);
+    TString outpath = Form("./CG_roots/%d/",year);
+    TFile* file = new TFile(outpath+"QCD_"+cut_name+"_"+cg+Enrich_name[isEnriched]+".root", "recreate");
+    for(int var=0; var<5; var++){
         auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600); // temporary canvas
         TChain* data_tree = new TChain("mytree");
-        data_tree->Add(path+"data/"+cg+"/new_data*"+dataset+"*.root");
+        data_tree->Add(inpath+"data/"+cg+"/new_data*"+dataset+"*.root");
         hdata = new TH1D("data", "", bins[var], xlow[var], xup[var]);
         data_tree->Draw(xvars[var]+">>data", cut+other_con1+other_con2);
         hdata->Scale(pre_scale);
         file->cd();
         hdata->Write();
+        delete hdata;
         delete data_tree;
         
         for(int k=0; k<5; k++){
@@ -185,12 +188,12 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
             h1->Sumw2();
             for(int j=edge_dn[k]; j<edge_up[k]; j++){
                 TChain* tree=new TChain("mytree");
-                tree->Add(path+"MC/"+cg+"/"+fileNames[j]);
+                tree->Add(inpath+"MC/"+cg+"/"+fileNames[j]);
 
                 TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
                 if(k==0)
                     weight = weight + "*nnlo_wt";
-                renew_weight(path+"MC/"+cg+"/", &weight, fileNames[j], j, year);
+                renew_weight(inpath+"MC/"+cg+"/", &weight, fileNames[j], j, year);
                 c1->cd();
                 hist = new TH1D("hist","", bins[var], xlow[var], xup[var]);
                 hist->Sumw2();
@@ -205,14 +208,12 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
             delete h1;
         }
         delete c1;
-        file->Close();
     }
+    file->Close();
 }
-void draw_cg(int i, int g, int year, bool isEnriched){
+void derive_cg(int i, int g, int year, bool isEnriched){
     TString cuts[] = {"(jet_num == 3 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
         "(jet_num == 3  && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
-
-    for(int i=0; i<3; i++)
-       derive(cuts[i], cutsName[i], g, year, isEnriched);
+    derive(cuts[i], cutsName[i], g, year, isEnriched);
 } 
