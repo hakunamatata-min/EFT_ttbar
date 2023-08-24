@@ -49,17 +49,20 @@ then
     echo "input file: $dir"
     cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/QCD_ES
     input=$(ls $output|grep root)
-    root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,0)"
-    root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,1)"
-    root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,2)"
-    root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,3)"
+    if [[ $inputFile =~ "SingleElectron" ]];then
+        root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,1)"
+    elif [[ $inputFile =~ "DoubleEG" ]];then
+        root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,2)"
+        root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,3)"
+    else
+        root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,1)"
+        root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,2)"
+        root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2015,3)"
+    fi
     num=$(ls $output|grep new|wc -l)
-    if [ $num -eq 4 ]
+    if [ $num -gt 0 ]
     then
-        mv $(ls $output/new*_A.root)  ${eos}/A
-        mv $(ls $output/new*_B.root)  ${eos}/B
-        mv $(ls $output/new*_C.root)  ${eos}/C
-        mv $(ls $output/new*_D.root)  ${eos}/D
+        mv $(ls $output/new*.root) $eos
     else
 	    echo "Failed. task unfinished"
     fi

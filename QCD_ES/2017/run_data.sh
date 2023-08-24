@@ -49,17 +49,13 @@ then
     echo "input file: $dir"
     cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/QCD_ES
     input=$(ls $output|grep root)
-    root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2017,0)"
     root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2017,1)"
     root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2017,2)"
     root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2017,3)"
     num=$(ls $output|grep new|wc -l)
-    if [ $num -eq 4 ]
+    if [ $num -gt 0 ]
     then
-        mv $(ls $output/new*_A.root)  ${eos}/A
-        mv $(ls $output/new*_B.root)  ${eos}/B
-        mv $(ls $output/new*_C.root)  ${eos}/C
-        mv $(ls $output/new*_D.root)  ${eos}/D
+        mv $(ls $output/new*.root) $eos
     else
 	    echo "Failed. task unfinished"
     fi
