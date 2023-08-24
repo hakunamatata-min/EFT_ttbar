@@ -175,8 +175,8 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
         auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600); // temporary canvas
         TChain* data_tree = new TChain("mytree");
         data_tree->Add(inpath+"data/"+cg+"/new_data*"+dataset+"*.root");
-        hdata = new TH1D(xvars[var]+"_data", "", bins[var], xlow[var], xup[var]);
-        data_tree->Draw(xvars[var]+">>data", cut+other_con1+other_con2);
+        hdata = new TH1D(title[var]+"_data", "", bins[var], xlow[var], xup[var]);
+        data_tree->Draw(xvars[var]+">>"+title[var]+"_data", cut+other_con1+other_con2);
         hdata->Scale(pre_scale);
         file->cd();
         hdata->Write();

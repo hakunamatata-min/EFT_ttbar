@@ -126,19 +126,20 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
     TString process[] = {"ttbar", "DYJets", "STop", "WJets", "QCD"};
     TString xtitle[] = {"lnL","M_{t}","p_{T}^{t}","M_{t#bar{t}}","#Deltay_{t#bar{t}}"};
     TString title[] = {"likelihood","mass_t","top_pt","Mtt", "deltay"};
+    TString xvars[] = {"likelihood","mass_t","rectop_pt","mass_tt", "rapidity_tt"};
     Double_t xup[] = {50, 450, 500, 1500, 3};
     Double_t xlow[] = {13, 50, 50, 200, -3};
     Int_t bins[]={37, 40, 24, 24, 20};
 
     int color[] = {97, 46, 9, 29, 209, kYellow, 93};
 
-    TH1D *hist, *hmc;
+    TH1D *hist[5], *hmc;
     TH1D *hdata, *hdatad;
     TH1D* hratio[3];
     Double_t nums, events;
     TString path = Form("./CG_roots/%d/",year);
     TFile* file = TFile::Open(path+"QCD_"+cut_name+"_"+cg+Enrich_name[isEnriched]+".root");
-    for(int var = 0; var < 5; var++){
+    for(int var = 0; var < 1; var++){
         //if(i == 6)
         //    lep[0] = lep[0] + "*(mass_tt>500)";
         auto c2 = new TCanvas("c2", "c2", 8, 30, 650, 650);
@@ -149,19 +150,17 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
         TLegend *leg = new TLegend(0.70, .65, 1.00, .90);
         format_leg(leg);
         format_canvas(c2);
-        hdata = (TH1D*)file->Get("data");
+        hdata = (TH1D*)file->Get(xvars[var]+"_data");
         THStack* hstack = new THStack("hstack", "");
         hmc = new TH1D("MC", "", bins[var], xlow[var], xup[var]);
         for (int k = 3; k >= 0; k--){
-            hist = (TH1D*)file->Get(title[var]+"_"+process[k]);
-            hist->SetFillColor(color[k]);
-            hstack->Add(hist);
-            leg->AddEntry(hist, legend[k], "f");
-            delete hist;
+            hist[k] = (TH1D*)file->Get(title[var]+"_"+process[k]);
+            hist[k]->SetFillColor(color[k]);
+            hstack->Add(hist[k]);
+            leg->AddEntry(hist[k], legend[k], "f");
         }
         hdatad=(TH1D*)hdata->Clone();
         hdatad->SetName("datad");
-        cout<<hdatad->GetNbinsX()<<" "<<hmc->GetNbinsX()<<endl;
         hdatad->Divide(hmc);
         set0(hdatad);
         set0(hdata);
@@ -184,7 +183,7 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
         gStyle->SetOptStat(0);
         format_th(hdatad,xtitle[var]);
         hdatad->Draw("P");
-        
+
         pad2->cd();
         for(int r=0; r<3; r++){
             hratio[r]=new TH1D(Form("ratio%d",r), "", bins[var], xlow[var], xup[var]);
@@ -197,6 +196,8 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
         c2->Print(Form("./CG_pdf/%d/", year)+title[var]+cut_name+"_"+cg+".pdf");
         for(int k=0; k<3; k++)
             delete hratio[k];
+        for(int k=0; k<4; k++)
+            delete hist[k];
         delete hdata;
         delete hdatad;
         delete hmc;
@@ -213,9 +214,9 @@ void draw_cg(){
     bool isEnriched = false;
     TString tex1[] = {"", "e","#mu"};
     TString tex2[] = {"region B", "region C","region D"};
-    for(int i=0; i<4; i++)
-        for(int y=0; y<4; y++){
-            for(int g=1; g<4; g++)
+    for(int i=3; i<4; i++)
+        for(int y=3; y<4; y++){
+            for(int g=1; g<2; g++)
                 draw(cutsName[i], g, year[y], isEnriched, "");
         }   
         
