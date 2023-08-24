@@ -168,10 +168,14 @@ __MACOSX
 *.dSYM
 
 # Project files
+convert_3Dto1D.cpp
+write_datacard.cpp
 *.root
 *.pdf
 run_log
+combine/*sh
 !combine/datacard/**/*.root
+!combine/datacard_ttx/**/*.root
 !combine/**/limit*.root
 !test/**/datacard/**/sumed/**/*.root
 **/output/**/check.cpp

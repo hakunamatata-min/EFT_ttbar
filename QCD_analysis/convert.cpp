@@ -20,7 +20,6 @@
 #include<RooFit.h>
 #include<RooRealVar.h>
 #include<TKey.h>
-#include<map>
 using namespace std;
 void sum_TH1D(TH1D* hs, TH1D** h1, int* start, int num){
     for(int f=0; f<num; f++){
@@ -56,7 +55,7 @@ void set_val(TH1D* h1, double val){
 }
 
 void smooth_sys(TH1D* hist_sys, TH1D* hist_nom, int* start, int num, int option){
-    TH1D *hd_sys[4], *hd_nom[4];
+    TH1D *hd_sys[num], *hd_nom[num];
     double norm_sys = hist_sys->GetSumOfWeights();
     double norm_nom = hist_nom->GetSumOfWeights();
     for(int f=0; f<num; f++){
@@ -106,16 +105,7 @@ void get_TH1D(TH1D* h1, TString h1_name, TH3D* h3, int like_cut, int ycut_low, i
     //cout<<h1->GetSumOfWeights()<<endl;
     delete h3_1;
 }
-void convert(TString cut_name, int t, int year){
-    //choose to divide
-    TString type_nus[] = {"no/", "smooth/", "flat/"};
-    TString input = Form("../select_analysis/output/%d/datacard/ttbar", year)+cut_name+".root";
-    TString output = "./datacard/"+type_nus[t]+"ttbar"+cut_name+Form("_%d.root", year);
-    double likelihood_cut = 1000;
-    const int nycut = 4;
-    int nbins[] = {9, 11, 10, 11};
-    double xbins_user[nycut][20] = {{0,300,340,380,420,460,500,600,800,3000}, {0,300,350,400,450,500,550,600,700,800,1000,3000}, 
-                               {0,400,450,500,550,600,650,700,800,1000,3000}, {0,450,550,650,700,750,800,900,1000,1200,1400,3000}};
+void convert(TString input, TString output, double likelihood_cut, const int nycut, double* ycut_user, int* nbins, double (*xbins_user)[20]){
     //convert
     int like_cut;
     if(likelihood_cut <= 50.0 && likelihood_cut >= 13.0)
@@ -124,7 +114,6 @@ void convert(TString cut_name, int t, int year){
         like_cut = -1;
 
     int ycut[nycut+1];
-    double ycut_user[nycut] = {0.0, 0.4, 1.0, 2.0};
     for(int i=1; i<nycut; i++)
         ycut[i] = int((ycut_user[i]-0.0)/0.1);
     ycut[nycut] = 41;
@@ -149,7 +138,6 @@ void convert(TString cut_name, int t, int year){
     TKey *key;
     TIter iter(list); //or TIter iter(list->MakeIterator());
     static TString classname("TH3D");
-    map<TString, TH1D> h1_map;
     int start[nycut+1];
     int bin_num = 0;
     for(int i=0; i<nycut; i++){
@@ -163,43 +151,23 @@ void convert(TString cut_name, int t, int year){
             TH3D* hist3 = (TH3D*)key->ReadObj();
             if(hist3) {
                 histname = TString(hist3->GetName());
-                histname.ReplaceAll("_sub", "");
-                if(histname.Contains("STop_pdf") || histname.Contains("STop_alphas"))//no pdf or alphas for STop
-                    continue;
                 cout<<histname<<endl;
                 TH1D* hists = new TH1D(histname, "", bin_num, 0 ,bin_num);
-                TH1D* hist1[4];
+                TH1D* hist1[nycut];
                 for(int f=0; f<nycut; f++){
                     hist1[f] = new TH1D;
                     get_TH1D(hist1[f], histname+Form("_%d", f), hist3, like_cut, ycut[f]+1, ycut[f+1], xbins[f], nbins[f]);
                 }
                 sum_TH1D(hists, hist1, start, nycut);
-                h1_map[histname] = *hists;
+                hists->Write();
                 //cout<<&h1_map[histname]<<" "<<hists<<endl;
 
                 delete hist3;
                 delete hists;
-                delete hist1[0]; delete hist1[1]; delete hist1[2]; delete hist1[3]; 
+                for(int i=0; i<nycut; i++)
+                    delete hist1[i];
             }
         }
-    }
-    for(map<TString, TH1D>::iterator ii=h1_map.begin(); ii!=h1_map.end(); ++ii){
-        if(ii->first.Contains("Up") || ii->first.Contains("Down")){
-            smooth_sys(&ii->second, &h1_map[sys_to_nom(ii->first)], start, nycut, t);
-        }
-        outFile->cd();
-        ii->second.Write();
     }
     outFile->Close();
-}
-void convert_3Dto1D(){
-    TString cut_name[4]={"_E_3jets", "_E_4jets", "_M_3jets", "_M_4jets"};
-    int year[] = {2015, 2016, 2017, 2018};
-    for(int i=0; i<4; i++){
-        for(int y=0; y<4; y++){
-            for(int t=0; t<3; t++){
-                convert(cut_name[i], t, year[y]);
-            }
-        }
-    }
 }

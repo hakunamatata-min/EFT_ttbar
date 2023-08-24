@@ -13,7 +13,7 @@ observation   -1
 bin 	ttbar_M_3jets_2015	ttbar_M_3jets_2015	ttbar_M_3jets_2015	ttbar_M_3jets_2015	ttbar_M_3jets_2015	ttbar_M_3jets_2015	ttbar_M_3jets_2015	ttbar_M_3jets_2015	
 process 	ttbar_ci0000	ttbar_ci0100	ttbar_ci0010	ttbar_ci0001	ttbar_ci0200	DYJets	STop	WJets	
 process 	-4	-3	-2	-1	0	1	2	3	
-rate 	142269.969	135724.797	141087.984	141423.625	125302.039	1189.146	13988.225	7105.745	
+rate 	63912.781	60870.969	63332.984	63527.383	56039.105	447.302	5430.093	2203.877	
 cms_lumi	 lnN 	1.012	1.012	1.012	1.012	1.012	1.012	1.012	1.012	
 jes_Absolute	 shape 	1	1	1	1	1	1	1	1	
 jes_Absolute_2015	 shape 	1	1	1	1	1	1	1	1	
