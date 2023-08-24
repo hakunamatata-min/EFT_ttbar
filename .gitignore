@@ -170,10 +170,14 @@ __MACOSX
 # Project files
 convert_3Dto1D.cpp
 write_datacard.cpp
+
 *.root
 *.pdf
 run_log
 combine/*sh
+combine/output*
+combine/impact*
+!combine/output/
 !combine/datacard/**/*.root
 !combine/datacard_ttx/**/*.root
 !combine/**/limit*.root
