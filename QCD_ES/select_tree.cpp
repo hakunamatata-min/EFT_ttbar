@@ -244,37 +244,37 @@ select_tree::select_tree(TString inputFile, TString outputFile, int sample_year,
     chain->SetBranchAddress("luminosityBlock",&luminosityBlock);
     chain->SetBranchAddress("event",&event);
     chain->SetBranchAddress("run",&run);
-    chain->SetBranchAddress("HLT_Mu27",&HLT_Mu27);//new
-    chain->SetBranchAddress("HLT_Ele23_CaloIdM_TrackIdM_PFJet30",&HLT_Ele23_CaloIdM_TrackIdM_PFJet30);//new
+    chain->SetBranchAddress("HLT_Mu27", &HLT_Mu27);//new
+    chain->SetBranchAddress("HLT_Ele23_CaloIdM_TrackIdM_PFJet30", &HLT_Ele23_CaloIdM_TrackIdM_PFJet30);//new
     if(year==2018){
-        chain->SetBranchAddress("HLT_Ele32_WPTight_Gsf",&HLT_Ele32_WPTight_Gsf);
-        chain->SetBranchAddress("HLT_Ele115_CaloIdVT_GsfTrkIdT",&HLT_Ele115_CaloIdVT_GsfTrkIdT);
+        chain->SetBranchAddress("HLT_Ele32_WPTight_Gsf", &HLT_Ele32_WPTight_Gsf);
+        chain->SetBranchAddress("HLT_Ele115_CaloIdVT_GsfTrkIdT", &HLT_Ele115_CaloIdVT_GsfTrkIdT);
         
-        chain->SetBranchAddress("HLT_IsoMu24",&HLT_IsoMu24);
-        chain->SetBranchAddress("HLT_Mu50",&HLT_Mu50);
-        chain->SetBranchAddress("HLT_OldMu100",&HLT_OldMu100);
-        chain->SetBranchAddress("HLT_TkMu100",&HLT_TkMu100);
+        chain->SetBranchAddress("HLT_IsoMu24", &HLT_IsoMu24);
+        chain->SetBranchAddress("HLT_Mu50", &HLT_Mu50);
+        chain->SetBranchAddress("HLT_OldMu100", &HLT_OldMu100);
+        chain->SetBranchAddress("HLT_TkMu100", &HLT_TkMu100);
         chain->SetBranchAddress("Flag_ecalBadCalibFilter", &Flag_met[10]);
         nFlag_met = 11;
     }
     else if(year==2016||year==2015){//2015 means 2016_pre
-        chain->SetBranchAddress("HLT_Ele27_WPTight_Gsf",&HLT_Ele27_WPTight_Gsf);
-        chain->SetBranchAddress("HLT_Ele115_CaloIdVT_GsfTrkIdT",&HLT_Ele115_CaloIdVT_GsfTrkIdT);
-        chain->SetBranchAddress("HLT_Photon175",&HLT_Photon175);
-        chain->SetBranchAddress("HLT_IsoMu24",&HLT_IsoMu24);
-        chain->SetBranchAddress("HLT_IsoTkMu24",&HLT_IsoTkMu24);
-        chain->SetBranchAddress("HLT_Mu50",&HLT_Mu50);
-        chain->SetBranchAddress("HLT_TkMu50",&HLT_TkMu50);
+        chain->SetBranchAddress("HLT_Ele27_WPTight_Gsf", &HLT_Ele27_WPTight_Gsf);
+        chain->SetBranchAddress("HLT_Ele115_CaloIdVT_GsfTrkIdT", &HLT_Ele115_CaloIdVT_GsfTrkIdT);
+        chain->SetBranchAddress("HLT_Photon175", &HLT_Photon175);
+        chain->SetBranchAddress("HLT_IsoMu24", &HLT_IsoMu24);
+        chain->SetBranchAddress("HLT_IsoTkMu24", &HLT_IsoTkMu24);
+        chain->SetBranchAddress("HLT_Mu50", &HLT_Mu50);
+        chain->SetBranchAddress("HLT_TkMu50", &HLT_TkMu50);
         nFlag_met = 10;
     }
     else{
-        chain->SetBranchAddress("HLT_Ele35_WPTight_Gsf",&HLT_Ele35_WPTight_Gsf);
-        chain->SetBranchAddress("HLT_Ele115_CaloIdVT_GsfTrkIdT",&HLT_Ele115_CaloIdVT_GsfTrkIdT);
-        chain->SetBranchAddress("HLT_Photon200",&HLT_Photon200);
-        chain->SetBranchAddress("HLT_IsoMu27",&HLT_IsoMu27);
-        chain->SetBranchAddress("HLT_Mu50",&HLT_Mu50);
-        chain->SetBranchAddress("HLT_OldMu100",&HLT_OldMu100);
-        chain->SetBranchAddress("HLT_TkMu100",&HLT_TkMu100);
+        chain->SetBranchAddress("HLT_Ele35_WPTight_Gsf", &HLT_Ele35_WPTight_Gsf);
+        chain->SetBranchAddress("HLT_Ele115_CaloIdVT_GsfTrkIdT", &HLT_Ele115_CaloIdVT_GsfTrkIdT);
+        chain->SetBranchAddress("HLT_Photon200", &HLT_Photon200);
+        chain->SetBranchAddress("HLT_IsoMu27", &HLT_IsoMu27);
+        chain->SetBranchAddress("HLT_Mu50", &HLT_Mu50);
+        chain->SetBranchAddress("HLT_OldMu100", &HLT_OldMu100);
+        chain->SetBranchAddress("HLT_TkMu100", &HLT_TkMu100);
         chain->SetBranchAddress("Flag_ecalBadCalibFilter", &Flag_met[10]);
         nFlag_met = 11;
     }
