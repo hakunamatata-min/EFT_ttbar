@@ -49,7 +49,7 @@ then
     echo "input file: $dir"
     cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/QCD_ES
     input=$(ls $output|grep root)
-    if [[ $inputFile =~ "QCD" ]]
+    if [[ $inputFile =~ "QCD" ]];then
         root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2018,0)"
     fi
     root -l -q -b ./process.cpp"(\"$output\",\"$inputFile\",\"$output/$input\",2018,1)"
