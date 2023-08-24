@@ -117,7 +117,7 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
                             "new_QCD_Pt-800To1000_MuEnrichedPt5_TuneCP5_13TeV.root",
                             "new_QCD_Pt-1000_MuEnrichedPt5_TuneCP5_13TeV.root"};
     
-
+    TString process[] = {"ttbar", "DYJets", "STop", "WJets", "QCD"};
     TString title[] = {"likelihood","mass_t","top_pt","Mtt", "deltay"};
     TString xvars[] = {"likelihood","mass_t","rectop_pt","mass_tt", "rapidity_tt"};
     Double_t xup[] = {50, 450, 500, 1500, 3};
@@ -184,7 +184,7 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
         delete data_tree;
         
         for(int k=0; k<5; k++){
-            h1 = new TH1D(title[var], "", bins[var], xlow[var], xup[var]);
+            h1 = new TH1D(title[var]+"_"+process[k], "", bins[var], xlow[var], xup[var]);
             h1->Sumw2();
             for(int j=edge_dn[k]; j<edge_up[k]; j++){
                 TChain* tree=new TChain("mytree");
