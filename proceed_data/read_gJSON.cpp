@@ -25,11 +25,11 @@ map<UInt_t, std::vector<UInt_t>> read_gJSON(int year){
     map<UInt_t, std::vector<UInt_t>> event_map;
     if(!file.is_open()){
         cout<<"open failed!"<<endl;
-        return;
+        return event_map;
     }
     if(!(reader.parse(file, valroot, false))){
         cout<<"parse failed!"<<endl;
-        return;
+        return event_map;
     }
     members = valroot.getMemberNames();
     for(Json::Value::Members::iterator it=members.begin(); it!=members.end(); it++){
