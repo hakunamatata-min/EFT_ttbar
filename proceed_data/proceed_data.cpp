@@ -27,7 +27,7 @@ void proceed_data(TString dir, int year, TString file, TString out){
         if(entry%500000 == 0){
             cout<<num_f<<endl;
             outFile = new TFile(dir+Form("new_data_%d", num_f)+out+".root","RECREATE");
-            mytree = new TTree("mytree", "selected data");
+            mytree =  (TTree*)oldtree.CloneTree(0);;
             num_f++;
         }
         event_id.first.first.first = run;
