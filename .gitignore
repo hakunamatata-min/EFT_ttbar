@@ -191,3 +191,4 @@ test_code
 err.txt
 *.vscode
 impact_z
+proceed_data/*.sh

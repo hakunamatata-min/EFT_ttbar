@@ -47,9 +47,10 @@ void add_weight_branch_tree(TString fileName, TString tree_name){
             //cout<<"weight[i]: "<<weight[i]<<endl;
         }
     }
+    file->cd();
     mytree->Write("",TObject::kOverwrite);
     delete mytree;
-    file->Close();        
+    file->Close();
 }
 void add_weight_branch(TString inputFile, bool is_sys, int year){
     TString trees[]={"jerUp", "jerDown", "unclusUp", "unclusDown"};
