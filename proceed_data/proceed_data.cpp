@@ -12,8 +12,6 @@ void proceed_data(TString dir, int year, TString file, TString out){
     oldtree.SetBranchAddress("luminosityBlock",&luminosityBlock);
     oldtree.SetBranchAddress("event",&event);
     oldtree.SetBranchAddress("run",&run);
-    if(year == 2015)
-        year = 2016;
     map<UInt_t, std::vector<UInt_t>> json_map = read_gJSON(year);
     int num_f = 0;
     pair<map<id, bool>::iterator, bool> isexsit;
