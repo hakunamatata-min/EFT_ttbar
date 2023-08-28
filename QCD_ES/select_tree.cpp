@@ -492,7 +492,6 @@ void select_tree::read_LHE(){
     }
 }
 void select_tree::loop(TTree* mytree, TTree* rawtree){
-    Bool_t ele_trigger, mu_trigger;
     Bool_t jet_flag, lep_flag, trigger_flag;
     for(int entry=0; entry<chain->GetEntries(); entry++){
         nLHEPart = 0;
@@ -626,14 +625,10 @@ void select_tree::write(){
     mytree->Branch("mass_jj", &mass_jj, "mass_jj/F");
     mytree->Branch("mass_lb", &mass_lb, "mass_lb/F");
     mytree->Branch("index", &index, "index/I");
-
-    if(year==2018){
-        mytree->Branch("HLT_Ele32_WPTight_Gsf",&HLT_Ele32_WPTight_Gsf,"HLT_Ele32_WPTight_Gsf/O");
-        mytree->Branch("HLT_Mu27",&HLT_Mu27,"HLT_Mu27/O");
-        mytree->Branch("HLT_IsoMu24",&HLT_IsoMu24,"HLT_IsoMu24/O");
-        mytree->Branch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30",&HLT_Ele23_CaloIdM_TrackIdM_PFJet30,"HLT_Ele23_CaloIdM_TrackIdM_PFJet30/O");
-    }
-
+    
+    mytree->Branch("ele_trigger", &ele_trigger, "ele_trigger/O");
+    mytree->Branch("mu_trigger", &mu_trigger, "mu_trigger/O");
+    
     if(type == true){
         mytree->Branch("run",&run,"run/i");
         mytree->Branch("luminosityBlock",&luminosityBlock,"luminosityBlock/i");

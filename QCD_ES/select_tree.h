@@ -59,7 +59,7 @@ private:
     Bool_t Flag_met[11];
     UInt_t nFlag_met;
     Bool_t met_match;
-
+    Bool_t ele_trigger, mu_trigger;
     Float_t lepton_mass, lepton_phi, lepton_eta, lepton_pt;
     Float_t *jet_btagDeepB, *jet_btagDeepFlavB, *jet_eta, *jet_pt, *jet_phi, *jet_mass;
     Int_t *jet_partonFlavour, *jet_hadronFlavour;
