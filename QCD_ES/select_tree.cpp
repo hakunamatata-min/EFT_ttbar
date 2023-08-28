@@ -1,6 +1,6 @@
 #include "select_tree.h"
 #include "reco.cpp"
-
+//type: 0:MC, 1:data
 read_object::read_object(TString input, Bool_t type){
     TChain* chain = new TChain("Events");
     UInt_t nMuon, nJet, nElectron, nGenJet;
@@ -10,7 +10,7 @@ read_object::read_object(TString input, Bool_t type){
     chain->SetBranchAddress("nMuon", &nMuon);
     chain->SetBranchAddress("nJet", &nJet);
     chain->SetBranchAddress("nElectron", &nElectron);
-    if(type)
+    if(!type)
         chain->SetBranchAddress("nGenJet", &nGenJet);
     nm = 0, ne = 0, nj = 0, ng = 0;
     for(int num=0; num<chain->GetEntries(); num++){
@@ -21,7 +21,7 @@ read_object::read_object(TString input, Bool_t type){
             ne = nElectron;
         if(nj < nJet)
             nj=nJet;
-        if(type){
+        if(!type){
             if(ng < nGenJet)
                 ng = nGenJet;
         }
@@ -55,7 +55,8 @@ Bool_t select_tree::tight_noiso(Int_t i){
     }
     return flag;
 }
-Int_t select_tree::iso_select(int i){
+Int_t select_tree::iso_select(Int_t i)
+{
     Float_t eta_sc = Electron_deltaEtaSC[i]+Electron_eta[i];
     Float_t iso_value = Electron_pfRelIso03_all[i];
     Float_t pt = Electron_pt[i];
@@ -106,7 +107,7 @@ Bool_t select_tree::is_lep_from_jet(TLorentzVector mom_lep){
     }
     return flag;
 }
-select_tree::select_tree(TString inputFile, TString outputFile, int sample_year, int s_cate, int s_type, int num_j, int num_e, int num_m, int num_g){ //type: 0:data; 1:MC nom; 2:MC sys 3:sys nom
+select_tree::select_tree(TString inputFile, TString outputFile, int sample_year, int s_cate, bool s_type, int num_j, int num_e, int num_m, int num_g){
     input = outputFile;
     year = sample_year;
     type = s_type;
@@ -126,7 +127,7 @@ select_tree::select_tree(TString inputFile, TString outputFile, int sample_year,
     chain->SetBranchAddress("nJet", &nJet);
     chain->SetBranchAddress("nElectron", &nElectron);
 
-    if(type == 0){
+    if(type == false){
         GenJet_pt = new Float_t[ng];
         GenJet_mass = new Float_t[ng];
         GenJet_phi = new Float_t[ng];
@@ -309,7 +310,7 @@ Bool_t select_tree::select_jet(){
             jet_mass[i]=Jet_mass[jet_index[i]];
             jet_btagDeepB[i]=Jet_btagDeepB[jet_index[i]];
             jet_btagDeepFlavB[i]=Jet_btagDeepFlavB[jet_index[i]];
-            if(type == 0){
+            if(type == false){
                 jet_partonFlavour[i]=Jet_partonFlavour[jet_index[i]];
                 jet_hadronFlavour[i]=Jet_hadronFlavour[jet_index[i]];
             }
@@ -361,13 +362,11 @@ Bool_t select_tree::select_lep(){
                 if(Muon_tightId[i-nElectron]==1 && Muon_pfRelIso04_all[i-nElectron]<=sel_muon_isoup[category] && Muon_pfRelIso04_all[i-nElectron]>=sel_muon_isodown[category] 
                     && Muon_pt[i-nElectron]>30 && fabs(Muon_eta[i-nElectron])<2.4 && (!is_from_jet))
                 {
-                    if(category<2||(Muon_highPtId[i-nElectron]!=0 && Muon_pt[i-nElectron]>52)){
-                        lep_c = Muon_charge[i-nElectron];
-                        mom_lep = p4_lepton;
-                        lep_flavour=true;
-                        lepton_flag=true;
-                        electron_deltaEtaSC = 0;
-                    }
+                    lep_c = Muon_charge[i-nElectron];
+                    mom_lep = p4_lepton;
+                    lep_flavour=true;
+                    lepton_flag=true;
+                    electron_deltaEtaSC = 0;
                 }
             }
         }
@@ -498,7 +497,7 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
     for(int entry=0; entry<chain->GetEntries(); entry++){
         nLHEPart = 0;
         chain->GetEntry(entry);
-        if(type == 0)
+        if(type == false)
             rawtree->Fill();
         index = entry;
         if(year==2018){
@@ -536,12 +535,6 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
                 ele_trigger=HLT_Ele23_CaloIdM_TrackIdM_PFJet30;
                 mu_trigger=HLT_Mu27;
             }
-        }
-        if(category >= 2){
-            if(type == 1)
-                mu_trigger = false;
-            else if(type == 2)
-                ele_trigger = false;
         }
         met_match = true;
         for(int i=0; i<nFlag_met; i++){
@@ -586,7 +579,7 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
                 lepton_eta = mom_lep.Eta();
                 lepton_mass = mom_lep.M();
                 lepton_phi = mom_lep.Phi();
-                if(type == 0)
+                if(type == false)
                     read_LHE();
                 mytree->Fill();
             } // end of cut of minimum
@@ -641,7 +634,7 @@ void select_tree::write(){
         mytree->Branch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30",&HLT_Ele23_CaloIdM_TrackIdM_PFJet30,"HLT_Ele23_CaloIdM_TrackIdM_PFJet30/O");
     }
 
-    if(type != 0){
+    if(type == true){
         mytree->Branch("run",&run,"run/i");
         mytree->Branch("luminosityBlock",&luminosityBlock,"luminosityBlock/i");
         mytree->Branch("event",&event,"event/l");
@@ -679,7 +672,7 @@ void select_tree::write(){
 
     loop(mytree, rawtree);
     output->cd();
-    if(type == 0){
+    if(type == false){
         rawtree->Write();
         cout<<"there are "<<rawtree->GetEntries()<<" events"<<endl;
         delete rawtree;
@@ -690,7 +683,7 @@ void select_tree::write(){
     delete mytree;
 }
 select_tree::~select_tree(){
-    if(type == 0){
+    if(type == false){
         delete[] GenJet_pt ;
         delete[] GenJet_mass;
         delete[] GenJet_phi;
