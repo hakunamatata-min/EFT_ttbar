@@ -8,7 +8,7 @@ void proceed_data(TString dir, int year, TString file, TString out){
     TChain oldtree("mytree");
     oldtree.Add(dir+"new_"+file+".root");
     UInt_t luminosityBlock, run;
-    ULong64_t event;    
+    ULong64_t event;
     oldtree.SetBranchAddress("luminosityBlock",&luminosityBlock);
     oldtree.SetBranchAddress("event",&event);
     oldtree.SetBranchAddress("run",&run);
@@ -21,13 +21,13 @@ void proceed_data(TString dir, int year, TString file, TString out){
     TTree* mytree;
     cout<<oldtree.GetEntries()<<endl;
     for(int entry=0; entry<oldtree.GetEntries(); entry++){
-        oldtree.GetEntry(entry);
         if(entry%500000 == 0){
             cout<<num_f<<endl;
             outFile = new TFile(dir+Form("new_data_%d", num_f)+out+".root","RECREATE");
             mytree =  (TTree*)oldtree.CloneTree(0);;
             num_f++;
         }
+        oldtree.GetEntry(entry);
         event_id.first.first.first = run;
         event_id.first.first.second = luminosityBlock;
         event_id.first.second = event;
