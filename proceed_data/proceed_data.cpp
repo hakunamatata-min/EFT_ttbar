@@ -42,9 +42,9 @@ void proceed_data(TString dir, int year, TString file, TString out){
                     break;
                 }
             }
-            if(isexsit.second && injson)
-                mytree->Fill();
         }
+        if(isexsit.second && injson)
+            mytree->Fill();
         if((entry+1)%500000 == 0 || entry == oldtree.GetEntries()-1){
             outFile->cd();
             mytree->Write();
