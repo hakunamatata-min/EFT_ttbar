@@ -2,9 +2,9 @@
 void process(TString outdir, TString outputFile, TString input, int year, int cate){
     int num_j, num_e, num_m, num_g = 0;
     int type = 0;
-    if(outputFile.Contains("EMEnriched") || outputFile.Contains("EGamma") || outputFile.Contains("SingleElectron") || outputFile.Contains("DoubleEG"))
+    if(outputFile.Contains("EGamma") || outputFile.Contains("SingleElectron") || outputFile.Contains("DoubleEG"))
         type = 1;
-    else if(outputFile.Contains("MuEnrichedPt5") || outputFile.Contains("SingleMuon"))
+    else if(outputFile.Contains("SingleMuon"))
         type = 2;
     read_object r(input, !bool(type));
     select_tree *s;
