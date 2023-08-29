@@ -9,7 +9,7 @@ do
     do
         for c in ${year[*]}
         do
-            nohup root -l -q -b derive_cg.cpp"($a, $b, $c, 0)"  >run_log/cg_$a$b$c.txt 2>&1 &
+            nohup root -l -q -b derive_cg.cpp"($a, $b, $c)"  >run_log/cg_$a$b$c.txt 2>&1 &
         done
     done
 done

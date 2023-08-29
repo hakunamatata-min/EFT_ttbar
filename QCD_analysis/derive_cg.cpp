@@ -90,15 +90,15 @@ void derive(TString cut, TString cut_name, int g, int year){
                             "new_WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM.root",
                             "new_WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM.root",*/
 
-                            "new_QCD_HT50to100_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT200to300_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph.root",
-                            "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph.root",
+                            "new_QCD_HT50to100_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                            "new_QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                            "new_QCD_HT200to300_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                            "new_QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                            "new_QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                            "new_QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                            "new_QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                            "new_QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                            "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph*.root",
 
                             "new_QCD_Pt-30to50_EMEnriched_TuneCP5_13TeV.root",
                             "new_QCD_Pt-50to80_EMEnriched_TuneCP5_13TeV.root",
@@ -125,20 +125,14 @@ void derive(TString cut, TString cut_name, int g, int year){
     Double_t xlow[] = {13, 50, 50, 300, -3};
     Int_t bins[]={37, 40, 24, 24, 20};
 
-
-    TString dataset;
     Double_t pre_scale_year[][2] = {{369.84, 130.38}, {1570.17, 162.22}, {1085.83, 224.41}, {1536.28, 474.95}};
     Double_t pre_scale;
     if(g < 2)
         pre_scale = 1.0;
-    else if(cut_name.Contains("M")){
+    else if(cut_name.Contains("M"))
         pre_scale = pre_scale_year[year-2015][1];
-        dataset = "M";
-    }
-    else{
+    else
         pre_scale = pre_scale_year[year-2015][0];
-        dataset = "E"; 
-    }
     
     int edge_dn[7]={0, 3, 11, 16, 20, 20};//23,31};
     int edge_up[7]={3, 11, 16, 20, 21, 29};
@@ -155,7 +149,7 @@ void derive(TString cut, TString cut_name, int g, int year){
     TString cg = cg_n[g];
 
     for(int i=0;i<nsample;i++)
-        fileNames[i]=fileNames[i].ReplaceAll(".root","*_"+cg+".root");
+        fileNames[i]=fileNames[i].ReplaceAll(".root","_*_"+cg+".root");
 
     TString other_con1 = "*((jet_num>=4)||(jet_num==3 && jet_pt[0]>50))";
     TString other_con2;
@@ -172,7 +166,7 @@ void derive(TString cut, TString cut_name, int g, int year){
     for(int var=0; var<5; var++){
         auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600); // temporary canvas
         TChain* data_tree = new TChain("mytree");
-        data_tree->Add(inpath+"data/"+"new_data*"+dataset+"*_"+cg+".root");
+        data_tree->Add(inpath+"data/"+"new_data*"+cg+".root");
         hdata = new TH1D(title[var]+"_data", "", bins[var], xlow[var], xup[var]);
         data_tree->Draw(xvars[var]+">>"+title[var]+"_data", cut+other_con1+other_con2);
         hdata->Scale(pre_scale);
@@ -209,7 +203,7 @@ void derive(TString cut, TString cut_name, int g, int year){
     }
     file->Close();
 }
-void derive_cg(int i, int g, int year, bool isEnriched){
+void derive_cg(int i, int g, int year){
     TString cuts[] = {"(jet_num == 3 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
         "(jet_num == 3  && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
