@@ -21,7 +21,7 @@ private:
     TString input;
     int year;
     int category;
-    int type; //0:no; 1:EM; 2:Muon
+    bool type; //0:MC; 1:data
     TChain* chain;
     TFile* output;
     Float_t btag_criteria;
@@ -59,7 +59,7 @@ private:
     Bool_t Flag_met[11];
     UInt_t nFlag_met;
     Bool_t met_match;
-
+    Bool_t ele_trigger, mu_trigger;
     Float_t lepton_mass, lepton_phi, lepton_eta, lepton_pt;
     Float_t *jet_btagDeepB, *jet_btagDeepFlavB, *jet_eta, *jet_pt, *jet_phi, *jet_mass;
     Int_t *jet_partonFlavour, *jet_hadronFlavour;
@@ -95,7 +95,7 @@ private:
     Bool_t tight_noiso(Int_t i);
     Int_t iso_select(Int_t i);
 public:
-    select_tree(TString inputfile, TString outputFile, int s_year, int s_cate, int s_type, int num_j, int num_e, int num_m, int num_g = 0);//type: 0:MC; 1:EGMMA; 2:SingleMuon
+    select_tree(TString inputfile, TString outputFile, int s_year, int s_cate, bool s_type, int num_j, int num_e, int num_m, int num_g = 0);//type: 0:MC; 1:data
     void write();
     ~select_tree(); 
 };
