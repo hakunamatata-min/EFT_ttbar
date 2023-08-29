@@ -134,8 +134,8 @@ void derive(TString cut, TString cut_name, int g, int year){
     else
         pre_scale = pre_scale_year[year-2015][0];
     
-    int edge_dn[7]={0, 3, 11, 16, 20, 20};//23,31};
-    int edge_up[7]={3, 11, 16, 20, 21, 29};
+    int edge_dn[7]={0, 3, 11, 16, 20, 21};//23,31};
+    int edge_up[7]={3, 11, 16, 20, 21, 30};
     if(cut_name.Contains("E")){
         edge_dn[6] = 30;
         edge_up[6] = 36;

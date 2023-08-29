@@ -44,7 +44,7 @@ void renew_weight(TString dir, TString* weight, TString file, int f, int year){ 
                                 1.23,1.23,1.23,1.23,1.23,1.23,1.23,1.23,
                                 1.0,1.0,1.0,1.0,1.0,
                                 1.21,1.21,1.21,1.21,//1.21,1.21,1.21,1.21,
-                                0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     double lumi_s[4]={19.5, 16.8, 41.48, 59.83};
@@ -75,6 +75,7 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     double yup = xyz_range[3];
     double zlow = xyz_range[4];
     double zup = xyz_range[5];
+    TString fileNamesA[nsample];
     TString fileNames[nsample] = {"new_TTToSemiLeptonic_TuneCP5_13TeV-powheg.root",
                                   "new_TTTo2L2Nu_TuneCP5_13TeV-powheg.root",
                                   "new_TTToHadronic_TuneCP5_13TeV-powheg.root",
@@ -99,15 +100,15 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
                                   "new_W3JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
                                   "new_W4JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
 
-                                  "new_QCD_HT50to100_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT200to300_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph.root",
-                                  "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph.root",
+                                  "new_QCD_HT50to100_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                                  "new_QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                                  "new_QCD_HT200to300_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                                  "new_QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                                  "new_QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                                  "new_QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                                  "new_QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                                  "new_QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph*.root",
+                                  "new_QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph*.root",
                                   
                                   "new_QCD_Pt-30to50_EMEnriched_TuneCP5_13TeV.root",
                                   "new_QCD_Pt-50to80_EMEnriched_TuneCP5_13TeV.root",
@@ -142,16 +143,14 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
         }
     }
     TString edge_name[] = {"other", "QCD"};
-    for(int i=0;i<nsample;i++)
-        fileNames[i]=fileNames[i].ReplaceAll(".root","*.root");
+    for(int i=0;i<nsample;i++){
+        fileNamesA[i] = fileNames[i];
+        fileNames[i] = fileNames[i].ReplaceAll(".root", "_*_"+cg+".root");
+        fileNamesA[i] =  fileNamesA[i].ReplaceAll(cg+".root", "A.root");
+    }
     
     //Lepton_triggers in C and D regions have prescales
-    TString dataset = "";
-    if(g>1 && cut_name.Contains("M"))
-        dataset = "M";
-    else if(g>1 && cut_name.Contains("E"))
-        dataset = "E"; 
-    Double_t pre_scale_year[][2] = {{572.37, 143.42}, {572.37, 143.42}, {1085.83, 224.41}, {1536.28, 474.95}};
+    Double_t pre_scale_year[][2] = {{369.84, 130.38}, {1570.17, 162.22}, {1085.83, 224.41}, {1536.28, 474.95}};
     Double_t pre_scale;
     if(g < 2)
         pre_scale = 1.0;
@@ -181,7 +180,7 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
 
     TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+"_3D.root", "recreate");
     TChain* data_tree = new TChain("mytree");
-    data_tree->Add(input_path+"data/"+cg+"/new_data_"+dataset+"*.root");
+    data_tree->Add(input_path+"data/"+"new_data"+"*_"+cg+".root");
     auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600);
     c1->cd();
     data_tree->Draw("likelihood:fabs(rapidity_tt):mass_tt>>QCD_other_removed", cut+other_con1+other_con2);
@@ -192,11 +191,11 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     for(int k=0; k<2; k++){
         for(int j=edge_dn[k]; j<edge_up[k]; j++){
             MC_tree = new TChain("mytree");
-            MC_tree->Add(input_path+"MC/"+cg+"/"+fileNames[j]);
+            MC_tree->Add(input_path+"MC/"+fileNames[j]);
             TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
             if(j < 3)
                 weight = weight + "*nnlo_wt";
-            renew_weight(input_path+"MC/"+cg+"/", &weight, fileNames[j], j, year);
+            renew_weight(input_path+"MC/", &weight, fileNames[j], j, year);
             c1->cd();
             TH3D* hist = new TH3D("hist", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
             hist ->Sumw2();
@@ -212,9 +211,9 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     set0(hdata);
     for(int j=edge_dn[1]; j<edge_up[1]; j++){
         MC_tree = new TChain("mytree");
-        MC_tree->Add(input_path+"MC/A/"+fileNames[j]);
+        MC_tree->Add(input_path+"MC/"+fileNamesA[j]);
         TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
-        renew_weight(input_path+"MC/A/", &weight, fileNames[j], j, year);
+        renew_weight(input_path+"MC/", &weight, fileNamesA[j], j, year);
         c1->cd();
         TH3D* hist = new TH3D("hist", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
         hist ->Sumw2();

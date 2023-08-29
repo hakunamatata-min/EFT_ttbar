@@ -118,12 +118,12 @@ void set_ratio(TH1D* h1, double a){
         h1->SetBinContent(i, a);
 }
 void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
-    TString Enrich_name[2] = {"", "_En"};
+    TString Enrich_name[2] = {"", "En"};
     TString legend[] = {"tt","DY","single top","V+jets","QCD"};
     TString legendd = "data";
     TString cg_n[] = {"A", "B", "C", "D"};
     TString cg = cg_n[g];
-    TString process[] = {"ttbar", "DYJets", "STop", "WJets", "QCD"};
+    TString process[] = {"ttbar", "DYJets", "STop", "WJets", "QCD"+Enrich_name[isEnriched]};
     TString xtitle[] = {"lnL","M_{t}","p_{T}^{t}","M_{t#bar{t}}","#Deltay_{t#bar{t}}"};
     TString title[] = {"likelihood","mass_t","top_pt","Mtt", "deltay"};
     Double_t xup[] = {50, 450, 500, 1500, 3};
@@ -137,7 +137,7 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
     TH1D* hratio[3];
     Double_t nums, events;
     TString path = Form("./CG_roots/%d/",year);
-    TFile* file = TFile::Open(path+"QCD_"+cut_name+"_"+cg+Enrich_name[isEnriched]+".root");
+    TFile* file = TFile::Open(path+"QCD_"+cut_name+"_"+cg+".root");
     for(int var = 0; var < 5; var++){
         //if(i == 6)
         //    lep[0] = lep[0] + "*(mass_tt>500)";
@@ -157,6 +157,8 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
             hist[k]->SetFillColor(color[k]);
             hstack->Add(hist[k]);
             hmc->Add(hist[k]);
+        }
+        for(int k=0; k<4; k++){
             leg->AddEntry(hist[k], legend[k], "f");
         }
         hdatad=(TH1D*)hdata->Clone();
@@ -192,7 +194,7 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
             hratio[r]->SetLineColor(1);
         }
     
-        c2->Print(Form("./CG_pdf/%d/", year)+title[var]+"_"+cut_name+"_"+cg+".pdf");
+        c2->Print(Form("./CG_pdf/%d/", year)+title[var]+"_"+cut_name+"_"+cg+"_"+Enrich_name[isEnriched]+".pdf");
         for(int k=0; k<3; k++)
             delete hratio[k];
         for(int k=0; k<4; k++)

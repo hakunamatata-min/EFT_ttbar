@@ -46,8 +46,8 @@ void get_error(int p, double* up_vs, double* down_vs, TString file_name, int yea
     double down_v, down_min;
     for(int s=0; s<30; s++){
         //cout<<p<<" "<<s<<endl;
-        if(pro[p] == "STop" && sys[s] == "alphas")
-            continue;
+        //if(pro[p] == "STop" && sys[s] == "alphas")
+        //    continue;
         up = (TH1D*)file->Get(pro[p]+"_"+sys[s]+"Up");
         if(up == NULL)
             continue;
@@ -269,6 +269,8 @@ void draw_pre(TString cut_name, int var, int year){//2, 0
         nums+=h1[k]->GetSumOfWeights();
         h1[k]->SetFillColor(color[k]);
         hstack->Add(h1[k]);
+    }
+    for(int k=0; k<4; k++){
         leg->AddEntry(h1[k], legend[k], "f");
     }
     leg->AddEntry(hdata, legendd, "p");

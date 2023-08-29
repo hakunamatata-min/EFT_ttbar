@@ -26,19 +26,23 @@ void set0(TH1D* h1){
     }
 }
 void renew_weight(TString dir, TString* weight, TString file, int f, int year){ //global weight
-    const int nsample = 29;
+    const int nsample = 45;
     Float_t cross_sections[nsample]={366.91, 89.05, 377.96,
                                     169.9, 147.4, 41.0, 5.7, 1.4, 0.63, 0.15, 0.0036,
                                     3.36, 136.02, 80.95, 35.6, 35.6,
                                     8927.0, 2809.0, 826.3, 544.3,	
                                     //53870.0,
                                     //1264.0,1345.7, 359.7, 48.9, 12.1, 5.5, 1.3, 0.032,//LO
-                                    186100000.0, 23590000, 1555000, 324500, 30310, 6444, 1127, 109.8, 21.98};
+                                    186100000.0, 23590000, 1555000, 324500, 30310, 6444, 1127, 109.8, 21.98,
+                                    6401000.0, 1993000.0, 364000.0, 66600.0, 16620.0, 1101.0,
+                                    1367000.0, 381700.0, 87740.0, 21280.0, 7000.0, 622.6, 58.9, 18.12, 3.318, 1.085};
     Float_t K_Factor[nsample]={1.0, 1.0, 1.0,
                                 1.23,1.23,1.23,1.23,1.23,1.23,1.23,1.23,
                                 1.0,1.0,1.0,1.0,1.0,
                                 1.21,1.21,1.21,1.21,//1.21,1.21,1.21,1.21,
-                                0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+                                1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     double lumi_s[4]={19.5, 16.8, 41.48, 59.83};
     double lumi = lumi_s[year-2015];
     auto c0 = new TCanvas("c0", "c0", 8, 30, 600, 600);
@@ -59,6 +63,7 @@ void renew_weight(TString dir, TString* weight, TString file, int f, int year){ 
 void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
     const int nsample = 45;
     TString Enrich_name[2] = {"", "_En"}; 
+    TString fileNamesA[nsample];
     TString fileNames[nsample] = {"new_TTToSemiLeptonic_TuneCP5_13TeV-powheg.root",
                                   "new_TTTo2L2Nu_TuneCP5_13TeV-powheg.root",
                                   "new_TTToHadronic_TuneCP5_13TeV-powheg.root",
@@ -130,8 +135,11 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
         }
     }
     TString edge_name[] = {"other", "QCD"};
-    for(int i=0;i<nsample;i++)
-        fileNames[i]=fileNames[i].ReplaceAll(".root","*.root");
+    for(int i=0;i<nsample;i++){
+        fileNamesA[i] = fileNames[i];
+        fileNames[i] = fileNames[i].ReplaceAll(".root", "_*_"+cg+".root");
+        fileNamesA[i] =  fileNamesA[i].ReplaceAll(cg+".root", "A.root");
+    }
     
     //Lepton_triggers in C and D regions have prescales
     TString dataset = "";
@@ -139,7 +147,7 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
         dataset = "M";
     else if(g>1 && cut_name.Contains("E"))
         dataset = "E"; 
-    Double_t pre_scale_year[][2] = {{572.37, 143.42}, {572.37, 143.42}, {1085.83, 224.41}, {1536.28, 474.95}};
+    Double_t pre_scale_year[][2] = {{369.84, 130.38}, {1570.17, 162.22}, {1085.83, 224.41}, {1536.28, 474.95}};
     Double_t pre_scale;
     if(g < 2)
         pre_scale = 1.0;
@@ -162,7 +170,7 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
 
     TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+Enrich_name[isEnriched]+"_1D.root", "recreate");
     TChain* data_tree = new TChain("mytree");
-    data_tree->Add(input_path+"data/"+cg+"/new_data_*"+dataset+"*.root");
+    data_tree->Add(input_path+"data/"+"new_data_*"+dataset+"*_"+cg+".root");
     auto c1 = new TCanvas("c1", "c1", 8, 30, 600, 600);
 
     TChain* MC_tree;
@@ -180,11 +188,11 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
         for(int k=0; k<2; k++){
             for(int j=edge_dn[k]; j<edge_up[k]; j++){
                 MC_tree = new TChain("mytree");
-                MC_tree->Add(input_path+"MC/"+cg+"/"+fileNames[j]);
+                MC_tree->Add(input_path+"MC/"+fileNames[j]);
                 TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
                 if(j < 3)
                     weight = weight + "*nnlo_wt";
-                renew_weight(input_path+"MC/"+cg+"/", &weight, fileNames[j], j, year);
+                renew_weight(input_path+"MC/", &weight, fileNames[j], j, year);
                 c1->cd();
                 TH1D* hist = new TH1D("hist", "", bins[var], xlow[var], xup[var]);
                 hist ->Sumw2();
@@ -201,9 +209,9 @@ void derive(TString cut, TString cut_name, int g, int year, bool isEnriched){
         set0(hdata);
         for(int j=edge_dn[1]; j<edge_up[1]; j++){
             MC_tree = new TChain("mytree");
-            MC_tree->Add(input_path+"MC/A/"+fileNames[j]);
+            MC_tree->Add(input_path+"MC/"+fileNamesA[j]);
             TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom*" + cut + other_con1 + other_con2;
-            renew_weight(input_path+"MC/A/", &weight, fileNames[j], j, year);
+            renew_weight(input_path+"MC/", &weight, fileNamesA[j], j, year);
             c1->cd();
             TH1D* hist = new TH1D("hist", "", bins[var], xlow[var], xup[var]);
             hist ->Sumw2();
