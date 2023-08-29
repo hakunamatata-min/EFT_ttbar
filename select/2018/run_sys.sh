@@ -6,7 +6,7 @@ mkdir -p myout
 output=$PWD/myout
 echo "output: $output"
 wrong="f"
-cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/select/2018/condor_out_mtop/$1
+cd /afs/cern.ch/user/y/yuekai/EFT-ttbar/select/2018/condor_out_sys/$1
 file=$(ls ${1}.txt)
 dir_f=$(cat $file)
 #dir="root://cms-xrd-global.cern.ch/"$dir
@@ -43,7 +43,7 @@ then
         fi
     fi
 fi
-mv $output/out*.txt /afs/cern.ch/user/y/yuekai/EFT-ttbar/select/2018/condor_out_mtop/$1
+mv $output/out*.txt /afs/cern.ch/user/y/yuekai/EFT-ttbar/select/2018/condor_out_sys/$1
 if [[ $wrong == "f" ]]
 then
     echo "input file: $dir"
