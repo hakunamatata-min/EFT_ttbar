@@ -117,10 +117,9 @@ void write_card(ofstream& card, TString category, int num_pro){
     }
 }
 
-void write(TString cut_name, int t, int year, TString datacard_name){
+void write(TString cut_name, int year, TString datacard_name){
     Clear();
-    TString type_nus[] = {"no/", "smooth/", "flat/"};
-    TString path = "./"+datacard_name+type_nus[t];
+    TString path = "./"+datacard_name;
     TString category="ttbar"+cut_name+Form("_%d", year);
     cout<<path+category+".txt"<<endl;
 

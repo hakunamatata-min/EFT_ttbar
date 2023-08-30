@@ -192,3 +192,4 @@ err.txt
 *.vscode
 impact_z
 proceed_data/*.sh
+sys_fix

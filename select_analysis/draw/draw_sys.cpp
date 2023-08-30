@@ -158,7 +158,7 @@ void set_th_lable(TH1D* h1, int* nbins){
     h1->LabelsDeflate("Y");
     h1->LabelsOption("v");
 }
-void draw_pre(TString cutname, int year, int ty){
+void draw_pre(TString cutname, int year){
     double low, high;
     TString sys, sys_path;
 
@@ -169,9 +169,8 @@ void draw_pre(TString cutname, int year, int ty){
     TString jes_source_paths[] = {"Absolute/", "Absolute_un/", "FlavorQCD/", "BBEC1/", "EC2/", "HF/", "BBEC1_un/", "EC2_un/", "RelativeBal/", "RelativeSample_un/"};
     TString inpath = "../../combine/";
     TString outpath = "../sys_pdf/";
-    TString type[] = {"no/", "flat/", "smooth/"};
     TString filename = "ttbar_"+cutname+Form("_%d.root", year);
-    TFile* file = TFile::Open(inpath+"datacard/"+type[ty]+filename);
+    TFile* file = TFile::Open(inpath+"datacard/"+filename);
     TH1D *hmc1, *hmc2, *hmc3;
     TH1D *hd1, *hd2, *hd3;
     int color[] = {2, 1, 4};
@@ -264,7 +263,7 @@ void draw_pre(TString cutname, int year, int ty){
                 format_line(l2[d]);
                 l2[d]->Draw("same");
             }
-            c2->Print(outpath+type[ty]+sys_path+Form("%d/", year)+cutname+"/"+process[c]+".pdf");
+            c2->Print(outpath+sys_path+Form("%d/", year)+cutname+"/"+process[c]+".pdf");
             for(int d=0; d<3; d++){
                 delete l1[d]; delete l2[d];
             }
@@ -288,9 +287,7 @@ void draw_sys(){
     //TString filenames[] = {"ttbar_M_4jets.root","ttbar_M_3jets.root","ttbar_E_4jets.root","ttbar_E_3jets.root"};
     for(int i=0; i<4; i++){
         for(int y=0; y<4; y++){
-            for(int t=0; t<3; t++){
-                draw_pre(cutNames[i], years[y], t);
-            }
+            draw_pre(cutNames[i], years[y]);
         }
     }
 }

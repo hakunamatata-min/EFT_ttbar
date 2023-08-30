@@ -118,7 +118,7 @@ void set_ratio(TH1D* h1, double a){
         h1->SetBinContent(i, a);
 }
 void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
-    TString Enrich_name[2] = {"", "En"};
+    TString Enrich_name[2] = {"", "_En"};
     TString legend[] = {"tt","DY","single top","V+jets","QCD"};
     TString legendd = "data";
     TString cg_n[] = {"A", "B", "C", "D"};
@@ -152,13 +152,13 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
         hdata = (TH1D*)file->Get(title[var]+"_data");
         THStack* hstack = new THStack("hstack", "");
         hmc = new TH1D("MC", "", bins[var], xlow[var], xup[var]);
-        for (int k = 3; k >= 0; k--){
+        for (int k = 4; k >= 0; k--){
             hist[k] = (TH1D*)file->Get(title[var]+"_"+process[k]);
             hist[k]->SetFillColor(color[k]);
             hstack->Add(hist[k]);
             hmc->Add(hist[k]);
         }
-        for(int k=0; k<4; k++){
+        for(int k=0; k<5; k++){
             leg->AddEntry(hist[k], legend[k], "f");
         }
         hdatad=(TH1D*)hdata->Clone();
@@ -194,10 +194,10 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
             hratio[r]->SetLineColor(1);
         }
     
-        c2->Print(Form("./CG_pdf/%d/", year)+title[var]+"_"+cut_name+"_"+cg+"_"+Enrich_name[isEnriched]+".pdf");
+        c2->Print(Form("./CG_pdf/%d/", year)+title[var]+"_"+cut_name+"_"+cg+Enrich_name[isEnriched]+".pdf");
         for(int k=0; k<3; k++)
             delete hratio[k];
-        for(int k=0; k<4; k++)
+        for(int k=0; k<5; k++)
             delete hist[k];
         delete hdata;
         delete hdatad;
@@ -212,13 +212,14 @@ void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
 void draw_cg(){
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
     int year[] = {2015, 2016, 2017, 2018};
-    bool isEnriched = false;
     TString tex1[] = {"", "e","#mu"};
     TString tex2[] = {"region B", "region C","region D"};
     for(int i=0; i<4; i++)
         for(int y=0; y<4; y++){
-            for(int g=1; g<4; g++)
-                draw(cutsName[i], g, year[y], isEnriched, "");
+            for(int g=1; g<4; g++){
+                draw(cutsName[i], g, year[y], 0, "");
+                draw(cutsName[i], g, year[y], 1, "");
+            }
         }   
         
     /*for(int i=0; i<3; i++){
