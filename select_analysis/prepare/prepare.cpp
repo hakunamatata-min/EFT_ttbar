@@ -76,7 +76,7 @@ void prepare::give_sys_name(TString file, TString weight, int s, int c){
     //cout<<weight_up<<" "<<weight_dn<<" "<<weight<<" "<<endl;
 }
 
-void prepare::renew_weight(TString* weight, TString file, int f){ //global weight
+void prepare::renew_weight(TString* weight, TString file){ //global weight
     double lumi_s[4]={19.5, 16.8, 41.48, 59.83};
     double lumi = lumi_s[year-2015];
     auto c0 = new TCanvas("c0", "c0", 8, 30, 600, 600);
@@ -87,7 +87,9 @@ void prepare::renew_weight(TString* weight, TString file, int f){ //global weigh
     c0->cd();
     tree1->Draw("nJet>>nmc","Generator_weight");
     //cout<<nmc->GetSumOfWeights()<<endl;
-    float weight1=cross_sections[f]*lumi/(nmc->GetSumOfWeights())*K_Factors[f]*1000;
+    double cross_section = xsection[file].first;
+    double K_Factor = xsection[file].second;
+    double weight1=cross_section*lumi/(nmc->GetSumOfWeights())*K_Factor*1000;
     //cout<<weight1<<endl;
     *weight = Form("%f*", weight1) + (*weight);
     delete tree1;
@@ -133,7 +135,7 @@ void prepare::draw(int c){
         weight = weight + EW[c] + "*nnlo_wt";
     for(int i=edge_i[c]; i<edge_f[c]; i++){
         weight_nom = weight;
-        renew_weight(&weight_nom, fileNames[i], i);
+        renew_weight(&weight_nom, fileNames[i]);
         if(equal_bin)
             h1 = new TH1D("h1", "", nbins, xlow, xup);
         else
@@ -185,8 +187,8 @@ void prepare::draw(int c, int s){
         weight = weight + EW[c] + "*nnlo_wt";
     for(int i=edge_i[c]; i<edge_f[c]; i++){
         give_sys_name(fileNames[i], weight, s, c);
-        renew_weight(&weight_up, file_up, i);
-        renew_weight(&weight_dn, file_dn, i);
+        renew_weight(&weight_up, file_up);
+        renew_weight(&weight_dn, file_dn);
         if(equal_bin){
             h1_up = new TH1D("h1_up", "", nbins, xlow, xup);
             h1_dn = new TH1D("h1_dn", "", nbins, xlow, xup);
@@ -214,7 +216,7 @@ void prepare::draw(int c, int s){
 }
 
 void prepare::set_dir(){
-    const int nsample = 20;
+    const int nsample = 44;
     TString fileName[nsample] = {  
                             "new_TTToSemiLeptonic_TuneCP5_13TeV-powheg.root",
                             "new_TTTo2L2Nu_TuneCP5_13TeV-powheg.root",
@@ -239,15 +241,50 @@ void prepare::set_dir(){
                             "new_W2JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
                             "new_W3JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
                             "new_W4JetsToLNu_TuneCP5_13TeV-madgraphMLM.root",
-                            };
-    Float_t cross_section[nsample]={366.91, 89.05, 377.96,
-                                    169.9, 147.4, 41.0, 5.7, 1.4, 0.63, 0.15, 0.0036,
-                                    3.36, 136.02, 80.95, 35.6, 35.6,
-                                    8927.0, 2809.0, 826.3, 544.3};
+
+                            "new_TTToSemiLeptonic_mtop173p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTTo2L2Nu_mtop173p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTToHadronic_mtop173p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTToSemiLeptonic_mtop171p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTTo2L2Nu_mtop171p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTToHadronic_mtop171p5_TuneCP5_13TeV-powheg.root",
+
+                            "new_TTToSemiLeptonic_mtop175p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTTo2L2Nu_mtop175p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTToHadronic_mtop175p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTToSemiLeptonic_mtop169p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTTo2L2Nu_mtop169p5_TuneCP5_13TeV-powheg.root",
+                            "new_TTToHadronic_mtop169p5_TuneCP5_13TeV-powheg.root",
+
+                            "new_TTToSemiLeptonic_hdampUP_TuneCP5_13TeV-powheg.root",
+                            "new_TTTo2L2Nu_hdampUP_TuneCP5_13TeV-powheg.root",
+                            "new_TTToHadronic_hdampUP_TuneCP5_13TeV-powheg.root",
+                            "new_TTToSemiLeptonic_hdampDOWN_TuneCP5_13TeV-powheg.root",
+                            "new_TTTo2L2Nu_hdampDOWN_TuneCP5_13TeV-powheg.root",
+                            "new_TTToHadronic_hdampDOWN_TuneCP5_13TeV-powheg.root",
+
+                            "new_TTToSemiLeptonic_TuneCP5up_13TeV-powheg.root",
+                            "new_TTTo2L2Nu_TuneCP5up_13TeV-powheg.root",
+                            "new_TTToHadronic_TuneCP5up_13TeV-powheg.root",
+                            "new_TTToSemiLeptonic_TuneCP5down_13TeV-powheg.root",
+                            "new_TTTo2L2Nu_TuneCP5down_13TeV-powheg.root",
+                            "new_TTToHadronic_TuneCP5down_13TeV-powheg.root"};
+    Float_t cross_section[nsample] = {365.34, 88.29, 377.96,
+                                      169.9, 147.4, 41.0, 5.7, 1.4, 0.63, 0.15, 0.0036,
+                                      3.36, 136.02, 80.95, 35.6, 35.6,
+                                      8927.0, 2809.0, 826.3, 544.3,
+                                      355.50, 85.91, 367.78, 375.45, 90.73, 377.96,
+                                      336.79, 81.39, 348.42, 396.76, 95.88, 410.47,
+                                      366.34, 88.29, 377.96, 365.29, 88.28, 377.90,
+                                      365.34, 88.29, 377.96, 365.34, 88.29, 377.96,};
     Float_t K_Factor[nsample] = {1.0, 1.0, 1.0,
-                                1.23,1.23,1.23,1.23,1.23,1.23,1.23,1.23,
-                                1.0,1.0,1.0,1.0,1.0,
-                                1.21,1.21,1.21,1.21};
+                                 1.23, 1.23, 1.23, 1.23, 1.23, 1.23, 1.23, 1.23,
+                                 1.0, 1.0, 1.0, 1.0, 1.0,
+                                 1.21, 1.21, 1.21, 1.21,
+                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     TString sys_s[] = {"jer", "unclus", "SF_btag", "SF_btag", "SF_btag", "SF_btag", "SF_lepton", "L1PreFiringWeight_Nom", "pu_wt", "muR", "muF", "ISR", "FSR", "pdf", "alphas", "mtop", "hdamp", "TuneCP5", "nnlo_wt", "EW_un"};
     TString sys_ns[] = {"jer", "unclus", "SF_btag", Form("SF_btag%d", year), "SF_ltag", Form("SF_ltag%d", year), "SF_lepton", "L1PF", "PU", "muR", "muF", "ISR", "FSR", "pdf", "alphas", "mtop", "hdamp", "TuneCP5", "nnlo_wt", "EW_un"};
     TString sys_up_s[] = {"jerUp", "unclusUp", "SF_btag_up_co", "SF_btag_up", "SF_ltag_up_co", "SF_ltag_up", "SF_lepton_up", "L1PreFiringWeight_Up", "pu_wt_up", "muR_up", "muF_up", "ISR_up", "FSR_up", "pdf_up", "alphas_up", "mtop173p5", "hdampUP", "TuneCP5up", "nnlo_wt_up", "EW_un_up"};
@@ -256,22 +293,17 @@ void prepare::set_dir(){
     TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
     TString sf_bl[] = {"SF_btag_co", "SF_ltag_co", "SF_btag_un", "SF_btag_un"};
     for(int i=0; i<nsample; i++){
-        fileNames[i] = fileName[i].ReplaceAll(".root","_*.root");
-        cross_sections[i] = cross_section[i];
-        K_Factors[i] = K_Factor[i];
+        if(i < 20)
+            fileNames[i] = fileName[i].ReplaceAll(".root","_*.root");
+        xsection[fileName[i]] = pair(cross_section[i],  K_Factor[i]);
     }
-    //Double_t mtt_edge[9]={0,370,420,500,600,700,800,950,2000};
-    //Double_t ytt_edge[10]={-4.0,-1.4,-0.9,-0.5,-0.15,0.15,0.5,0.9,1.4,4.0};
-    //Double_t mtt_edge[5]={0, 400, 500, 700, 2000};
-    //Double_t ytt_edge[6]={-3.0, -1.2, -0.3, 0.3, 1.2, 3.0};
-    //Double_t xbin[2][20] = {{0,340,360,380,400,420,440,460,480,500,520,540,570,600,640,700,3000}, {0,450,500,570,630,700,820,3000}};
-    //int nbin[2] = {16, 7};
-    TString process_s[]={"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "DYJets","STop", "WJets", "QCD"};
+
+    TString process_s[]={"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "EW_no", "DYJets","STop", "WJets"};
     TString EWs[5] = {"*weight_ci0000", "*weight_ci0100", "*weight_ci0010", "*weight_ci0001", "*weight_ci0200"};
 
-    int edge_is[] = {0, 0, 0, 0, 0, 3, 11, 16};//23,31}; 
-    int edge_fs[] = {3, 3, 3, 3, 3, 11, 16, 20,}; 
-    for(int i=0; i<8; i++){
+    int edge_is[] = {0, 0, 0, 0, 0, 0, 3, 11, 16};//23,31}; 
+    int edge_fs[] = {3, 3, 3, 3, 3, 0, 11, 16, 20,}; 
+    for(int i=0; i<9; i++){
         edge_i[i] = edge_is[i];
         edge_f[i] = edge_fs[i];
     }
@@ -352,7 +384,9 @@ void prepare::run(TString cut_s, TString cut_name_s, int year_s, int s_num){
                 continue;
             if(c>4 && s>24)//sys only for signal
                 break;
-            if(c==5 && (s==23 || s==24))//no pdf or alphas for STop
+            if(c==5)
+                break;//no sys for EW_no
+            if(c==7 && (s==23 || s==24))//no pdf or alphas for STop
                 break;
             draw(c, s);
             cout<<"finished sys of "<<sys_n[s]<<" of "<<process[c]<<endl;

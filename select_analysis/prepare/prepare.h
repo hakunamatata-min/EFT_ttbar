@@ -40,10 +40,9 @@ private:
 
     //int bin_num;
     TString fileNames[20];
-    Float_t cross_sections[20];
-    Float_t K_Factors[20];
+    map<TString, pair<double, double>> xsection;
     TString cut, cut_name;
-    int edge_i[8], edge_f[8];
+    int edge_i[9], edge_f[9];
     TString sys_n[30], sys[30], sys_up[30], sys_down[30];
     TString process[9];
     TString EW[5];
@@ -53,7 +52,7 @@ private:
     TString xvar, title;
     void Floor(TH1D* hist);
     void give_sys_name(TString file, TString weight, int s, int c);
-    void renew_weight(TString* weight, TString file, int f);
+    void renew_weight(TString* weight, TString file);
     void draw(TH1D* h1, TString file, TString tree, TString weight);
     void set_dir();
     void draw(int c);
