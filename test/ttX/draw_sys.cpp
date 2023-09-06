@@ -39,7 +39,7 @@ void format_leg(TLegend* leg){
     leg->SetTextSize(0.04);
     leg->SetLineColor(1);
     leg->SetLineStyle(1);
-    leg->SetLineWidth(1);
+    leg->SetLineWidth(2);
     leg->SetFillColor(0);
     leg->SetFillStyle(0);
 }
@@ -76,7 +76,7 @@ void format_th_pad2(TH1D* h1, TString xtitle, double* low, double* high, int s){
     int ydivisions=505;
     double range[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                       0, 0, 0, 0.25, 0, 0, 0, 0, 0, 0,
-                      0, 0, 0, 0, 0, 0, 0, 0, 0.09, 0,
+                      0, 0, 0, 0, 0, 0, 0, 0, 0.09, 0.03,
                       0, 0 ,0 ,0};
     float up = h1->GetMaximum();
     float down = h1->GetMinimum();
