@@ -105,6 +105,8 @@ void prepare_3D::draw(int c){
     hist->Sumw2();
     if(c < 5)
         weight = weight + EW[c] + "*nnlo_wt";
+    if(c == 5)
+        weight = weight + "*nnlo_wt";
     for(int i=edge_i[c]; i<edge_f[c]; i++){
         weight_nom = weight;
         renew_weight(&weight_nom, fileNames[i]);
@@ -129,7 +131,7 @@ void prepare_3D::draw(int c, int s){
     TString weight = "Generator_weight*SF_btag*SF_lepton*pu_wt*L1PreFiringWeight_Nom" + other_con1 + other_con2;
     TH3D* hist_up = new TH3D("hist_up", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
     TH3D* hist_dn = new TH3D("hist_dn", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);
-    if(c>4 && (sys_n[s].Contains("muR")||sys_n[s].Contains("muF"))){
+    if(c > 5 && (sys_n[s].Contains("muR")||sys_n[s].Contains("muF"))){
         hist_up->SetName(process[c]+"_"+sys_n[s]+Form("%dUp_sub",c-4));
         hist_dn->SetName(process[c]+"_"+sys_n[s]+Form("%dDown_sub",c-4));
     }
@@ -147,6 +149,8 @@ void prepare_3D::draw(int c, int s){
     }
     if(c < 5)
         weight = weight + EW[c] + "*nnlo_wt";
+    if(c == 5)
+        weight = weight + "*nnlo_wt";
     for(int i=edge_i[c]; i<edge_f[c]; i++){
         give_sys_name(fileNames[i], weight, s, c);
         renew_weight(&weight_up, file_up);
@@ -229,7 +233,7 @@ void prepare_3D::set_dir(){
                                       169.9, 147.4, 41.0, 5.7, 1.4, 0.63, 0.15, 0.0036,
                                       3.36, 136.02, 80.95, 35.6, 35.6,
                                       8927.0, 2809.0, 826.3, 544.3,
-                                      355.50, 85.91, 367.78, 375.45, 90.73, 377.96,
+                                      355.50, 85.91, 367.78, 375.45, 90.73, 388.41,
                                       336.79, 81.39, 348.42, 396.76, 95.88, 410.47,
                                       366.34, 88.29, 377.96, 365.29, 88.28, 377.90,
                                       365.34, 88.29, 377.96, 365.34, 88.29, 377.96,};
@@ -251,7 +255,7 @@ void prepare_3D::set_dir(){
     for(int i=0; i<nsample; i++){
         if(i < 20)
             fileNames[i] = fileName[i].ReplaceAll(".root","_*.root");
-        xsection[fileName[i]] = pair(cross_section[i],  K_Factor[i]);
+        xsection[fileName[i]] = pair<double, double>(cross_section[i],  K_Factor[i]);
     }
     
     TString process_s[]={"ttbar_ci0000","ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0200", "EW_no", "DYJets","STop", "WJets"};
@@ -326,11 +330,11 @@ prepare_3D::prepare_3D(TString cut_s, TString cut_name_s, int year_s, int* xyz_b
     //add_qcd();
     for(int s=0; s<30; s++){
         for(int c=0; c<8; c++){
-            if(c>4 && s>24)//sys only for signal
+            if(c > 4 && s > 24)//sys only for signal
                 break;
-            if(c==5)
+            if(c == 5)
                 break;//no sys for EW_no
-            if(c==7 && (s==23 || s==24))//no pdf or alphas for STop
+            if(c == 7 && (s == 23 || s == 24))//no pdf or alphas for STop
                 break;
             draw(c, s);
             cout<<"finished sys of "<<sys_n[s]<<" of "<<process[c]<<endl;

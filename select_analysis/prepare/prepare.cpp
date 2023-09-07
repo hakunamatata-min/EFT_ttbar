@@ -133,6 +133,8 @@ void prepare::draw(int c){
         hist = new TH1D(process[c], "", nbins, 0, nbins);
     if(c < 5)
         weight = weight + EW[c] + "*nnlo_wt";
+    if(c == 5)
+        weight = weight + "*nnlo_wt";
     for(int i=edge_i[c]; i<edge_f[c]; i++){
         weight_nom = weight;
         renew_weight(&weight_nom, fileNames[i]);
@@ -167,7 +169,7 @@ void prepare::draw(int c, int s){
         hist_up = new TH1D("hist_up", "", nbins, 0, nbins);
         hist_dn = new TH1D("hist_dn", "", nbins, 0, nbins);
     }
-    if(c>4 && (sys_n[s].Contains("muR")||sys_n[s].Contains("muF"))){
+    if(c > 5 && (sys_n[s].Contains("muR")||sys_n[s].Contains("muF"))){
         hist_up->SetName(process[c]+"_"+sys_n[s]+Form("%dUp",c-4));
         hist_dn->SetName(process[c]+"_"+sys_n[s]+Form("%dDown",c-4));
     }
@@ -185,6 +187,8 @@ void prepare::draw(int c, int s){
     }
     if(c < 5)
         weight = weight + EW[c] + "*nnlo_wt";
+    if(c == 5)
+        weight = weight + "*nnlo_wt";
     for(int i=edge_i[c]; i<edge_f[c]; i++){
         give_sys_name(fileNames[i], weight, s, c);
         renew_weight(&weight_up, file_up);
@@ -273,7 +277,7 @@ void prepare::set_dir(){
                                       169.9, 147.4, 41.0, 5.7, 1.4, 0.63, 0.15, 0.0036,
                                       3.36, 136.02, 80.95, 35.6, 35.6,
                                       8927.0, 2809.0, 826.3, 544.3,
-                                      355.50, 85.91, 367.78, 375.45, 90.73, 377.96,
+                                      355.50, 85.91, 367.78, 375.45, 90.73, 388.41,
                                       336.79, 81.39, 348.42, 396.76, 95.88, 410.47,
                                       366.34, 88.29, 377.96, 365.29, 88.28, 377.90,
                                       365.34, 88.29, 377.96, 365.34, 88.29, 377.96,};
@@ -380,13 +384,13 @@ void prepare::run(TString cut_s, TString cut_name_s, int year_s, int s_num){
     //add_qcd();
     for(int s=0; s<30; s++){
         for(int c=0; c<8; c++){
-            if(c<5 && c>=signal_num)
+            if(c < 5 && c >= signal_num)
                 continue;
-            if(c>4 && s>24)//sys only for signal
+            if(c > 4 && s > 24)//sys only for signal
                 break;
-            if(c==5)
+            if(c == 5)
                 break;//no sys for EW_no
-            if(c==7 && (s==23 || s==24))//no pdf or alphas for STop
+            if(c == 7 && (s == 23 || s == 24))//no pdf or alphas for STop
                 break;
             draw(c, s);
             cout<<"finished sys of "<<sys_n[s]<<" of "<<process[c]<<endl;
