@@ -725,4 +725,5 @@ select_tree::~select_tree(){
     delete[] jet_phi;
     delete[] mom_jets;
     output->Close();
+    delete chain;
 }

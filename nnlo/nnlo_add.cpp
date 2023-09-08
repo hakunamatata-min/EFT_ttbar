@@ -67,8 +67,15 @@ void nnlo_add_tree(TString inputFile, TString tree_name, bool remain_sys){
         }
     }
     file->cd();
-    mytree->Write("",TObject::kOverwrite);
+    mytree->Write("", TObject::kOverwrite);
+    delete mytree;
     file->Close();
+    delete h2_nom;
+    delete h2;
+    delete h2_d;
+    delete h2_up;
+    delete h2_down;
+    nfile->Close();
 }
 
 void nnlo_add(TString inputFile, bool is_sys, int year){

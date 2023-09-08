@@ -20,30 +20,33 @@ void add_pu_tree(TString fileName, TString tree_name, int year, bool remain_sys)
     TTree *mytree=(TTree*) file->Get(tree_name);
     mytree->SetBranchAddress("Pileup_nPU",&Pileup_nPU);
     TFile* nfile = TFile::Open(Form("./%d/pu_weight.root", year));
-    hn = (TH1D*)nfile->Get("pu_nom"); 
+    hn = (TH1D*)nfile->Get("pu_nom");
+    hu = (TH1D*)nfile->Get("pu_up"); 
+    hd = (TH1D*)nfile->Get("pu_down"); 
     TBranch *branch1, *branch2, *branch3;
     branch1 = mytree->Branch("pu_wt", &pu_wt, "pu_wt/D");
     if(remain_sys){
         branch2 = mytree->Branch("pu_wt_up", &pu_wt_up, "pu_wt_up/D");
         branch3 = mytree->Branch("pu_wt_dn", &pu_wt_dn, "pu_wt_dn/D");
-        hu = (TH1D*)nfile->Get("pu_up"); 
-        hd = (TH1D*)nfile->Get("pu_down"); 
     }
     for(int i=0; i<mytree->GetEntries(); i++){
         mytree->GetEntry(i);
         Int_t bin = hn->FindBin(Pileup_nPU);
         pu_wt = hn->GetBinContent(bin);
+        pu_wt_up = hu->GetBinContent(bin);
+        pu_wt_dn = hd->GetBinContent(bin);
         branch1->Fill();
         if(remain_sys){
-            pu_wt_up = hu->GetBinContent(bin);
-            pu_wt_dn = hd->GetBinContent(bin);
             branch2->Fill();
             branch3->Fill();
         }
     }
     file->cd();
-    mytree->Write("",TObject::kOverwrite);
+    mytree->Write("", TObject::kOverwrite);
+    delete mytree;
     file->Close();
+    delete hn; delete hu; delete hd;
+    nfile->Close();
 }
 void add_pu(TString inputFile, int year, bool is_sys){
     TString trees[]={"jerUp", "jerDown", "unclusUp", "unclusDown"};

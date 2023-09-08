@@ -55,6 +55,9 @@ void un_weight_add(TString input){
         }
     }
     file->cd();
-    mytree->Write("",TObject::kOverwrite);
+    mytree->Write("", TObject::kOverwrite);
+    delete mytree;
     file->Close();
+    delete h2_ratio;
+    ra_file->Close();
 }

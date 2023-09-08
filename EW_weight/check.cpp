@@ -43,7 +43,7 @@ void format_canvas(TCanvas *c) {
     c->SetFrameFillStyle(0);
     c->SetFrameBorderMode(0);
 }
-void format_th(TH1D* h1, TString xtitle, double min){
+void format_th(TH1F* h1, TString xtitle, double min){
     int ydivisions=505;
     h1->SetMarkerStyle(20);
     h1->SetMarkerSize(0.4);
@@ -63,7 +63,7 @@ void format_th(TH1D* h1, TString xtitle, double min){
     h1->GetYaxis()->SetRangeUser(min, 0.02);
     //h1->GetYaxis()->SetRangeUser(0.0, 80000);
 }
-double model1(TH1D* h2[4], double y, double z, double k, int row){
+double model1(TH1F* h2[4], double y, double z, double k, int row){
     double cor[4];
     for(int i=0; i<4; i++){
         cor[i] = 1 + h2[i]->GetBinContent(row);
@@ -71,7 +71,7 @@ double model1(TH1D* h2[4], double y, double z, double k, int row){
     double val = k*k*cor[2]+0.298038*cor[0]*y*(2.35528 + y)+cor[3]*(0.41333 - k*k - 0.298038*(1.17764 + y)*(1.17764 + y) + (z - 1)*(z - 1))-cor[1]*(z*z -2*z);
     return val - 1;
 }
-double model2(TH1D* h2[5], double y, double z, double k, int row){
+double model2(TH1F* h2[5], double y, double z, double k, int row){
     double cor[5];
     for(int i=0; i<5; i++){
         cor[i] = 1 + h2[i]->GetBinContent(row);
@@ -84,7 +84,7 @@ double model2(TH1D* h2[5], double y, double z, double k, int row){
     return (c1*y*y + c2*(z-1)*(z-1) + c3*k*k + c4*y + c5 - 1);
     //return c4/c1;
 }
-double model3(TH1D* h2[6], double y, double z, double k, int row){
+double model3(TH1F* h2[6], double y, double z, double k, int row){
     double cor[6];
     for(int i=0; i<6; i++){
         cor[i] = 1 + h2[i]->GetBinContent(row);
@@ -100,53 +100,48 @@ double model3(TH1D* h2[6], double y, double z, double k, int row){
     //return c4/c1;
 }
 void check(){
-    TString filenames[] = {"ci0100.root","ci0010.root", "ci0001.root", "ci0000.root", "ci0200.root", "ci0020.root"};
-    TString h_name[] = {"h100", "h010", "h001", "h000", "h200", "h020", };
+    TString filename[] = {"ci0100.root","ci0010.root", "ci0001.root", "ci0000.root", "ci0200.root", "ci0020.root"};
+    TString h_name[] = {"h100", "h010", "h001", "h000", "h200", "h020"};
     TString id[] = {"id7", "id13", "id10"};
-    TString varname[] = {"M_{t#bar{t}}","#Deltay_{t#bar{t}}","p_{T}^{t}"};
-    TString name[] = {"Mtt","deltay","top_pt"};
+    TString varname[] = {"M_{t#bar{t}}", "#Deltay_{t#bar{t}}", "p_{T}^{t}"};
+    TString name[] = {"Mtt", "deltay", "top_pt"};
     double loc[] = {0.7, 0.7, 0.3}; 
     double min[] = {-0.6, -0.4, -1.0};
-    TH1D* h2[6];
-    TString check_names[][6] = {{"ci0310.root","ci0-110.root", "ci0-210.root", "ci0-310.root", "ci0-410.root", "ci0-510.root"},
-                                {"ci0300.root","ci0-100.root", "ci0-200.root", "ci0-300.root", "ci0-400.root", "ci0-500.root"}};
-    TString legend[][6] = {{"ci310","ci-110", "ci-210", "ci-310", "ci-410", "ci-510"},
-                            {"ci300","ci-100", "ci-200", "ci-300", "ci-400", "ci-500"}};
-            //TString legend[] = {"ci300","ci-100", "ci-200", "ci-300", "ci-400", "ci-500"};
-    //TString check_names[] = {"ci0300.root","ci0-100.root", "ci0-200.root", "ci0-300.root", "ci0-400.root", "ci0-500.root"};
-    double y[] = {3, -1, -2, -3, -4, -5};
-    double z[][6] = {{1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0}};
-    //double z[] = {0, 0, 0, 0, 0, 0};
-    TH1D* hc[6];
-    TH1D* hist[7];
+    TH1F *h2[6], *hc[6], *hist[6];;
+    TFile *infile[6], *cfile[6];
+    int value[][3] = {{2, 1, 0}, {-1, 1, 0}, {-2, 1, 0}, {-3, 1, 0}, {-4, 1, 0}, {-5, 1, 0},
+                         {3, 0, 0}, {-1, 0, 0}, {-2, 0, 0}, {-3, 0, 0}, {-4, 0, 0}, {-5, 0, 0}};
+
+    TString check_name;
     int color[] = {2, 46, 9, 29, 8, kYellow, 93};
     for(int var=0; var<3; var++){
         for(int vz=0; vz<2; vz++){
             for(int i=0; i<6; i++){
-                TFile* file = TFile::Open("./correction_roots/"+filenames[i]);
-                h2[i] = (TH1D*)file->Get(id[var]);
+                infile[i] = TFile::Open("./correction_roots_back/"+filename[i]);
+                h2[i] = (TH1F*)infile[i]->Get(id[var]);
                 h2[i]->SetName(h_name[i]);
             }
-
             auto c2 = new TCanvas("c2", "c2", 8, 30, 650, 650);
             format_canvas(c2);
             c2->cd();
             TLegend *leg = new TLegend(loc[var], .25, loc[var]+0.30, .50);
             format_leg(leg);
+
             for(int i=0; i<6; i++){
-                TFile* file = TFile::Open("./correction_roots/"+check_names[vz][i]);
-                hc[i] = (TH1D*)file->Get(id[var]);
+                check_name = Form("ci0%d%d%d", value[vz*6+i][0], value[vz*6+i][1], value[vz*6+i][2]);
+                cfile[i] = TFile::Open("./correction_roots_back/"+check_name+".root");
+                hc[i] = (TH1F*)cfile[i]->Get(id[var])->Clone();
                 hc[i]->SetName(Form("hc_%d",i));
-                hist[i] = (TH1D*)hc[i]->Clone();
+                hist[i] = (TH1F*)hc[i]->Clone();
                 hist[i]->SetName(Form("hist_%d",i));
-                for(int j=0; j<hc[i]->GetNbinsX(); j++){       
-                    hist[i]->SetBinContent(j+1, model2(h2, y[i], z[vz][i], 0, j+1));
+                for(int j=0; j<hc[i]->GetNbinsX()+2; j++){       
+                    hist[i]->SetBinContent(j, model2(h2, value[vz*6+i][0], value[vz*6+i][1], value[vz*6+i][2], j));
+                    hist[i]->SetBinError(j, 0);
                 }
                 c2->cd();
                 if(i == 0){
                     hc[i]->Draw("hist");
                     format_th(hc[i], varname[var], min[var]);
-                    //format_th(hc[i], "#Deltay_{t#bar{t}}");
                 }
                 else
                     hc[i]->Draw("histsame");
@@ -155,25 +150,21 @@ void check(){
                 hist[i]->Draw("Psame");
                 hist[i]->SetMarkerSize(0.3);
                 hist[i]->SetMarkerStyle(21);
-                leg->AddEntry(hc[i], legend[vz][i], "l");
+                leg->AddEntry(hc[i], check_name, "l");
             }
             leg->AddEntry(hist[0], "model", "P");
             c2->cd();
             leg->Draw("same");
-            c2->Print("h1_"+name[var]+Form("_%d.pdf", 1-vz));
+            c2->Print("./check_pdf/"+name[var]+Form("_%d.pdf", vz));
             delete leg;
             for(int i=0; i<6; i++){
                 delete h2[i];
                 delete hist[i];
                 delete hc[i];
+                infile[i]->Close();
+                cfile[i]->Close();
             }
             delete c2;
         }
     }
-    
-    /*for(int i=0; i<h2->GetNbinsX(); i++){
-        for(int j=0; j<h2->GetNbinsY(); j++){
-            if(h2->GetBinContent(i+1,j+1)>0)
-                cout<<h2->GetBinContent(i+1,j+1);
-    */
 }

@@ -14,43 +14,61 @@ using namespace std;
 void add_weight_branch_tree(TString fileName, TString tree_name){
     TH2F* hist[9];
     //TString dir="/home/yksong/code/ttbar/EW_weight/correction_roots/";
-    TString dir="./correction_roots/";
-    Int_t Cpq3[9]={ 0, 0, 0, 0, 0, 2, 0, 0, 0 };
-    Int_t Cpu[9]={  0, 2, 1, 0, 0, 0, 2, 0, 0 };
-    Int_t ReCup[9]={0, 0, 0, 1, 0, 0, 0, 2, 0 };
-    Int_t ImCup[9]={0, 0, 0, 0, 1, 0, 0, 0, 2 };                 
+    TString dir = "./correction_roots/";
+    TString mtop = "";
+    TString infile;
+    TFile *fhist[5];
+
+    if(fileName.Contains("mtop171p5"))
+        mtop = "_mt171p5";
+    if(fileName.Contains("mtop169p5"))
+        mtop = "_mt169p5";
+    if(fileName.Contains("mtop173p5"))
+        mtop = "_mt173p5";
+    if(fileName.Contains("mtop175p5"))
+        mtop = "_mt175p5";
+    
+    Int_t Cpq3[5] = {0, 0, 0, 0, 0};
+    Int_t Cpu[5] = {0, 2, 1, 0, 0};
+    Int_t ReCup[5] = {0, 0, 0, 1, 0};
+    Int_t ImCup[5] = {0, 0, 0, 0, 1};                 
     for(Int_t i=0; i<5; i++){
-        TString file;
-        file.Form("EWci%d%d%d%d.root",Cpq3[i],Cpu[i],ReCup[i],ImCup[i]);
-        TFile* fhist=TFile::Open(dir+file);
-        hist[i]=(TH2F*)fhist->Get("h2");
+        infile = Form("EWci%d%d%d%d",Cpq3[i],Cpu[i],ReCup[i],ImCup[i]) + mtop + ".root";
+        fhist[i] = TFile::Open(dir+infile);
+        hist[i] = (TH2F*)fhist[i]->Get("h2");
+        hist[i]->SetName(Form("2D_%d", i));
     }
-    TFile *file=new TFile(fileName,"update");
+
+    TFile *file = new TFile(fileName, "update");
     cout<<"add NLO_EW weight on "<<tree_name<<endl;
-    TTree *mytree=(TTree*) file->Get(tree_name);
+    TTree *mytree=(TTree*)file->Get(tree_name);
     Float_t M_tt, delta_rapidity;
-    mytree->SetBranchAddress("M_tt_gen",&M_tt);
-    mytree->SetBranchAddress("delta_rapidity_gen",&delta_rapidity);      
+    mytree->SetBranchAddress("M_tt_gen", &M_tt);
+    mytree->SetBranchAddress("delta_rapidity_gen", &delta_rapidity);      
     Float_t weight[9];TBranch* branch[9];
     for(int i=0; i<5; i++){
-        TString weight_name=Form("weight_ci%d%d%d%d",Cpq3[i],Cpu[i],ReCup[i],ImCup[i]);
-        branch[i]=mytree->Branch(weight_name,&weight[i],weight_name+"/F");
+        TString weight_name = Form("weight_ci%d%d%d%d", Cpq3[i],Cpu[i],ReCup[i],ImCup[i]);
+        branch[i] = mytree->Branch(weight_name, &weight[i], weight_name+"/F");
     }  
     Int_t entries=mytree->GetEntries();
     cout<<"total number of events: "<<entries<<endl;
     for(Int_t i=0;i<entries;i++){
         mytree->GetEntry(i);
         for(Int_t i=0; i<5; i++){
-            Int_t nbin=hist[i]->FindBin(M_tt,delta_rapidity);
-            weight[i]=1.0+hist[i]->GetBinContent(nbin);
+            Int_t nbin = hist[i]->FindBin(M_tt, delta_rapidity);
+            weight[i] = 1.0 + hist[i]->GetBinContent(nbin);
             branch[i]->Fill();
             //cout<<"weight[i]: "<<weight[i]<<endl;
         }
     }
     file->cd();
-    mytree->Write("",TObject::kOverwrite);
+    mytree->Write("", TObject::kOverwrite);
     delete mytree;
     file->Close();
+    for(int i=0; i<5; i++){
+        delete hist[i];
+        fhist[i]->Close();
+    }
 }
 void add_weight_branch(TString inputFile, bool is_sys, int year){
     TString trees[]={"jerUp", "jerDown", "unclusUp", "unclusDown"};
