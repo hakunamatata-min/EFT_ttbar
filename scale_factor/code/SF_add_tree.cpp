@@ -316,7 +316,7 @@ SF_add_tree::SF_add_tree(TString inputFile_s, TString tree_name, bool remain_sys
     year = year_s;
     inputFile = inputFile_s;
     set_dir();
-    TFile *file = new TFile(inputFile, "update");
+    file = new TFile(inputFile, "update");
     TTree *mytree = (TTree*)file->Get(tree_name);
     Float_t sf_lepton, sf_btag, sf_btag_it;
     UInt_t jet_num;
@@ -419,6 +419,14 @@ SF_add_tree::SF_add_tree(TString inputFile_s, TString tree_name, bool remain_sys
 SF_add_tree::~SF_add_tree(){
     delete reader;
     file->Close();
+    delete hist_elec_id;
+    delete hist_elec_reco_a20; 
+    delete hist_elec_reco_b20;
+    delete hist_muon_m_id; 
+    delete hist_muon_m_iso;
+    delete h2_djEff_b; 
+    delete h2_djEff_c; 
+    delete h2_djEff_udsg;
     fhist_elec_id->Close();
     fhist_muon_m_id->Close();
     fhist_muon_m_iso->Close();

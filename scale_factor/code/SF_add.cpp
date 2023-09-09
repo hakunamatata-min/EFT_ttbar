@@ -13,8 +13,8 @@ void SF_add(TString inputFile, bool is_sys, int year){
         }
         for(int i=0; i<10; i++){
             s1 = new SF_add_tree(inputFile, "jes_"+jes_source[i]+"Up", false, year);
-            s2 = new SF_add_tree(inputFile, "jes_"+jes_source[i]+"Down", false, year);
             delete s1;
+            s2 = new SF_add_tree(inputFile, "jes_"+jes_source[i]+"Down", false, year);
             delete s2;
         }
     }

@@ -185,6 +185,7 @@ combine/impact*
 **/output/**/check.cpp
 **/output/**/*.sh
 **/output/**/*.txt
+select_test
 condor_out_*
 condor_list_*
 test_code
