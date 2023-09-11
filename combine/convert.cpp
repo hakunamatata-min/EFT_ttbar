@@ -176,7 +176,6 @@ void convert(TString input, TString output, double likelihood_cut, const int nyc
                 hist_name.ReplaceAll("_sub", "");
                 if(hist_name.Contains("STop_pdf") || hist_name.Contains("STop_alphas"))//no pdf or alphas for STop
                     continue;
-                cout<<hist_name<<endl;
                 TH1D* hists = new TH1D(hist_name, "", bin_num, 0 ,bin_num);
                 TH1D* hist1[nycut];
                 for(int f=0; f<nycut; f++){
@@ -187,6 +186,7 @@ void convert(TString input, TString output, double likelihood_cut, const int nyc
                 
                 h1_map[hist_name] = *hists;
                 if(!(hist_name.Contains("Up") || hist_name.Contains("Down"))){
+                    cout<<hist_name<<endl;
                     outFile->cd();
                     hists->Write();
                 }
