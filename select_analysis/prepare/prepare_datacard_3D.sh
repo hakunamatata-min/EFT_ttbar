@@ -1,6 +1,7 @@
 cut=(0 1 2 3)
 year=(2015 2016 2017 2018)
-
+rm -rf run_log/
+mkdir run_log/
 for a in ${cut[*]}
 do
     for c in ${year[*]}

@@ -253,8 +253,9 @@ void prepare_3D::set_dir(){
     TString jes_source[] = {"Absolute", Form("Absolute_%d", year), "FlavorQCD", "BBEC1", "EC2", "HF", Form("BBEC1_%d", year), Form("EC2_%d", year), "RelativeBal", Form("RelativeSample_%d", year)};
     TString sf_bl[] = {"SF_btag_co", "SF_ltag_co", "SF_btag_un", "SF_btag_un"};
     for(int i=0; i<nsample; i++){
+        fileName[i].ReplaceAll(".root","_*.root");
         if(i < 20)
-            fileNames[i] = fileName[i].ReplaceAll(".root","_*.root");
+            fileNames[i] = fileName[i];
         xsection[fileName[i]] = pair<double, double>(cross_section[i],  K_Factor[i]);
     }
     
