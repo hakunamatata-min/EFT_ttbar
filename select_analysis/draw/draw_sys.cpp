@@ -23,6 +23,12 @@ void seterror0(TH1D* h1){
         h1->SetBinError(i,0);
     }
 }
+void set_ratio(TH1D* h1, double a){
+    for(int i=1; i<=h1->GetNbinsX(); i++){
+        h1->SetBinContent(i, a);
+        h1->SetBinError(i, 0);
+    }
+}
 void format_text(TPaveText* lumi){
     lumi->SetFillColor(0);
     lumi->SetTextFont(42);
@@ -72,18 +78,59 @@ void format_pad(TPad* pad1, TPad* pad2){
     pad2->SetBottomMargin(0.45);
     pad2->SetLeftMargin(0.15);
 }
-void format_th_pad2(TH1D* h1, TString xtitle, double* low, double* high, int s){
-    int ydivisions=505;
+void get_range_pad2(TH1D* h1, double* ranges, int s){
     double range[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                      0, 0, 0, 0.25, 0, 0, 0, 0, 0, 0,
+                      0, 0, 0, 0, 0, 0, 0, 0, 0.09, 0.06,
                       0, 0 ,0 ,0};
     float up = h1->GetMaximum();
     float down = h1->GetMinimum();
-    up = fabs(up-1);
-    down = fabs(down-1);
-    h1->SetMarkerStyle(20);
-    h1->SetMarkerSize(0.4);
+    up = fabs(up);
+    down = fabs(down);
+    if(range[s] != 0){
+        *ranges = range[s];
+        return;
+    }
+    if(up>0.1 || down>0.1){
+        *ranges = 0.15;
+        return;
+    }
+    if(up > down)
+        *ranges = +1.3*up;
+    else
+        *ranges = +1.3*down;
+}
+void set_th_lable(TH1D* h1, int* nbins){
+    double xbins[][20] = {{0,300,340,380,420,460,500,600,800,3000}, {0,300,350,400,450,500,550,600,700,800,1000,3000}, 
+                        {0,400,450,500,550,600,650,700,800,1000,3000}, {0,450,550,650,700,750,800,900,1000,1200,1400,3000}};
+    for(int i=0; i<4; i++){
+        for(int j=nbins[i]; j<nbins[i+1]; j++){
+            h1->GetXaxis()->SetBinLabel(j+1, TString::Format("%.0f-%.0f", xbins[i][j-nbins[i]], xbins[i][j-nbins[i]+1]));
+        }
+    }
+    h1->LabelsDeflate("X");
+    h1->LabelsDeflate("Y");
+    h1->LabelsOption("v");
+}
+void format_th_pad2(TH1D* h1, TString xtitle, double range, int color, int type, int* nbins){
+    int ydivisions=505;
+    h1->SetLineColor(color);
+    if(type == 0){//ratio
+        h1->SetLineStyle(7);
+        h1->SetLineColor(1);
+        h1->SetLineWidth(1);
+    }
+    if(type == 1){//filled TH1D
+        h1->SetFillColorAlpha(color, 0.3);
+        h1->SetLineWidth(0);
+    }
+    else{//real TH1D(line)
+        h1->SetLineWidth(2);
+        h1->SetMarkerColor(color);
+        h1->SetMarkerStyle(20);
+        h1->SetMarkerSize(0.4);
+    }
+    seterror0(h1);
     h1->SetStats(kFALSE);
     h1->GetXaxis()->SetTitle(xtitle);
     h1->GetYaxis()->SetTitle("Ratio");
@@ -95,33 +142,15 @@ void format_th_pad2(TH1D* h1, TString xtitle, double* low, double* high, int s){
     h1->GetYaxis()->SetTitleSize(0.06*p2weight);
     h1->GetXaxis()->SetTitleOffset(1.8);
     h1->GetYaxis()->SetTitleOffset(1.1/p2weight);
-    h1->GetXaxis()->SetLabelSize(0.08);
+    h1->GetXaxis()->SetLabelSize(0.12);
     h1->GetYaxis()->SetLabelSize(0.05*p2weight);
-    if(range[s] != 0){
-        h1->GetYaxis()->SetRangeUser(1-range[s], 1+range[s]);
-        *low = 1-range[s];
-        *high = 1+range[s];
-        return;
-    }
-    if(up>0.1 || down>0.1){
-        h1->GetYaxis()->SetRangeUser(0.85,1.15);
-        *low = 0.85;
-        *high = 1.15;
-        return;
-    }
-    if(up > down){
-        h1->GetYaxis()->SetRangeUser(1-1.5*up, 1+1.5*up);
-        *low = 1-1.3*up;
-        *high = 1+1.3*up;
-    }  
-    else{
-        h1->GetYaxis()->SetRangeUser(1-1.5*down, 1+1.5*down);
-        *low = 1-1.3*down;
-        *high = 1+1.3*down;
-    }
+    h1->GetYaxis()->SetRangeUser(-range, range);
+    set_th_lable(h1, nbins);
 }
-double format_th_pad1(TH1D* h1, TString xtitle){
+double format_th_pad1(TH1D* h1, TString xtitle, int color){
     int ydivisions=505;
+    h1->SetLineColor(color);
+    h1->SetLineWidth(2);
     h1->SetMarkerStyle(20);
     h1->SetMarkerSize(0.4);
     h1->SetStats(kFALSE);
@@ -146,20 +175,8 @@ void format_line(TLine* l1){
     l1->SetLineWidth(2);
     l1->SetLineColor(1);
 }
-void set_th_lable(TH1D* h1, int* nbins){
-    double xbins[][20] = {{0,300,340,380,420,460,500,600,800,3000}, {0,300,350,400,450,500,550,600,700,800,1000,3000}, 
-                        {0,400,450,500,550,600,650,700,800,1000,3000}, {0,450,550,650,700,750,800,900,1000,1200,1400,3000}};
-    for(int i=0; i<4; i++){
-        for(int j=nbins[i]; j<nbins[i+1]; j++){
-            h1->GetXaxis()->SetBinLabel(j+1, TString::Format("%.0f-%.0f", xbins[i][j-nbins[i]], xbins[i][j-nbins[i]+1]));
-        }
-    }
-    h1->LabelsDeflate("X");
-    h1->LabelsDeflate("Y");
-    h1->LabelsOption("v");
-}
 void draw_pre(TString cutname, int year){
-    double low, high;
+    double range, high;
     TString sys, sys_path;
 
     TString syss[] = {"jes","jer","unclus","SF_lepton","SF_btag", Form("SF_btag%d", year), "SF_ltag", Form("SF_ltag%d", year), "pdf", "alphas", "L1PF", "PU", "muR1","muF1","muR2","muF2","muR3","muF3","ISR","FSR","mtop","hdamp","TuneCP5","nnlo_wt","EW_un", "qcds"};
@@ -171,13 +188,15 @@ void draw_pre(TString cutname, int year){
     TString outpath = "../sys_pdf/";
     TString filename = "ttbar_"+cutname+Form("_%d.root", year);
     TFile* file = TFile::Open(inpath+"datacard/"+filename);
-    TH1D *hmc1, *hmc2, *hmc3;
-    TH1D *hd1, *hd2, *hd3;
-    int color[] = {2, 1, 4};
+    TH1D *hsm;
+    TH1D *hmc[4], *hd[4], *hratio[3];
+    TString name[] = {"Up", "Down", "OUp", "ODown"}; 
+    int color[] = {2, 4};
     TString xtitle = "M_{t#bar{t}}";
-    TString legend[] = {"nom", "up", "down"};
+    TString legend[] = {"up", "down"};
     int div[] = {9, 20, 30};
     int nbins[] = {0, 9, 20, 30, 41};
+    int bins = 41;
     TString cut[4] = {"|#Deltay|<0.4", "0.4<|#Deltay|<1.0", "1.0<|#Deltay|<2.0", "|#Deltay|>2.0"};
     TLine *l1[3], *l2[3];
     TPaveText *t[4];
@@ -201,38 +220,36 @@ void draw_pre(TString cutname, int year){
             TLegend *leg = new TLegend(0.75, .55, 1.00, .70);
             format_leg(leg);
             format_canvas(c2);
-            hmc1 = (TH1D*)file->Get(process[c]);
-            hmc2 = (TH1D*)file->Get(process[c]+"_"+sys+"Up");
-            hmc3 = (TH1D*)file->Get(process[c]+"_"+sys+"Down");
-            if(hmc2 == NULL){
+            hsm = (TH1D*)file->Get(process[c]);
+            for(int i=0; i<4; i++)
+                hmc[i] = (TH1D*)file->Get(process[c]+"_"+sys+name[i]);
+            if(hmc[0] == NULL){
                 delete pad1; delete pad2; delete leg;
-                delete hmc1; delete hmc2; delete hmc3;
+                for(int i=0; i<4; i++)
+                    delete hmc[i];
                 delete c2;
                 continue;
             }
-            TH1D* hd = (TH1D*)hmc1->Clone();
-            hd1 = (TH1D*)hmc1->Clone();
-            hd2 = (TH1D*)hmc2->Clone();
-            hd3 = (TH1D*)hmc3->Clone();
-            hd1->Divide(hd);
-            hd2->Divide(hd);
-            hd3->Divide(hd);
+            for(int i=0; i<4; i++){
+                hd[i] = (TH1D*)hmc[i]->Clone();
+                hd[i]->SetName(Form("hd_%d", i));
+                hd[i]->Add(hsm, -1);
+                hd[i]->Divide(hsm);
+            }
 
             pad1->cd();
-            hmc1->Draw("hist");
-            double high1 = format_th_pad1(hmc1, xtitle);
-            hmc1->SetLineColor(color[0]);
-            hmc2->Draw("histSame");
-            hmc2->SetLineColor(color[1]);
-            hmc3->Draw("histSame");
-            hmc3->SetLineColor(color[2]);
-            leg->AddEntry(hmc1, legend[0], "l");
-            leg->AddEntry(hmc2, legend[1], "l");
-            leg->AddEntry(hmc3, legend[2], "l");
+            hsm->Draw("hist");
+            high = format_th_pad1(hsm, xtitle, color[0]);
+            leg->AddEntry(hsm, "SM case", "l");
+            for(int i=0; i<2; i++){
+                hmc[i]->Draw("histSame");
+                format_th_pad1(hmc[i], xtitle, color[i]);
+                leg->AddEntry(hmc[i], sys+"_"+legend[i], "l");
+            }
             leg->Draw("Same");
             
             for(int d=0; d<3; d++){
-                l1[d] = new TLine(div[d], 0, div[d], high1);
+                l1[d] = new TLine(div[d], 0, div[d], high);
                 format_line(l1[d]);
                 pad1->cd();
                 l1[d]->Draw("same");
@@ -245,21 +262,27 @@ void draw_pre(TString cutname, int year){
             }
 
             pad2->cd();
-            hd2->Draw("hist");
-            hd2->SetLineColor(color[1]);
-            format_th_pad2(hd2, xtitle, &low, &high, s);
-            set_th_lable(hd2, nbins);
-            seterror0(hd2);
-            hd3->Draw("hSame");
-            seterror0(hd3);
-            hd3->SetLineColor(color[2]);
-            hd1->Draw("hSame");
-            seterror0(hd1);
-            hd1->SetLineStyle(9);
-            hd1->SetLineColor(color[0]);
+            get_range_pad2(hd[0], &range, s);
+            for(int r=0; r<3; r++){
+                hratio[r] = new TH1D(Form("ratio%d",r), "", bins, 0, bins);
+                set_ratio(hratio[r], 0.5*range*(r-1));
+                if(r == 0)
+                    hratio[r]->Draw("L");
+                else
+                    hratio[r]->Draw("LSame");
+                format_th_pad2(hratio[r], xtitle, range, 1, 0, nbins);
+            }
+            for(int i=0; i<2; i++){
+                hd[i]->Draw("PhSame");
+                format_th_pad2(hd[i], xtitle, range, color[i], 2, nbins);
+            }
+            for(int i=0; i<2; i++){
+                hd[2+i]->Draw("hSame");
+                format_th_pad2(hd[2+i], xtitle, range, color[i], 1, nbins);
+            }
 
             for(int d=0; d<3; d++){
-                l2[d] = new TLine(div[d], low, div[d], high);
+                l2[d] = new TLine(div[d], -range, div[d], range);
                 format_line(l2[d]);
                 l2[d]->Draw("same");
             }
@@ -270,12 +293,11 @@ void draw_pre(TString cutname, int year){
             for(int tex=0; tex<4; tex++)
                 delete t[tex];
             delete leg;
-            delete hmc1;
-            delete hmc2;
-            delete hmc3;
-            delete hd1;
-            delete hd2;
-            delete hd3;
+            delete hsm;
+            for(int i=0; i<3; i++)
+                delete hratio[i];
+            for(int i=0; i<4; i++)
+                delete hd[i], hmc[i];
             delete pad1; delete pad2;
             delete c2;
         }
