@@ -496,7 +496,7 @@ void select_tree::loop(TTree* mytree, TTree* rawtree){
                 lepton_phi = mom_lep.Phi();
                 if(type == 1){
                     read_sys();
-                    pdf_w(LHEPdfWeight, alphas_up, alphas_dn, pdf_up, pdf_dn);
+                    //pdf_w(LHEPdfWeight, alphas_up, alphas_dn, pdf_up, pdf_dn);
                 }
                 if(type != 0)
                     read_LHE();
@@ -554,12 +554,12 @@ void select_tree::write(){
         mytree->Branch("ISF_down", &ISR_down, "ISR_down/F");
         mytree->Branch("FSR_up", &FSR_up, "FSR_up/F");
         mytree->Branch("FSR_down", &FSR_down, "FSR_down/F");
-        mytree->Branch("pdf_up", &pdf_up, "pdf_up/F");
+        /*mytree->Branch("pdf_up", &pdf_up, "pdf_up/F");
         mytree->Branch("pdf_dn", &pdf_dn, "pdf_dn/F");
         mytree->Branch("alphas_up", &alphas_up, "alphas_up/F");
-        mytree->Branch("alphas_dn", &alphas_dn, "alphas_dn/F");
-        //mytree->Branch("nLHEPdfWeight", &nLHEPdfWeight, "nLHEPdfWeight/i");
-        //mytree->Branch("LHEPdfWeight", LHEPdfWeight, "LHEPdfWeight[nLHEPdfWeight]/F");
+        mytree->Branch("alphas_dn", &alphas_dn, "alphas_dn/F");*/
+        mytree->Branch("nLHEPdfWeight", &nLHEPdfWeight, "nLHEPdfWeight/i");
+        mytree->Branch("LHEPdfWeight", LHEPdfWeight, "LHEPdfWeight[nLHEPdfWeight]/F");
         mytree->Branch("L1PreFiringWeight_Up",&L1PreFiringWeight_Up,"L1PreFiringWeight_Up/F");
         mytree->Branch("L1PreFiringWeight_Dn",&L1PreFiringWeight_Dn,"L1PreFiringWeight_Dn/F");
     }
