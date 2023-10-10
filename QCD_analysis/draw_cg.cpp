@@ -118,7 +118,7 @@ void set_ratio(TH1D* h1, double a){
         h1->SetBinContent(i, a);
 }
 void draw(TString cut_name, int g, int year, bool isEnriched, TString tex){
-    TString Enrich_name[2] = {"", "_En"};
+    TString Enrich_name[2] = {"", "En"};
     TString legend[] = {"tt","DY","single top","V+jets","QCD"};
     TString legendd = "data";
     TString cg_n[] = {"A", "B", "C", "D"};
@@ -218,7 +218,7 @@ void draw_cg(){
         for(int y=0; y<4; y++){
             for(int g=1; g<4; g++){
                 draw(cutsName[i], g, year[y], 0, "");
-                draw(cutsName[i], g, year[y], 1, "");
+                //draw(cutsName[i], g, year[y], 1, "");
             }
         }   
         

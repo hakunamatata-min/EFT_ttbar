@@ -160,7 +160,7 @@ void derive(TString cut, TString cut_name, int g, int year){
     TChain *mytree;
     TH1D  *hist, *h1;
     TH1D *hdata;
-    TString inpath = Form("./output/%d/",year);
+    TString inpath = Form("/home/yksong/code/EFT-ttbar/QCD_analysis/output/%d/",year);
     TString outpath = Form("./CG_roots/%d/",year);
     TFile* file = new TFile(outpath+"QCD_"+cut_name+"_"+cg+".root", "recreate");
     for(int var=0; var<5; var++){
@@ -169,9 +169,11 @@ void derive(TString cut, TString cut_name, int g, int year){
         data_tree->Add(inpath+"data/"+"new_data*"+cg+".root");
         hdata = new TH1D(title[var]+"_data", "", bins[var], xlow[var], xup[var]);
         data_tree->Draw(xvars[var]+">>"+title[var]+"_data", cut+other_con1+other_con2);
+        //cout<<title[var]<<" "<<hdata->GetSumOfWeights()<<endl;
         hdata->Scale(pre_scale);
         file->cd();
         hdata->Write();
+        cout<<title[var]<<" "<<hdata->GetSumOfWeights()<<endl;
         delete hdata;
         delete data_tree;
         
@@ -197,6 +199,7 @@ void derive(TString cut, TString cut_name, int g, int year){
             }
             file->cd();
             h1->Write();
+            //cout<<title[var]<<" "<<h1->GetSumOfWeights()<<endl;
             delete h1;
         }
         delete c1;
@@ -204,8 +207,10 @@ void derive(TString cut, TString cut_name, int g, int year){
     file->Close();
 }
 void derive_cg(int i, int g, int year){
-    TString cuts[] = {"(jet_num == 3 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
-        "(jet_num == 3  && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
+    //TString cuts[] = {"(jet_num == 3 && (!lep_flavour))","(jet_num >= 4  && (!lep_flavour))",
+    //    "(jet_num == 3  && lep_flavour)",  "(jet_num >= 4 && lep_flavour)"};
+    TString cuts[] = {"(jet_num == 3 && (!lep_flavour) && likelihood < 20.0)","(jet_num >= 4  && (!lep_flavour))",
+                      "(jet_num == 3  && lep_flavour && likelihood < 20.0)",  "(jet_num >= 4 && lep_flavour)"};
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
     derive(cuts[i], cutsName[i], g, year);
 } 

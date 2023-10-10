@@ -1,0 +1,68 @@
+nohup: ignoring input
+
+Processing derive_qcd_1D.cpp(3, 2, 2016, 0)...
+finished Control region
+likelihood 1.92068e+06 102136 816849
+1.81855e+06
+5624.23
+finished A region
+finished Control region
+mass_t 2.92028e+06 123835 1.23284e+06
+2.79645e+06
+5923.25
+finished A region
+finished Control region
+mass_at 2.92872e+06 123810 1.24346e+06
+2.80491e+06
+5923.37
+finished A region
+finished Control region
+mass_wlep 3.01453e+06 124845 1.28612e+06
+2.88969e+06
+5952.94
+finished A region
+finished Control region
+mass_whad 1.74386e+06 100428 733015
+1.64344e+06
+5332.15
+finished A region
+finished Control region
+mass_thad 2.83593e+06 122804 1.19032e+06
+2.71313e+06
+5902.17
+finished A region
+finished Control region
+mass_tlep 3.01307e+06 124840 1.28598e+06
+2.88824e+06
+5944.46
+finished A region
+finished Control region
+lepton_pt 3.02411e+06 125277 1.2915e+06
+2.89883e+06
+5948.28
+finished A region
+finished Control region
+leading_pt 2.97917e+06 121049 1.26047e+06
+2.85812e+06
+5941.39
+finished A region
+finished Control region
+jet_num 2.9258e+06 107405 1.25803e+06
+2.8184e+06
+5943.62
+finished A region
+finished Control region
+top_pt 2.65311e+06 111742 1.10179e+06
+2.54137e+06
+963.755
+finished A region
+finished Control region
+Mtt 2.98517e+06 124214 1.27086e+06
+2.86096e+06
+5945.91
+finished A region
+finished Control region
+deltay 2.96976e+06 124483 1.27724e+06
+2.84528e+06
+5781.84
+finished A region

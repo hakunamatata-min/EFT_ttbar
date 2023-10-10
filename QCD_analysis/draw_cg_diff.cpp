@@ -101,7 +101,7 @@ void draw_pre(TString cut, int year){
     }
 }
 void draw_cg_diff(){
-    TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
+    TString cutsName[] = {"_E_3jets", "_E_4jets", "_M_3jets", "_M_4jets"};
     int year[] = {2015, 2016, 2017, 2018};
     for(int i=0; i<4; i++){
         for(int y=0; y<4; y++)

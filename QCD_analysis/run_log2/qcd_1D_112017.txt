@@ -1,0 +1,68 @@
+nohup: ignoring input
+
+Processing derive_qcd_1D.cpp(1, 1, 2017, 0)...
+finished Control region
+likelihood 247168 204598 54127.5
+42570.4
+1250.36
+finished A region
+finished Control region
+mass_t 462444 384862 88473.8
+77581.8
+2208.84
+finished A region
+finished Control region
+mass_at 461719 383901 87819.9
+77818
+2169.16
+finished A region
+finished Control region
+mass_wlep 483094 402053 91766.6
+81253.6
+2405.68
+finished A region
+finished Control region
+mass_whad 265728 221256 61439.1
+44472.2
+1305.11
+finished A region
+finished Control region
+mass_thad 454306 378188 88392.9
+76117.5
+2161.65
+finished A region
+finished Control region
+mass_tlep 469857 390575 87900.8
+79285.3
+2216.35
+finished A region
+finished Control region
+lepton_pt 482816 401871 92977.4
+86997.7
+2364.88
+finished A region
+finished Control region
+leading_pt 480191 397433 92544.7
+83324.7
+2343.89
+finished A region
+finished Control region
+jet_num 483230 402766 93071.4
+80464.2
+2351.45
+finished A region
+finished Control region
+top_pt 413908 350830 80145.9
+65446.1
+1835.92
+finished A region
+finished Control region
+Mtt 477504 397711 92355.9
+79793
+2344.05
+finished A region
+finished Control region
+deltay 480013 402777 92338
+77235.9
+2409.34
+finished A region
