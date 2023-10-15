@@ -168,6 +168,8 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     else
         other_con2 = "*1";
 
+    TString output_path = Form("./output/%d/QCD_root/",year);
+    TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+"_3D.root", "recreate");
     TH3D *hdata, *hmc_b[2], *hmc_qa;
     //TH1D *hdata1d;
     hdata = new TH3D("QCD_other_removed", "", xbins, xlow, xup, ybins, ylow, yup, zbins, zlow, zup);//final QCD;
@@ -181,9 +183,7 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
     //cout<< xbins<< " "<< xlow<<" "<< xup<<" "<<ybins<<" "<<ylow<<" "<<yup<< " "<<zbins<<" "<<zlow<<" "<<zup<<endl;
 
     TString input_path = Form("/home/yksong/code/EFT-ttbar/QCD_analysis/output/%d/",year);
-    TString output_path = Form("./output/%d/Enriched/",year);
 
-    TFile* file = new TFile(output_path+"QCD_"+cut_name+"_"+cg+"_3D.root", "recreate");
     TChain* data_tree = new TChain("mytree");
     data_tree->Add(input_path+"data/"+"new_data*"+cg+".root");
     // data_tree->Add("/home/yksong/code/EFT-ttbar/QCD_analysis/output/2015/data/new_data_0_B.root");
@@ -268,14 +268,14 @@ void derive(TString cut, TString cut_name, int g, int year, int* xyz_bins, doubl
 }
 void derive_qcd_3D(int i, int g, int year){
     //TString cg[] = {"A", "B", "C", "D"};
-    TString cuts[] = {"(jet_num == 3 && (!lep_flavour) && likelihood < 20.0)","(jet_num >= 4  && (!lep_flavour))",
-                     "(jet_num == 3  && lep_flavour && likelihood < 20.0)",  "(jet_num >= 4 && lep_flavour)"};
+    TString cuts[] = {"(jet_num == 3 && (!lep_flavour) )","(jet_num >= 4  && (!lep_flavour))",
+                     "(jet_num == 3  && lep_flavour )",  "(jet_num >= 4 && lep_flavour)"};
     TString cutsName[] = {"E_3jets", "E_4jets", "M_3jets", "M_4jets"};
 
     int nbins[] = {9, 11, 10, 11};
     int xyz_bins[] = {270, 40, 37};
     double xyz_range[] = {300, 3000, 0, 4.0, 13, 50};
     //double xyz_range[] = {0, 50, 0, 50, 0, 50};
-    //derive(cuts[i], cutsName[i], g, year, xyz_bins, xyz_range, 0);
-    derive(cuts[i], cutsName[i], g, year, xyz_bins, xyz_range, 1);
+    derive(cuts[i], cutsName[i], g, year, xyz_bins, xyz_range, 0);
+    //derive(cuts[i], cutsName[i], g, year, xyz_bins, xyz_range, 1);
 } 
