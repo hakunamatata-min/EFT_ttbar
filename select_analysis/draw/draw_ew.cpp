@@ -125,8 +125,8 @@ void format_line(TLine* l1){
     l1->SetLineColor(1);
 }
 void set_th_lable(TH1D* h1, int* nbins){
-    double xbins[][20] = {{0,300,340,380,420,460,500,600,800,3000}, {0,300,350,400,450,500,550,600,700,800,1000,3000}, 
-                        {0,400,450,500,550,600,650,700,800,1000,3000}, {0,450,550,650,700,750,800,900,1000,1200,1400,3000}};
+    double xbins[][20] ={{0,300,320,340,360,380,400,420,460,500,600,700,800,3000}, {0,300,320,340,360,380,400,420,440,460,480,500,600,700,800,1000,3000}, 
+                               {0,400,450,500,550,600,700,800,1000,3000}, {0,550,600,650,700,800,900,1000,1200,1400,3000}};
     for(int i=0; i<4; i++){
         for(int j=nbins[i]; j<nbins[i+1]; j++){
             h1->GetXaxis()->SetBinLabel(j+1, TString::Format("%.0f-%.0f", xbins[i][j-nbins[i]], xbins[i][j-nbins[i]+1]));
@@ -155,10 +155,10 @@ void model(TH1D* h1, TH1D* h2[5], double y, double z, double k){
 void draw_pre(TString cutname, int year, TString sys, int type, double value[5], int index[5], bool rel){
     double low, high;
     TString process[] = {"ttbar_ci0100", "ttbar_ci0010", "ttbar_ci0001", "ttbar_ci0000", "ttbar_ci0200"};
-    TString inpath = "../../combine/";
-    TString outpath = "../ew_pdf/" + cutname + Form("_%d/", year);
+    TString inpath = "/home/tangmin/EFT_ttbar_v1/combine/";
+    TString outpath = "/home/tangmin/combine/ew_pdf/" + cutname + Form("_%d/", year);
     TString filename = "ttbar_"+cutname+Form("_%d.root", year);
-    TFile* file = TFile::Open(inpath+"datacard/"+filename);
+    TFile* file = TFile::Open(inpath+"check_mtt/original/"+filename);
     TH1D *hmc1[5], *h1[5], *hd1[5];
     TH1D* hno, *hd;
     int color[] = {2, 1, 8, 4, 6};
@@ -170,8 +170,8 @@ void draw_pre(TString cutname, int year, TString sys, int type, double value[5],
     for(int i=0; i<5; i++)
         legend[i] = legend_l[type] + Form("%.2f", value[i]);
     //TString legend[] = {"#kappa = 1", "#kappa = 0.5", "#kappa = 0", "#kappa = 1.5", "#kappa = 2.0"};
-    int div[] = {9, 20, 30};
-    int nbins[] = {0, 9, 20, 30, 41};
+    int div[] = {13, 29, 38};
+    int nbins[] = {0, 13, 29, 38, 48};
     TString cut[4] = {"|#Deltay|<0.4", "0.4<|#Deltay|<1.0", "1.0<|#Deltay|<2.0", "|#Deltay|>2.0"};
     TLine *l1[3], *l2[3];
     TPaveText *t[4];
@@ -282,7 +282,8 @@ void draw_pre(TString cutname, int year, TString sys, int type, double value[5],
 void draw_ew(int i, int y, int s, int t, bool rel){
     TString cutNames[] = {"M_4jets","M_3jets","E_4jets","E_3jets"};
     int years[] = {2015, 2016, 2017, 2018};
-    TString sys[] = {"", "_mtopUp", "_nnlo_wtUp", "_pdfUp", "_EW_unUp"};
+    // TString sys[] = {"", "_mtopUp", "_nnlo_wtUp", "_pdfUp", "_EW_unUp"};
+    TString sys[] = {"", "_mtopUp", "_nnlo_wtUp", "_EW_unUp"};
     int index[3][5] = {{2, 1, 0, 3, 4}, {2, 1, 0, 3, 4}, {0, 1, 2, 3, 4}};
     double v[3][5] = {{0, 0.5, 1.0, -0.5, -1.0}, {0, 0.5, 1.0, 1.5, 2.0}, {0, 0.5, 1.0, -0.5, -1.0}};
     //TString filenames[] = {"ttbar_M_4jets.root","ttbar_M_3jets.root","ttbar_E_4jets.root","ttbar_E_3jets.root"};

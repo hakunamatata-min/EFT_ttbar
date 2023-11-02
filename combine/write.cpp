@@ -148,12 +148,12 @@ void write(TString datacard_name, TString cut_name, int year){
             if(hist) {
                 hist_name = TString(hist->GetName());
                 //cout<<hist_name<<endl;
-                if(hist_name.Contains("Up")){
+                if(hist_name.Contains("Up")&& !hist_name.Contains("pdf") && (!hist_name.Contains("mtop")||hist_name.Contains("mtop3"))){
                     hist_name.ReplaceAll("Up", "");
                     sys_and_nom(hist_name, sys_name, nom_name);
                     sys_shape[sys_name].push_back(nom_name);
                 }
-                else if(!hist_name.Contains("Down") && !hist_name.Contains("EW_no") && !hist_name.Contains("data_obs")){
+                else if(!hist_name.Contains("Down") && !hist_name.Contains("EW_no") && !hist_name.Contains("data_obs")&& !hist_name.Contains("pdf")&& (!hist_name.Contains("mtop")||hist_name.Contains("mtop3"))){
                     pro.name = hist_name;
                     pro.yield = hist->GetSumOfWeights();
                     pro.bin = category;

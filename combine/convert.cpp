@@ -98,6 +98,7 @@ void convert(TString input, TString output, double likelihood_cut, vector<double
     int nbins[nycut];
     for(int i=0; i<nycut; i++){
         nbins[i] = xbins_user[i].size() - 1;
+        cout << nbins[i] <<endl;
         //xbins[i] = new int[nbins[i]+1];
         for(int j=0; j<nbins[i]+1; j++){
             if(xbins_user[i][j]<300)

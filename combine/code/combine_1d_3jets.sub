@@ -1,0 +1,13 @@
+executable              = combine_1d_3jets.sh
+arguments               = $(dir)
+Initialdir              = /afs/cern.ch/user/m/mitang/EFT_ttbar/combine/$(dir)
+						
+output                  = run.out
+error                   = run.err
+log                     = run.log
+						
+RequestMemory           = 2000
+ShouldTransferFiles     = NO
++JobFlavour             = "testmatch"
+x509userproxy           = $ENV(HOME)/temp/x509up
+Queue dir from ./condor_list_datacard.txt

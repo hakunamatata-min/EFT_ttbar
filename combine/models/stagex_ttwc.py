@@ -26,7 +26,7 @@ class stagex_ttwc(PhysicsModel):
 		if "ttbar" not in process: # return 1 for background
 			return 1
 		else:
-			print (process, "is a ttbar process with EW correction")
+			print(process, "is a ttbar process with EW correction")
 		if self.stage0:
 			if "ttbar" in process:
 				if self.acttbar:
